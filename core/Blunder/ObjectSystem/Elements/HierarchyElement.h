@@ -29,11 +29,11 @@ public:
     void EraseObject(bool deleteChildren = false);
 
     // Virtual Function(s)
-    //virtual void DrawElementUI() = 0;
+    virtual void DrawElementUI() = 0;
+    virtual std::string getName() = 0;
 
 private:
     int ID;
-    std::string label;
     HierarchyType type;
     HierarchyElement* parent;
     std::vector<HierarchyElement*> children;

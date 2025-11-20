@@ -26,24 +26,17 @@ namespace obs
             : mode(mode), renderTriangles(renderTriangles), backfaceCull(backfaceCull) {}
 
         // Getters
-        obj::Object* getObject(int ID) { return objects[findObject(ID)]; }
-        std::vector<obj::Object*> getObjects() { return objects; }
-        int getObjectCount() { return objects.size(); }
         RenderMode getMode() { return mode; }
 
         // Setters
         void setMode(RenderMode mode) { this->mode = mode; }
 
-        // Functions
-        void addObject(obj::Object* object) { objects.push_back(object); }
-        int findObject(int ID); // returns index of the object;
-        void removeObject(int ID) { objects.erase(objects.begin() + findObject(ID)); }
+        // Functions}
         void renderObjects(glm::mat4 projection, glm::mat4 view);
 
         void testOutput();
 
     private:
-        std::vector<obj::Object*> objects;
         RenderMode mode;
         bool renderTriangles;
         bool backfaceCull;

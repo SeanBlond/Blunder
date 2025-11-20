@@ -16,8 +16,9 @@ HierarchyElement::HierarchyElement(HierarchyType type, HierarchyElement* parent,
 
 void HierarchyElement::changeParent(HierarchyElement* parent)
 {
-    parent->removeChild(getID());
+    this->parent->removeChild(getID());
     this->parent = parent;
+    parent->addChild(this);
 }
 void HierarchyElement::addChild(HierarchyElement* child)
 {
@@ -52,9 +53,9 @@ void HierarchyElement::EraseObject(bool deleteChildren)
         for (int i = 0; i < children.size(); i++)
         {
             children[i]->EraseObject(parent);
+            delete children[i];
         }
+        children.clear();
+
     }
 }
-
-// Object Hierarchy Element Class Functions
-// ----------------------------------------
