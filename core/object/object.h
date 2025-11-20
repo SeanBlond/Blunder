@@ -61,17 +61,6 @@ namespace obj
         glm::vec3 originalRotation;
         glm::vec3 originalScale;
     };
-
-    class Folder
-    {
-    public:
-        Folder();
-
-    private:
-        std::string name;
-        bool display;
-        std::vector<Object*> members;
-    };
 };
 
 #endif

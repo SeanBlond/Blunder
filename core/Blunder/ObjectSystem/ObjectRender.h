@@ -14,30 +14,9 @@
 #include "../../shader/shader.h"
 #include "../../object/object.h"
 
-namespace obr
+namespace obs
 {
     enum RenderMode { OR_SIMPLE, OR_XRAY, OR_SHADED, OR_RENDER };
-
-    class ObjectReference
-    {
-    public:
-        ObjectReference(obj::Object* object) : object(object), showChildren(false) {}
-
-        // Getters
-        obj::Object* getObject() { return object; }
-        bool getShowChildren() { return showChildren; }
-        
-        // Setters
-        void setObject(obj::Object* object) { this->object = object; }
-        void setShowChildren(bool showChildren) { this->showChildren = showChildren; }
-
-        // Functions
-        void renderObjectReference(ui::UIRenderer* renderer, float xpos, float ypos);
-
-    private:
-        obj::Object* object;
-        bool showChildren;
-    };
 
     class ObjectRender
     {
@@ -65,7 +44,6 @@ namespace obr
 
     private:
         std::vector<obj::Object*> objects;
-        std::vector<obj::Folder*> folders;
         RenderMode mode;
         bool renderTriangles;
         bool backfaceCull;

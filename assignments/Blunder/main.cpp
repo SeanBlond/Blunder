@@ -8,7 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <Blunder/ObjectRender/ObjectRender.h>
+#include <Blunder/ObjectSystem/ObjectSystem.h>
 #include <Blunder/StateMachine/StateMachine.h>
 #include <Blunder/UI/UIElements.h>
 #include <Blunder/UI/UIWindows.h>
@@ -48,7 +48,7 @@ OrbitCamera camera(1.25f, 2.0f, 7.5f);
 StateMachine state(&mouse);
 
 // Setting up Object System
-obr::ObjectRender objectSystem;
+obs::ObjectSystem objectSystem;
 int obj::Object::nextID = 0;
 
 int main() {

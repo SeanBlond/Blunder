@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "../StateMachine/StateMachine.h"
-#include "../ObjectRender/ObjectRender.h"
+#include "../ObjectSystem/ObjectSystem.h"
 #include "UIElements.h"
 
 // Window Parent Class
@@ -83,14 +83,14 @@ class HierarchyWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    HierarchyWindow(float width, float height, std::string fontName, int fontSize, obr::ObjectRender* objectSystem) : UIWindow(width, height, fontName, fontSize), objectSystem(objectSystem) {}
+    HierarchyWindow(float width, float height, std::string fontName, int fontSize, obs::ObjectSystem* objectSystem) : UIWindow(width, height, fontName, fontSize), objectSystem(objectSystem) {}
     ~HierarchyWindow()
     {
         interactables.clear();
     }
 
     // Getters
-    obr::ObjectRender* getObjectSystem() { return objectSystem; }
+    obs::ObjectRender* getObjectSystem() { return objectSystem; }
 
     // Setters
     void setObjectSystem(obr::ObjectRender* objectSystem) { this->objectSystem = objectSystem; }
@@ -102,7 +102,7 @@ public:
 
 private:
     std::vector<ui::HierarchyInteractable> interactables;
-    obr::ObjectRender* objectSystem;
+    obs::ObjectRender* objectSystem;
 };
 
 #endif // !UIWINDOWS

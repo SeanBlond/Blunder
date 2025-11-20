@@ -1,5 +1,6 @@
 #include "ObjectRender.h"
-using namespace obr;
+
+using namespace obs;
 
 
 int ObjectRender::findObject(int ID)
