@@ -14,7 +14,7 @@ void Folder::removeElement(HierarchyElement* element, bool deleteChildren)
         // Adding children to this folder
         if (!deleteChildren)
         {
-            for (int i = 0; i < element->getChildren().size(); i++)
+            for (int i = 0; i < element->getChildrenSize(); i++)
             {
                 addElement(element->getChild(i));
             }

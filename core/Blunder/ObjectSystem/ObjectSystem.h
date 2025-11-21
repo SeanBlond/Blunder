@@ -13,12 +13,19 @@
 #include "../../math/smath.h"
 #include "../../shader/shader.h"
 #include "../../object/object.h"
-#include "ObjectRender.h"
 #include "Elements/Folder.h"
 #include "Elements/HierarchyElement.h"
 
 namespace obs
 {
+
+    enum RenderMode { OR_SIMPLE, OR_XRAY, OR_SHADED, OR_RENDER };
+    struct RenderSettings
+    {
+        RenderMode mode;
+        bool renderTriangles;
+        bool backfaceCull;
+    };
 
     class ObjectSystem
     {
@@ -30,15 +37,19 @@ namespace obs
         // Getters
         Folder* getSelectedFolder() { return selectedFolder; }
         Folder* getRootFolder() { return rootFolder; }
-        ObjectRender* getRenderer() { return &renderer; }
+        RenderSettings getRenderSettings() { return renderSettings; }
 
         // Setters
         void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
+        void setRenderSettings(RenderSettings renderSettings) { this->renderSettings = renderSettings; }
 
         //Functions
         void addObject(obj::Object* object);
         void addHierarchyElement(HierarchyElement* element);
         void addFolder(std::string name);
+        void RenderHierarchyElement(HierarchyElement* element, glm::mat4 projection, glm::mat4 view);
+        void RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view);
+        void Render(glm::mat4 projection, glm::mat4 view);
 
         void outputFolder(Folder* folder, int offset);
         void testOutput();
@@ -46,7 +57,7 @@ namespace obs
     private:
         Folder* selectedFolder;
         Folder* rootFolder;
-        ObjectRender renderer;
+        RenderSettings renderSettings;
     };
 }
 #endif // !OBJECTSYSTEM

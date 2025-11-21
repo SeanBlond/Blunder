@@ -180,7 +180,7 @@ int main() {
         glEnable(GL_DEPTH);
 
         // Drawing the Meshes
-        //objectSystem.renderObjects(projection, view);
+        objectSystem.Render(projection, view);
         
         // Drawing Axis Lines
         xAxisLine.setTransformation(projection * view);

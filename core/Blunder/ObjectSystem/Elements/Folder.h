@@ -18,10 +18,14 @@ public:
     Folder* getParentFolder() { return parentFolder; }
     Folder* getChildFolder(int index) { return childrenFolders[index]; }
     int getChildFoldersSize() { return childrenFolders.size(); }
+    bool getDisplayed() { return displayed; }
+    bool getRendered() { return rendered; }
     
 
     // Setters
     void setName(std::string name) { this->name = name; }
+    void setDisplayed(bool displayed) { this->displayed = displayed; }
+    void setRendered(bool rendered) { this->rendered = rendered; }
 
     // Functions
     void addElement(HierarchyElement* element);

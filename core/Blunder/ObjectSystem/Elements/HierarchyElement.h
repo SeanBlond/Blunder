@@ -16,11 +16,17 @@ public:
 
     // Getters
     HierarchyElement* getParent() { return parent; }
-    std::vector<HierarchyElement*> getChildren() { return children; }
     HierarchyElement* getChild(int index) { return children[index]; }
+    int getChildrenSize() { return children.size(); }
     HierarchyType getType() { return type; }
     obj::Object* getObject() { return object; }
     std::string getName() { return object->getName(); }
+    bool getDisplayed() { return displayed; }
+    bool getRendered() { return rendered; }
+
+    // Setters
+    void setDisplayed(bool displayed) { this->displayed = displayed; }
+    void setRendered(bool rendered) { this->rendered = rendered; }
 
     // Functions
     void changeParent(HierarchyElement* parent);
