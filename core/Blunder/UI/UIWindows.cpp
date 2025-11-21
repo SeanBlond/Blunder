@@ -289,7 +289,7 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
     renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Folder Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_FOLDER_T);
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_FOLDER_SYMBOL);
 
     // Folder Text
     renderer.renderText(folder->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);

@@ -79,17 +79,16 @@ UIRenderer::UIRenderer(std::string fontName, int fontSize, glm::mat4 projection)
 
     // Loading Textures for each texture enum value
     ui_textures.resize(11);
-    ui_textures[UI_DISPLAY_T] = new shdr::Texture2D("assets/UI-Textures/Display_T.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_DISPLAY_F] = new shdr::Texture2D("assets/UI-Textures/Display_F.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_DROPDOWN_T] = new shdr::Texture2D("assets/UI-Textures/Dropdown_T.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_DROPDOWN_F] = new shdr::Texture2D("assets/UI-Textures/Dropdown_F.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_FOLDER_T] = new shdr::Texture2D("assets/UI-Textures/Folder_T.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_FOLDER_F] = new shdr::Texture2D("assets/UI-Textures/Folder_F.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_RENDER_T] = new shdr::Texture2D("assets/UI-Textures/Render_T.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_RENDER_F] = new shdr::Texture2D("assets/UI-Textures/Render_F.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_OBJECT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Object Symbol.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_LIGHT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Light Symbol.png", GL_LINEAR, GL_REPEAT);
-    ui_textures[UI_CAMERA_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Camera Symbol.png", GL_LINEAR, GL_REPEAT);
+    ui_textures[UI_DISPLAY_T] = new shdr::Texture2D("assets/UI-Textures/Display_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_DISPLAY_F] = new shdr::Texture2D("assets/UI-Textures/Display_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_DROPDOWN_T] = new shdr::Texture2D("assets/UI-Textures/Dropdown_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_DROPDOWN_F] = new shdr::Texture2D("assets/UI-Textures/Dropdown_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_RENDER_T] = new shdr::Texture2D("assets/UI-Textures/Render_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_RENDER_F] = new shdr::Texture2D("assets/UI-Textures/Render_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_FOLDER_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Folder_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_OBJECT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Object_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_LIGHT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Light_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
+    ui_textures[UI_CAMERA_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Camera_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
 }
 UIRenderer::~UIRenderer()
 {
