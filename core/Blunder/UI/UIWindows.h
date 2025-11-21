@@ -90,10 +90,10 @@ public:
     }
 
     // Getters
-    obs::ObjectRender* getObjectSystem() { return objectSystem; }
+    obs::ObjectSystem* getObjectSystem() { return objectSystem; }
 
     // Setters
-    void setObjectSystem(obr::ObjectRender* objectSystem) { this->objectSystem = objectSystem; }
+    void setObjectSystem(obs::ObjectSystem* objectSystem) { this->objectSystem = objectSystem; }
 
     // Functions
     void GenerateInteractables() override;
@@ -102,7 +102,7 @@ public:
 
 private:
     std::vector<ui::HierarchyInteractable> interactables;
-    obs::ObjectRender* objectSystem;
+    obs::ObjectSystem* objectSystem;
 };
 
 #endif // !UIWINDOWS

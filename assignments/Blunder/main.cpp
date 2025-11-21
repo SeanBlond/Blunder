@@ -95,18 +95,19 @@ int main() {
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
     // Creating Default Objects
+    printf("Adding Test Object\n");
     objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
     objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
-    objectSystem.addObject(new obj::Object("cylinder", mesh::createCylinder(1.0f, 2.0f, 12), &testShader, glm::vec3(2, 0, 0)));
-    objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
+    //objectSystem.addObject(new obj::Object("cylinder", mesh::createCylinder(1.0f, 2.0f, 12), &testShader, glm::vec3(2, 0, 0)));
+    //objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
 
     // Testing hierarchy stuff
-    objectSystem.getObject(1)->setParent(objectSystem.getObject(0));
-    //objectSystem.getObject(0)->setFolder();
+    objectSystem.addFolder("Test 1");
+    objectSystem.addFolder("Test 2");
     objectSystem.testOutput();
 
     // Selecting the default cube
-    state.selectObject(objectSystem.getObject(0));
+    state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
     obj::Object* selectedObject = state.getSelectedObject();
 
     // Attribute UI Creation
@@ -133,7 +134,7 @@ int main() {
     attributeUI.GenerateInteractables();
 
     // Hierarchy UI Creation
-    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
+    //HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
     // hierarchyUI.GenerateInteractables();
 
 
@@ -179,7 +180,7 @@ int main() {
         glEnable(GL_DEPTH);
 
         // Drawing the Meshes
-        objectSystem.renderObjects(projection, view);
+        //objectSystem.renderObjects(projection, view);
         
         // Drawing Axis Lines
         xAxisLine.setTransformation(projection * view);
@@ -201,10 +202,10 @@ int main() {
         // Drawing Hierarchy UI
         glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
         glDisable(GL_DEPTH);
-        hierarchyUI.DrawAttributeWindow();
+        //hierarchyUI.DrawAttributeWindow();
 
         // Managing Hierarchy UI
-        hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
+        //hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
         //hierarchyUI.ManageUIInteraction(window, &state);
 
         glfwSwapBuffers(window);

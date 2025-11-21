@@ -11,29 +11,26 @@ class HierarchyElement
 {
 public:
     // Constructor
-    HierarchyElement(HierarchyType type, HierarchyElement* parent, bool displayed = true, bool rendered = true);
-    ~HierarchyElement() { EraseObject(); }
+    HierarchyElement(obj::Object* object, HierarchyType type, HierarchyElement* parent, bool displayed = true, bool rendered = true);
+    ~HierarchyElement() { EraseObject(true); }
 
     // Getters
-    int getID() { return ID; }
     HierarchyElement* getParent() { return parent; }
     std::vector<HierarchyElement*> getChildren() { return children; }
     HierarchyElement* getChild(int index) { return children[index]; }
     HierarchyType getType() { return type; }
-
+    obj::Object* getObject() { return object; }
+    std::string getName() { return object->getName(); }
 
     // Functions
     void changeParent(HierarchyElement* parent);
     void addChild(HierarchyElement* child);
-    void removeChild(int ID);
+    void removeChild(HierarchyElement* element);
     void EraseObject(bool deleteChildren = false);
-
-    // Virtual Function(s)
-    virtual void DrawElementUI() = 0;
-    virtual std::string getName() = 0;
+    void DrawElementUI();
 
 private:
-    int ID;
+    obj::Object* object;
     HierarchyType type;
     HierarchyElement* parent;
     std::vector<HierarchyElement*> children;
@@ -41,24 +38,5 @@ private:
     // UI Interaction Elements
     bool displayed;
     bool rendered;
-
-    static int nextID;
 };
-
-// Object Hierarchy Element
-class HierarchyObject : public HierarchyElement
-{
-public:
-    // Constuctor & Deconstructor
-    HierarchyObject(obj::Object* object, HierarchyElement* parent, bool displayed = true, bool rendered = true)
-        : object(object), HierarchyElement(OBS_OBJECT, parent, displayed, rendered) {}
-    ~HierarchyObject();
-
-    // Getters
-    obj::Object* getObject() { return object; }
-
-private:
-    obj::Object* object;
-};
-
 #endif // !HIERARCHY_ELEMENT

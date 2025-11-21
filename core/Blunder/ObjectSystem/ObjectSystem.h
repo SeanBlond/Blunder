@@ -23,24 +23,29 @@ namespace obs
     class ObjectSystem
     {
     public:
+        // Constructor & Deocnstructor
         ObjectSystem();
+        ~ObjectSystem();
 
         // Getters
         Folder* getSelectedFolder() { return selectedFolder; }
-        Folder* getFolder(int index) { return folders[index]; }
-        std::vector<Folder*> getFolders() { return folders; }
-        ObjectRender* getRender() { return &render; }
+        Folder* getRootFolder() { return rootFolder; }
+        ObjectRender* getRenderer() { return &renderer; }
 
         // Setters
         void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
 
         //Functions
-        void addObject(obj::Object object);
+        void addObject(obj::Object* object);
         void addHierarchyElement(HierarchyElement* element);
+        void addFolder(std::string name);
+
+        void outputFolder(Folder* folder, int offset);
+        void testOutput();
 
     private:
         Folder* selectedFolder;
-        std::vector<Folder*> folders;
+        Folder* rootFolder;
         ObjectRender renderer;
     };
 }

@@ -93,15 +93,16 @@ void Folder::EraseFolder()
     // Erasing all elements
     for (int i = 0; i < elements.size(); i++)
     {
-        elements[0]->EraseObject(true); // 'true' is set so that the children of the element are also deleted
+        delete elements[i];
+        elements[i] = nullptr;
     }
     elements.clear();
 
     // Erasing the folders
     for (int i = 0; i < childrenFolders.size(); i++)
     {
-        childrenFolders[0]->EraseFolder();
-        delete childrenFolders[0];
+        delete childrenFolders[i];
+        childrenFolders[i] = nullptr;
     }
     childrenFolders.clear();
 }

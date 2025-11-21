@@ -179,6 +179,7 @@ void HierarchyWindow::GenerateInteractables()
 }
 void HierarchyWindow::DrawAttributeWindow()
 {
+    /*
     // Rendering Base Quads
     renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb());
     renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.01f), glm::vec2(width*0.92f, height - (width * 0.08f)), colors::darkerGrey.rgb());
@@ -221,6 +222,7 @@ void HierarchyWindow::DrawAttributeWindow()
 
         yPos -= (width * 0.08f);
     }
+    */
 }
 void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {

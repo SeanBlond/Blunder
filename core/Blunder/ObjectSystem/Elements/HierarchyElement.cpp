@@ -3,41 +3,49 @@
 // Base Hierarchy Element Class Functions
 // --------------------------------------
 // Constructor
-HierarchyElement::HierarchyElement(HierarchyType type, HierarchyElement* parent, bool displayed, bool rendered)
+HierarchyElement::HierarchyElement(obj::Object* object, HierarchyType type, HierarchyElement* parent, bool displayed, bool rendered)
 {
+    this->object = object;
     this->type = type;
     this->displayed = displayed;
     this->rendered = rendered;
-    this->ID = nextID;
-    changeParent(parent);
-
-    nextID++;
+    this->parent = parent;
 }
 
 void HierarchyElement::changeParent(HierarchyElement* parent)
 {
-    this->parent->removeChild(getID());
-    this->parent = parent;
-    parent->addChild(this);
+    // Checking if parent exists
+    if (parent != nullptr)
+    {
+        this->parent->removeChild(this);
+        this->parent = parent;
+        parent->addChild(this);
+    }
 }
 void HierarchyElement::addChild(HierarchyElement* child)
 {
     children.push_back(child);
     child->changeParent(this);
 }
-void HierarchyElement::removeChild(int ID)
+void HierarchyElement::removeChild(HierarchyElement* element)
 {
-    for (int i = 0; i < children.size(); i++)
+    // Checking if element is in vector
+    int index = smath::vectorFind(children, element);
+    if (index != -1)
     {
-        if (children[i]->getID() == ID);
-        children.erase(children.begin() + i);
+        children.erase(children.begin() + index);
     }
 }
 
 void HierarchyElement::EraseObject(bool deleteChildren)
 {
     // Removing this object from the parent
-    parent->removeChild(getID());
+    if (parent != nullptr)
+        parent->removeChild(this);
+
+    // Deleting object data
+    delete object;
+    object = nullptr;
 
     // Moving children to the parent
     if (!deleteChildren)
@@ -52,10 +60,14 @@ void HierarchyElement::EraseObject(bool deleteChildren)
     {
         for (int i = 0; i < children.size(); i++)
         {
-            children[i]->EraseObject(parent);
             delete children[i];
+            children[i] = nullptr;
         }
         children.clear();
-
     }
+}
+
+void HierarchyElement::DrawElementUI()
+{
+    std::cout << "TODO: DRAW UI ELEMENT" << std::endl;
 }

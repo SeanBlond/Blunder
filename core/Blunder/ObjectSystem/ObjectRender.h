@@ -31,10 +31,8 @@ namespace obs
         // Setters
         void setMode(RenderMode mode) { this->mode = mode; }
 
-        // Functions}
+        // Functions
         void renderObjects(glm::mat4 projection, glm::mat4 view);
-
-        void testOutput();
 
     private:
         RenderMode mode;
