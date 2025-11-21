@@ -104,7 +104,6 @@ int main() {
     // Testing hierarchy stuff
     objectSystem.addFolder("Test 1");
     objectSystem.addFolder("Test 2");
-    objectSystem.testOutput();
 
     // Selecting the default cube
     state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());

@@ -51,9 +51,6 @@ namespace obs
         void RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view);
         void Render(glm::mat4 projection, glm::mat4 view);
 
-        void outputFolder(Folder* folder, int offset);
-        void testOutput();
-
     private:
         Folder* selectedFolder;
         Folder* rootFolder;

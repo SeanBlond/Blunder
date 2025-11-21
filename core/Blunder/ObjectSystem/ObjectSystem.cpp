@@ -91,22 +91,3 @@ void ObjectSystem::Render(glm::mat4 projection, glm::mat4 view)
     // Rendering starts from the Root Folder
     RenderFolder(rootFolder, projection, view);
 }
-
-void ObjectSystem::outputFolder(Folder* folder, int offset)
-{
-    std::cout << std::string((offset * 4), ' ') << folder->getName() << std::endl;
-    for (int i = 0; i < folder->getChildFoldersSize(); i++)
-    {
-        outputFolder(folder->getChildFolder(i), offset + 1);
-    }
-    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
-    {
-        std::cout << std::string((offset * 4), ' ') << folder->getHierarchyElement(i)->getName() << std::endl;
-    }
-}
-
-void ObjectSystem::testOutput()
-{
-    std::cout << "Test Hierarchy Layout" << std::endl;
-    outputFolder(rootFolder, 0);
-}
