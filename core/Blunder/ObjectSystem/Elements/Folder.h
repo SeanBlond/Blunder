@@ -21,6 +21,9 @@ public:
     bool getDisplayed() { return displayed; }
     bool getRendered() { return rendered; }
     bool getDropdown() { return dropdown; }
+    bool* getDisplayedAddress() { return &displayed; }
+    bool* getRenderedAddress() { return &rendered; }
+    bool* getDropdownAddress() { return &dropdown; }
     
 
     // Setters

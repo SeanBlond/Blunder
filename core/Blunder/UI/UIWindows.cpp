@@ -174,8 +174,111 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
 }
 
 // Hierarchy Window Functions
+void HierarchyWindow::generateFolderInteractable(Folder* folder, int indent, float& yPos)
+{
+    // Dropdown Button
+    glm::vec4 dropdownCorners = glm::vec4(
+        (0.08f * indent) + 0.04f,
+        yPos - 0.04f,
+        (0.08f * indent) + 0.08f,
+        yPos + 0.04f
+    );
+    ui::AttributeInteractable folderDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", folder->getDropdownAddress()));
+    interactables.push_back(folderDropdown);
+
+    // Eventually add Text Entry for the name
+
+    // Visibility Button
+    dropdownCorners = glm::vec4(
+        0.8f,
+        yPos - 0.04f,
+        0.88f,
+        yPos + 0.04f
+    );
+    ui::AttributeInteractable folderVisibility(dropdownCorners, new ui::Toggle("folder-dropdown", folder->getDisplayedAddress()));
+    interactables.push_back(folderVisibility);
+
+    // Render Button
+    dropdownCorners = glm::vec4(
+        0.88f,
+        yPos - 0.04f,
+        0.96f,
+        yPos + 0.04f
+    );
+    ui::AttributeInteractable folderRender(dropdownCorners, new ui::Toggle("folder-dropdown", folder->getRenderedAddress()));
+    interactables.push_back(folderRender);
+
+    // Changing yPos
+    yPos += 0.08f;
+
+    // Generating interactables for each folder UI, if the folder is dropped down
+    if (folder->getDropdown())
+    {
+        for (int i = 0; i < folder->getChildFoldersSize(); i++)
+        {
+            generateFolderInteractable(folder->getChildFolder(i), indent + 1, yPos);
+        }
+
+        // Generating interactables for each element UI, if the folder is dropped down
+        for (int i = 0; i < folder->getHierarchyElementSize(); i++)
+        {
+            generateElementInteractable(folder->getHierarchyElement(i), indent + 1, yPos);
+        }
+    }
+}
+void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int indent, float& yPos)
+{
+    // Dropdown Button
+    glm::vec4 dropdownCorners = glm::vec4(
+        (0.08f * indent) + 0.04f,
+        yPos - 0.04f,
+        (0.08f * indent) + 0.08f,
+        yPos + 0.04f
+    );
+    std::cout << "Interactable Generated at (" << dropdownCorners.x << ", " << dropdownCorners.y << ", " << dropdownCorners.z << ", " << dropdownCorners.w << ")\n";
+    ui::AttributeInteractable elementDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", element->getDropdownAddress()));
+    interactables.push_back(elementDropdown);
+
+    // Eventually add Text Entry for the name
+
+    // Visibility Button
+    dropdownCorners = glm::vec4(
+        0.8f,
+        yPos - 0.04f,
+        0.88f,
+        yPos + 0.04f
+    );
+    std::cout << "Interactable Generated at (" << dropdownCorners.x << ", " << dropdownCorners.y << ", " << dropdownCorners.z << ", " << dropdownCorners.w << ")\n";
+    ui::AttributeInteractable elementVisibility(dropdownCorners, new ui::Toggle("element-dropdown", element->getDisplayedAddress()));
+    interactables.push_back(elementVisibility);
+
+    // Render Button
+    dropdownCorners = glm::vec4(
+        0.88f,
+        yPos - 0.04f,
+        0.96f,
+        yPos + 0.04f
+    );
+    std::cout << "Interactable Generated at (" << dropdownCorners.x << ", " << dropdownCorners.y << ", " << dropdownCorners.z << ", " << dropdownCorners.w << ")\n";
+    ui::AttributeInteractable elementRender(dropdownCorners, new ui::Toggle("element-dropdown", element->getRenderedAddress()));
+    interactables.push_back(elementRender);
+
+    // Changing yPos
+    yPos += 0.08f;
+
+    // Generating interactables for each child if dropdown
+    if (element->getDropdown())
+    {
+        for (int i = 0; i < element->getChildrenSize(); i++)
+        {
+            generateElementInteractable(element->getChild(i), indent + 1, yPos);
+        }
+    }
+}
 void HierarchyWindow::GenerateInteractables()
 {
+    float yPos = 0.2f;
+    generateFolderInteractable(objectSystem->getRootFolder(), 0, yPos);
 }
 void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 {
@@ -183,19 +286,19 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
 
     // Dropdown Symbol
-    renderer.renderQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Folder Symbol
-    renderer.renderQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_FOLDER_T);
 
     // Folder Text
     renderer.renderText(folder->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
 
     // Visibility Symbol
-    renderer.renderQuad(glm::vec3((width * 0.84f), yPos, 0.21f), glm::vec2(0.06f * width, 0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
 
     // Render Symbol
-    renderer.renderQuad(glm::vec3((width * 0.92f), yPos, 0.21f), glm::vec2(0.05f * width, 0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (width * 0.08f);
@@ -218,19 +321,19 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
     
     // Dropdown Symbol
-    renderer.renderQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
     
     // Object Symbol
-    renderer.renderQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
     
     // Object Text
     renderer.renderText(element->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
     
     // Visibility Symbol
-    renderer.renderQuad(glm::vec3((width * 0.84f), yPos, 0.21f), glm::vec2(0.06f * width, 0.04f * width), colors::white.rgb()); 
+    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
     
     // Render Symbol
-    renderer.renderQuad(glm::vec3((width * 0.92f), yPos, 0.21f), glm::vec2(0.05f * width, 0.04f * width), colors::white.rgb()); 
+    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.25f), glm::vec2(0.08f * width), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (width * 0.08f);
@@ -261,5 +364,60 @@ void HierarchyWindow::DrawAttributeWindow()
 }
 void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    xpos = (xpos - xoffset) / width;
+    ypos = (ypos - yoffset) / width;
 
+    // Checking if Mouse Position is within the UI bounds
+    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (height / width))
+    {
+        //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
+        for (int i = 0; i < interactables.size(); i++)
+        {
+            // Highlighting an Element
+            if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
+            {
+                // Clicking an Element
+                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+                {
+                    state->changeState(SM_UI_INTERACT);
+                    interactables[i].element->clicked = true;
+                    clickedElement = (interactables[i].element);
+                    clickedElement->OnClick(glm::vec2(xpos, ypos) * width);
+                }
+
+                // Highilighting an Element
+                else
+                    interactables[i].element->highlighted = true;
+            }
+
+            // Unhighlighting an Element
+            else if (interactables[i].element->highlighted)
+                interactables[i].element->highlighted = false;
+
+
+        }
+    }
+
+    // Managing Clicked Element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->OnHold(glm::vec2(xpos, ypos) * width);
+
+        // Unclicking an Element
+        if (clickedElement->clicked && !glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+        {
+            clickedElement->OnRelease(state);
+            clickedElement->clicked = false;
+
+            // Checking if Dropdown Button was clicked
+            if (clickedElement->getType() == ui::UI_DROPDOWN)
+            {
+                GenerateInteractables();
+            }
+
+            clickedElement = nullptr;
+        }
+    }
 }

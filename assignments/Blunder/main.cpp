@@ -110,7 +110,7 @@ int main() {
     obj::Object* selectedObject = state.getSelectedObject();
 
     // Attribute UI Creation
-    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64);
+    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64);
 
     ui::Attribute positionAttribute("Position");
     positionAttribute.addFloatEntry("X", &(selectedObject->transform.position.x));
@@ -130,10 +130,12 @@ int main() {
     scaleAtrribute.addFloatEntry("Z", &(selectedObject->transform.scale.z));
     attributeUI.addAttribute(&scaleAtrribute);
 
+    std::cout << "Attribute Interactables" << std::endl;
     attributeUI.GenerateInteractables();
 
     // Hierarchy UI Creation
-    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
+    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
+    std::cout << "Hierarchy Interactables" << std::endl;
     hierarchyUI.GenerateInteractables();
 
 
@@ -195,7 +197,7 @@ int main() {
         attributeUI.DrawAttributeWindow();
 
         // Managing Attribute UI
-        attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
+        attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
         attributeUI.ManageUIInteraction(window, &state);
 
         // Drawing Hierarchy UI
@@ -204,7 +206,7 @@ int main() {
         hierarchyUI.DrawAttributeWindow();
 
         // Managing Hierarchy UI
-        hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
+        hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageUIInteraction(window, &state);
 
         glfwSwapBuffers(window);

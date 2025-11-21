@@ -227,6 +227,7 @@ void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
+
 Texture2D::Texture2D(const char* filePath, int filterMode, int wrapMode)
 {
     glGenTextures(1, &m_id);
@@ -236,7 +237,7 @@ Texture2D::Texture2D(const char* filePath, int filterMode, int wrapMode)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMode);
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(false);
     // load and generate the texture
     unsigned char* data = stbi_load(filePath, &m_width, &m_height, &m_nrChannels, 0);
     if (data)

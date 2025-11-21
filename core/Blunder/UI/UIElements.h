@@ -228,16 +228,6 @@ namespace ui
 
 
     // Hierarchy Stuff
-    struct HierarchyInteractable
-    {
-        HierarchyInteractable(glm::vec4 corners, obj::Object* object) : corners(corners), object(object) { /*folder = nullptr;*/ isObject = true; }
-        //HierarchyInteractable(glm::vec4 corners, obj::Folder* folder) : corners(corners), folder(folder) { object = nullptr; isObject = false; }
-        obj::Object* object;
-        //obj::Folder* folder;
-        bool isObject;
-        glm::vec4 corners;
-    };
-
 
     // Camera Item
     // Lighting Item

@@ -17,7 +17,7 @@ class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, std::string fontName, int fontSize) : width(width), height(height), renderer(fontName, fontSize, smath::orthographic(0.0f, width, 0.0f, height)) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize) : width(width), height(height), renderer(fontName, fontSize, smath::orthographic(0.0f, width, 0.0f, height)) {}
 
     // Getters
     float getWidth() { return width; }
@@ -26,8 +26,8 @@ public:
     // Setters
     void setWidth(float width) { this->width = width; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
     void setHeight(float height) { this->height = height; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
-    void setDimensions(float width, float height) { this->width = width; this->height = height; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
-    void setDimensions(glm::vec2 dimensions) { this->width = dimensions.x; this->height = dimensions.y; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
+    void setDimensions(float width, float height, float xoffset, float yoffset) { this->width = width; this->height = height; this->xoffset = xoffset; this->yoffset = yoffset; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
+    void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { this->width = dimensions.x; this->height = dimensions.y; this->xoffset = offset.x; this->yoffset = offset.y; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
 
     // Functions
     virtual void GenerateInteractables() = 0;
@@ -43,6 +43,8 @@ public:
 protected:
     float width;
     float height;
+    float xoffset;
+    float yoffset;
     ui::UIRenderer renderer;
 };
 
@@ -52,7 +54,7 @@ class AttributeWindow : public UIWindow
 {
 public:
     // Constructor & Desconstructor
-    AttributeWindow(float width, float height, std::string fontName, int fontSize) : UIWindow(width, height, fontName, fontSize), clickedElement(nullptr) {}
+    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), clickedElement(nullptr) {}
     ~AttributeWindow()
     {
         attributes.clear();
@@ -83,7 +85,7 @@ class HierarchyWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    HierarchyWindow(float width, float height, std::string fontName, int fontSize, obs::ObjectSystem* objectSystem) : UIWindow(width, height, fontName, fontSize), objectSystem(objectSystem) {}
+    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), objectSystem(objectSystem), clickedElement(nullptr) {}
     ~HierarchyWindow()
     {
         interactables.clear();
@@ -96,6 +98,8 @@ public:
     void setObjectSystem(obs::ObjectSystem* objectSystem) { this->objectSystem = objectSystem; }
 
     // Functions
+    void generateFolderInteractable(Folder* folder, int indent, float& yPos);
+    void generateElementInteractable(HierarchyElement* element, int indent, float& yPos);
     void GenerateInteractables() override;
     void DrawUIFolder(Folder* folder, int indent, float& yPos);
     void DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos);
@@ -103,8 +107,9 @@ public:
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
 
 private:
-    std::vector<ui::HierarchyInteractable> interactables;
+    std::vector<ui::AttributeInteractable> interactables;
     obs::ObjectSystem* objectSystem;
+    ui::AttributeElement* clickedElement;
 };
 
 #endif // !UIWINDOWS

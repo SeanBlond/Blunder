@@ -179,6 +179,7 @@ void Toggle::OnRelease(StateMachine* state)
     // Toggling the value
     state->exitState();
     *value = !(*value);
+    std::cout << "Toggle Clicked: " << *value << std::endl;
 }
 
 
