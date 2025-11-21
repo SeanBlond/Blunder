@@ -23,10 +23,12 @@ public:
     std::string getName() { return object->getName(); }
     bool getDisplayed() { return displayed; }
     bool getRendered() { return rendered; }
+    bool getDropdown() { return dropdown; }
 
     // Setters
     void setDisplayed(bool displayed) { this->displayed = displayed; }
     void setRendered(bool rendered) { this->rendered = rendered; }
+    void setDropdown(bool dropdown) { this->dropdown = dropdown; }
 
     // Functions
     void changeParent(HierarchyElement* parent);
@@ -44,5 +46,6 @@ private:
     // UI Interaction Elements
     bool displayed;
     bool rendered;
+    bool dropdown;
 };
 #endif // !HIERARCHY_ELEMENT

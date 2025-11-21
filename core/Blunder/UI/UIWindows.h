@@ -97,6 +97,8 @@ public:
 
     // Functions
     void GenerateInteractables() override;
+    void DrawUIFolder(Folder* folder, int indent, float& yPos);
+    void DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos);
     void DrawAttributeWindow() override;
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
 

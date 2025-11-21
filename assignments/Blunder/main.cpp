@@ -134,8 +134,8 @@ int main() {
     attributeUI.GenerateInteractables();
 
     // Hierarchy UI Creation
-    //HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
-    // hierarchyUI.GenerateInteractables();
+    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
+    hierarchyUI.GenerateInteractables();
 
 
     // Creating Axis Line
@@ -202,11 +202,11 @@ int main() {
         // Drawing Hierarchy UI
         glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
         glDisable(GL_DEPTH);
-        //hierarchyUI.DrawAttributeWindow();
+        hierarchyUI.DrawAttributeWindow();
 
         // Managing Hierarchy UI
-        //hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
-        //hierarchyUI.ManageUIInteraction(window, &state);
+        hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT);
+        hierarchyUI.ManageUIInteraction(window, &state);
 
         glfwSwapBuffers(window);
     }

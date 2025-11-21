@@ -177,9 +177,72 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
 void HierarchyWindow::GenerateInteractables()
 {
 }
+void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
+{
+    // Rendering the base folder UI
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
+
+    // Dropdown Symbol
+    renderer.renderQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+
+    // Folder Symbol
+    renderer.renderQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+
+    // Folder Text
+    renderer.renderText(folder->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
+
+    // Visibility Symbol
+    renderer.renderQuad(glm::vec3((width * 0.84f), yPos, 0.21f), glm::vec2(0.06f * width, 0.04f * width), colors::white.rgb());
+
+    // Render Symbol
+    renderer.renderQuad(glm::vec3((width * 0.92f), yPos, 0.21f), glm::vec2(0.05f * width, 0.04f * width), colors::white.rgb());
+
+    // Changing yPos
+    yPos -= (width * 0.08f);
+
+    // Rendering each folder UI
+    for (int i = 0; i < folder->getChildFoldersSize(); i++)
+    {
+        DrawUIFolder(folder->getChildFolder(i), indent + 1, yPos);
+    }
+
+    // Rendering each element UI
+    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
+    {
+        DrawUIHierarchyElement(folder->getHierarchyElement(i), indent + 1, yPos);
+    }
+}
+void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos)
+{
+    // Rendering the base element UI
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
+    
+    // Dropdown Symbol
+    renderer.renderQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    
+    // Object Symbol
+    renderer.renderQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
+    
+    // Object Text
+    renderer.renderText(element->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
+    
+    // Visibility Symbol
+    renderer.renderQuad(glm::vec3((width * 0.84f), yPos, 0.21f), glm::vec2(0.06f * width, 0.04f * width), colors::white.rgb()); 
+    
+    // Render Symbol
+    renderer.renderQuad(glm::vec3((width * 0.92f), yPos, 0.21f), glm::vec2(0.05f * width, 0.04f * width), colors::white.rgb()); 
+
+    // Changing yPos
+    yPos -= (width * 0.08f);
+
+    // Rendering each child of the element
+    for (int i = 0; i < element->getChildrenSize(); i++)
+    {
+        DrawUIHierarchyElement(element->getChild(i), indent + 1, yPos);
+    }
+}
 void HierarchyWindow::DrawAttributeWindow()
 {
-    /*
     // Rendering Base Quads
     renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb());
     renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.01f), glm::vec2(width*0.92f, height - (width * 0.08f)), colors::darkerGrey.rgb());
@@ -190,39 +253,11 @@ void HierarchyWindow::DrawAttributeWindow()
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
     renderer.renderText("Hierarchy", (width / 2), yPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
 
+    // Updating yPos
     yPos -= (width * 0.1f);
-    std::vector<int> savedIDs;
-    std::vector<obj::Object*> objects = objectSystem->getObjects();
-    for (int i = 0; i < objects.size(); i++)
-    {
-        // Checking if object has already been listed
-        int index = smath::vectorFind(savedIDs, objects[i]->getID());
 
-        if (index != -1)
-            continue;
-        
-        // Drawing object
-        renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
-        if (objects[i]->hasChildren()) // Checking if dropdown arrow should be rendered
-            renderer.renderQuad(glm::vec3((width * 0.08f), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb());
-        renderer.renderQuad(glm::vec3((width * 0.16f), yPos, 0.21f), glm::vec2(0.04f * width), colors::white.rgb()); // Object Symbol
-        renderer.renderText(objects[i]->getName(), (width * 0.2f), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
-        renderer.renderQuad(glm::vec3((width * 0.84f), yPos, 0.21f), glm::vec2(0.06f * width, 0.04f * width), colors::white.rgb()); // Visibility Symbol
-        renderer.renderQuad(glm::vec3((width * 0.92f), yPos, 0.21f), glm::vec2(0.05f * width, 0.04f * width), colors::white.rgb()); // Render Symbol
-        
-        savedIDs.push_back(objects[i]->getID());
-
-        // Drawing Object Children
-        for (int j = 0; j < objects[i]->getChildren().size(); j++)
-        {
-            yPos -= (width * 0.08f);
-            //std::cout << "  o " << objects[i]->getChildren()[j]->getName() << std::endl;
-            savedIDs.push_back(objects[i]->getChildren()[j]->getID());
-        }
-
-        yPos -= (width * 0.08f);
-    }
-    */
+    // Starting the UI Draw from the root folder
+    DrawUIFolder(objectSystem->getRootFolder(), 0, yPos);
 }
 void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {

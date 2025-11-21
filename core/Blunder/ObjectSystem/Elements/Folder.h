@@ -8,7 +8,7 @@ class Folder
 {
 public:
     // Constructor & Deconstructor
-    Folder(std::string name, Folder* parentFolder = nullptr, bool displayed = true, bool rendered = true) : name(name), parentFolder(parentFolder), displayed(displayed), rendered(rendered) {}
+    Folder(std::string name, Folder* parentFolder = nullptr, bool displayed = true, bool rendered = true) : name(name), parentFolder(parentFolder), displayed(displayed), rendered(rendered), dropdown(true) {}
     ~Folder() { EraseFolder(); }
 
     // Getters
@@ -20,12 +20,14 @@ public:
     int getChildFoldersSize() { return childrenFolders.size(); }
     bool getDisplayed() { return displayed; }
     bool getRendered() { return rendered; }
+    bool getDropdown() { return dropdown; }
     
 
     // Setters
     void setName(std::string name) { this->name = name; }
     void setDisplayed(bool displayed) { this->displayed = displayed; }
     void setRendered(bool rendered) { this->rendered = rendered; }
+    void setDropdown(bool dropdown) { this->dropdown = dropdown; }
 
     // Functions
     void addElement(HierarchyElement* element);
@@ -46,6 +48,7 @@ private:
     // UI Interaction Elements
     bool displayed;
     bool rendered;
+    bool dropdown;
     
     // Sorting Elements by Alphabetical order
     void SortElements();

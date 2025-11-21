@@ -10,6 +10,7 @@ HierarchyElement::HierarchyElement(obj::Object* object, HierarchyType type, Hier
     this->displayed = displayed;
     this->rendered = rendered;
     this->parent = parent;
+    this->dropdown = true;
 }
 
 void HierarchyElement::changeParent(HierarchyElement* parent)
