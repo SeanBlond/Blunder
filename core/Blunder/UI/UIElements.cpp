@@ -26,20 +26,20 @@ void Attribute::addToggle(std::string label, bool* value)
 
 
 // Float Entry Mouse Functions
-void FloatEntry::OnClick(glm::vec2 mousePos)
+void FloatEntry::OnClick(StateMachine* state)
 {
     // Storing Initial Mouse Pos
     slideStarted = false;
     saveValue = *value;
-    initialMousePos = mousePos;
+    initialMousePos = state->getMouse()->mousePos;
 }
-void FloatEntry::OnHold(glm::vec2 mousePos)
+void FloatEntry::OnHold(StateMachine* state)
 {
     // Checking if value should slide with mouse
-    if (abs(mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
+    if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((mousePos.x - initialMousePos.x) / 100.0f) * speed;
+        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
         setValue(newValue);
     }
 }
@@ -61,20 +61,20 @@ void FloatEntry::OnRelease(StateMachine* state)
 }
 
 // Float Slider Mouse Functions
-void FloatSlider::OnClick(glm::vec2 mousePos)
+void FloatSlider::OnClick(StateMachine* state)
 {
     // Storing Initial Mouse Pos
     slideStarted = false;
     saveValue = *value;
-    initialMousePos = mousePos;
+    initialMousePos = state->getMouse()->mousePos;
 }
-void FloatSlider::OnHold(glm::vec2 mousePos)
+void FloatSlider::OnHold(StateMachine* state)
 {
     // Checking if value should slide with mouse
-    if (abs(mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
+    if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((mousePos.x - initialMousePos.x) / 100.0f) * speed;
+        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
         setValue(newValue);
     }
 }
@@ -96,20 +96,20 @@ void FloatSlider::OnRelease(StateMachine* state)
 }
 
 // Int Entry Mouse Functions
-void IntEntry::OnClick(glm::vec2 mousePos)
+void IntEntry::OnClick(StateMachine* state)
 {
     // Storing Initial Mouse Pos
     slideStarted = false;
     saveValue = *value;
-    initialMousePos = mousePos;
+    initialMousePos = state->getMouse()->mousePos;
 }
-void IntEntry::OnHold(glm::vec2 mousePos)
+void IntEntry::OnHold(StateMachine* state)
 {
     // Checking if value should slide with mouse
-    if (abs(mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
+    if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((mousePos.x - initialMousePos.x) / 100.0f) * speed;
+        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
         setValue(round(newValue));
     }
 }
@@ -131,20 +131,20 @@ void IntEntry::OnRelease(StateMachine* state)
 }
 
 // Int Slider Mouse Functions
-void IntSlider::OnClick(glm::vec2 mousePos)
+void IntSlider::OnClick(StateMachine* state)
 {
     // Storing Initial Mouse Pos
     slideStarted = false;
     saveValue = *value;
-    initialMousePos = mousePos;
+    initialMousePos = state->getMouse()->mousePos;
 }
-void IntSlider::OnHold(glm::vec2 mousePos)
+void IntSlider::OnHold(StateMachine* state)
 {
     // Checking if value should slide with mouse
-    if (abs(mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
+    if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((mousePos.x - initialMousePos.x) / 100.0f) * speed;
+        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
         setValue(round(newValue));
     }
 }
@@ -166,11 +166,11 @@ void IntSlider::OnRelease(StateMachine* state)
 }
 
 // Toggle Mouse Functions
-void Toggle::OnClick(glm::vec2 mousePos)
+void Toggle::OnClick(StateMachine* state)
 {
     // Toggle does not do anything on click
 }
-void Toggle::OnHold(glm::vec2 mousePos)
+void Toggle::OnHold(StateMachine* state)
 {
     // Toggle does nothing on hold
 }

@@ -13,8 +13,7 @@
 #include "../../math/smath.h"
 #include "../../shader/shader.h"
 #include "../../object/object.h"
-#include "Elements/Folder.h"
-#include "Elements/HierarchyElement.h"
+#include "HierarchyElement.h"
 
 namespace obs
 {
@@ -38,9 +37,11 @@ namespace obs
         Folder* getSelectedFolder() { return selectedFolder; }
         Folder* getRootFolder() { return rootFolder; }
         RenderSettings getRenderSettings() { return renderSettings; }
+        HierarchyElement* getSelectedElement() { return selectedElement; }
 
         // Setters
         void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
+        void setSelectedElement(HierarchyElement* element) { this->selectedElement = element; }
         void setRenderSettings(RenderSettings renderSettings) { this->renderSettings = renderSettings; }
 
         //Functions
@@ -54,6 +55,7 @@ namespace obs
     private:
         Folder* selectedFolder;
         Folder* rootFolder;
+        HierarchyElement* selectedElement;
         RenderSettings renderSettings;
     };
 }

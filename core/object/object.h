@@ -31,6 +31,7 @@ namespace obj
         // Setters
         void setMesh(Mesh* mesh) { this->mesh = mesh; }
         void setDisplayed(bool displayed) { this->displayed = displayed; }
+        void setName(std::string name) { this->name = name; }
         void setParent(Object* parent);
 
         // Functions

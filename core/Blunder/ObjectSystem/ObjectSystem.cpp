@@ -9,6 +9,7 @@ ObjectSystem::ObjectSystem()
     renderSettings.backfaceCull = true;
     renderSettings.renderTriangles = true;
     renderSettings.mode = OR_SIMPLE;
+    selectedElement = nullptr;
 }
 ObjectSystem::~ObjectSystem()
 {

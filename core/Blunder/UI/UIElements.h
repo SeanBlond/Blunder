@@ -34,8 +34,8 @@ namespace ui
 
         // Override Functions
         virtual void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) = 0;
-        virtual void OnClick(glm::vec2 mousePos) = 0;
-        virtual void OnHold(glm::vec2 mousePos) = 0;
+        virtual void OnClick(StateMachine* state) = 0;
+        virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
 
         bool clicked = false;
@@ -57,14 +57,16 @@ namespace ui
     {
     public:
         FloatEntry(std::string label, float* value, float speed = 1.0f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_ENTRY)
-            { initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false; }
+        {
+            initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
+        }
 
         // Element Functions
         void setValue(float value) { *(this->value) = value; }
         void setValue(float* value) { this->value = value; }
         void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
-        void OnClick(glm::vec2 mousePos) override;
-        void OnHold(glm::vec2 mousePos) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
 
     private:
@@ -83,7 +85,9 @@ namespace ui
     {
     public:
         FloatSlider(std::string label, float* value, float speed = 1.0f, float min = 0.0f, float max = 1.0f) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_SLIDER)
-            { initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false; }
+        {
+            initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
+        }
 
         // Getters
         float getPercentage() { return smath::clamp((*value - min) / (max - min), 0.0f, 1.0f); }
@@ -92,8 +96,8 @@ namespace ui
         void setValue(float value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(float* value) { this->value = value; }
         void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
-        void OnClick(glm::vec2 mousePos) override;
-        void OnHold(glm::vec2 mousePos) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
 
     private:
@@ -114,14 +118,16 @@ namespace ui
     {
     public:
         IntEntry(std::string label, int* value, float speed = 1.0f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
-            { initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false; }
+        {
+            initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
+        }
 
         // Element Functions
         void setValue(int value) { *(this->value) = value; }
         void setValue(int* value) { this->value = value; }
         void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
-        void OnClick(glm::vec2 mousePos) override;
-        void OnHold(glm::vec2 mousePos) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
 
     private:
@@ -140,7 +146,9 @@ namespace ui
     {
     public:
         IntSlider(std::string label, int* value, float speed = 1.0f, int min = 0, int max = 10) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
-            { initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false; }
+        {
+            initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
+        }
 
         // Getters
         float getPercentage() { return smath::clamp(((float)*value - (float)min) / ((float)max - (float)min), 0.0f, 1.0f); }
@@ -149,8 +157,8 @@ namespace ui
         void setValue(int value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(int* value) { this->value = value; }
         void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
-        void OnClick(glm::vec2 mousePos) override;
-        void OnHold(glm::vec2 mousePos) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
 
     private:
@@ -176,8 +184,8 @@ namespace ui
         void setToggle(bool value) { *(this->value) = value; }
         void toggleValue() { *value = !(*value); }
         void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
-        void OnClick(glm::vec2 mousePos) override;
-        void OnHold(glm::vec2 mousePos) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
 
     private:
@@ -228,6 +236,31 @@ namespace ui
 
 
     // Hierarchy Stuff
+    // Attribute Element Parent Class
+    class HierarchyInteractable
+    {
+    public:
+        HierarchyInteractable(std::string label, ElementType type) : label(label), type(type) {}
+
+        // Getters
+        std::string getLabel() { return label; }
+        ElementType getType() { return type; }
+
+        // Setters
+        void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
+
+        // Override Functions
+        void OnClick(StateMachine* state);
+        void OnHold(StateMachine* state);
+        void OnRelease(StateMachine* state);
+        void OnDoubleClick(StateMachine* state);
+
+        bool clicked = false;
+        bool highlighted = false;
+    protected:
+        ElementType type;
+        std::string label;
+    };
 
     // Camera Item
     // Lighting Item

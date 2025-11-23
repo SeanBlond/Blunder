@@ -38,6 +38,7 @@ public:
     bool getTransforming() { return transforming; }
     bool getUIInteraction() { return UIInteracting; }
     ui::TextInput* getTextInput() { return textInput; }
+    Mouse* getMouse() { return mouse; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }

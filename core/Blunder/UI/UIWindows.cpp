@@ -135,7 +135,7 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
                     state->changeState(SM_UI_INTERACT);
                     interactables[i].element->clicked = true;
                     clickedElement = (interactables[i].element);
-                    clickedElement->OnClick(glm::vec2(xpos, ypos) * width);
+                    clickedElement->OnClick(state);
                 }
 
                 // Highilighting an Element
@@ -154,7 +154,7 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
     // Managing Clicked Element
     if (clickedElement != nullptr)
     {
-        clickedElement->OnHold(glm::vec2(xpos, ypos) * width);
+        clickedElement->OnHold(state);
 
         // Unclicking an Element
         if (clickedElement->clicked && !glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
@@ -183,7 +183,7 @@ void HierarchyWindow::generateFolderInteractable(Folder* folder, int indent, flo
         (0.08f * indent) + 0.08f,
         yPos + 0.04f
     );
-    ui::AttributeInteractable folderDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", folder->getDropdownAddress()));
+    ui::AttributeInteractable folderDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", folder->getDropdownAddress(), ui::UI_DROPDOWN));
     interactables.push_back(folderDropdown);
 
     // Eventually add Text Entry for the name
@@ -236,7 +236,7 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
         yPos + 0.04f
     );
     std::cout << "Interactable Generated at (" << dropdownCorners.x << ", " << dropdownCorners.y << ", " << dropdownCorners.z << ", " << dropdownCorners.w << ")\n";
-    ui::AttributeInteractable elementDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", element->getDropdownAddress()));
+    ui::AttributeInteractable elementDropdown(dropdownCorners, new ui::Toggle("folder-dropdown", element->getDropdownAddress(), ui::UI_DROPDOWN));
     interactables.push_back(elementDropdown);
 
     // Eventually add Text Entry for the name
@@ -286,7 +286,8 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
 
     // Dropdown Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+    if (folder->hasChildren())
+        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Folder Symbol
     renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_FOLDER_SYMBOL);
@@ -303,25 +304,31 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
     // Changing yPos
     yPos -= (width * 0.08f);
 
-    // Rendering each folder UI
-    for (int i = 0; i < folder->getChildFoldersSize(); i++)
+    // Checking if children should be displayed
+    if (folder->getDropdown())
     {
-        DrawUIFolder(folder->getChildFolder(i), indent + 1, yPos);
-    }
+        // Rendering each folder UI
+        for (int i = 0; i < folder->getChildFoldersSize(); i++)
+        {
+            DrawUIFolder(folder->getChildFolder(i), indent + 1, yPos);
+        }
 
-    // Rendering each element UI
-    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
-    {
-        DrawUIHierarchyElement(folder->getHierarchyElement(i), indent + 1, yPos);
+        // Rendering each element UI
+        for (int i = 0; i < folder->getHierarchyElementSize(); i++)
+        {
+            DrawUIHierarchyElement(folder->getHierarchyElement(i), indent + 1, yPos);
+        }
     }
 }
 void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos)
 {
     // Rendering the base element UI
-    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
+    Color baseColor = (objectSystem->getSelectedElement() == element ? colors::grey.rgb() : colors::lightgrey.rgb());
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb());
     
     // Dropdown Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+    if (element->hasChildren())
+        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
     
     // Object Symbol
     renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
@@ -338,10 +345,14 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
     // Changing yPos
     yPos -= (width * 0.08f);
 
-    // Rendering each child of the element
-    for (int i = 0; i < element->getChildrenSize(); i++)
+    // Checking if children should be displayed
+    if (element->getDropdown())
     {
-        DrawUIHierarchyElement(element->getChild(i), indent + 1, yPos);
+        // Rendering each child of the element
+        for (int i = 0; i < element->getChildrenSize(); i++)
+        {
+            DrawUIHierarchyElement(element->getChild(i), indent + 1, yPos);
+        }
     }
 }
 void HierarchyWindow::DrawAttributeWindow()
@@ -384,7 +395,7 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
                     state->changeState(SM_UI_INTERACT);
                     interactables[i].element->clicked = true;
                     clickedElement = (interactables[i].element);
-                    clickedElement->OnClick(glm::vec2(xpos, ypos) * width);
+                    clickedElement->OnClick(state);
                 }
 
                 // Highilighting an Element
@@ -403,7 +414,7 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
     // Managing Clicked Element
     if (clickedElement != nullptr)
     {
-        clickedElement->OnHold(glm::vec2(xpos, ypos) * width);
+        clickedElement->OnHold(state);
 
         // Unclicking an Element
         if (clickedElement->clicked && !glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
