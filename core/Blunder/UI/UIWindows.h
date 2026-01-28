@@ -11,6 +11,7 @@
 #include "../StateMachine/StateMachine.h"
 #include "../ObjectSystem/ObjectSystem.h"
 #include "UIElements.h"
+#include "../Time.h"
 
 // Window Parent Class
 class UIWindow
@@ -57,8 +58,7 @@ public:
     AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), clickedElement(nullptr) {}
     ~AttributeWindow()
     {
-        attributes.clear();
-        interactables.clear();
+        ClearAttributes();
     }
 
     // Getters
@@ -69,15 +69,19 @@ public:
     void addAttribute(ui::Attribute* attribute) { attributes.push_back(attribute); }
 
     // Functions
-    // Once UI Quads are better optimized, GenerateInteractables will should be reworked
+    // Once UI Quads are better optimized, GenerateInteractables should be reworked
     void GenerateInteractables() override;
     void DrawAttributeWindow() override;
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
+    void ClearAttributes();
+    void CreateUIfromObject(obj::Object* object);
 
 private:
     std::vector<ui::Attribute*> attributes;
     std::vector<ui::AttributeInteractable> interactables;
     ui::AttributeElement* clickedElement;
+
+    
 };
 
 // Hierarchy Window

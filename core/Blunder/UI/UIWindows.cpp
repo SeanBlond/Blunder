@@ -112,6 +112,11 @@ void AttributeWindow::DrawAttributeWindow()
         // Creating Space for Next Attribute
         attributeYPos -= (width * 0.05f);
     }
+
+    // Drawing the time
+    std::cout << TimeManager::getInstance()->getFPS() << std::endl;
+    std::string fpsTime = "FPS: " + std::to_string(TimeManager::getInstance()->getFPS());
+    renderer.renderText(fpsTime, (width * 0.1f), attributeYPos, mediumText(), colors::white.rgb());
 }
 void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -171,6 +176,48 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
             clickedElement = nullptr;
         }
     }
+}
+void AttributeWindow::ClearAttributes()
+{
+    // Clearing attribute array
+    for (int i = 0; i < attributes.size(); i++)
+    {
+        delete attributes[i];
+        attributes[i] = nullptr;
+    }
+
+    // Resetting Vectors
+    attributes.clear();
+    interactables.clear();
+}
+void AttributeWindow::CreateUIfromObject(obj::Object* object)
+{
+    // Clearing attributes
+    ClearAttributes();
+
+
+
+    // Adding standard transform attributes
+    ui::Attribute* positionAttribute = new ui::Attribute("Position");
+    positionAttribute->addFloatEntry("X", &(object->transform.position.x));
+    positionAttribute->addFloatEntry("Y", &(object->transform.position.y));
+    positionAttribute->addFloatEntry("Z", &(object->transform.position.z));
+    addAttribute(positionAttribute);
+
+    ui::Attribute* rotationAtrribute = new ui::Attribute("Rotation");
+    rotationAtrribute->addFloatEntry("X", &(object->transform.rotation.x));
+    rotationAtrribute->addFloatEntry("Y", &(object->transform.rotation.y));
+    rotationAtrribute->addFloatEntry("Z", &(object->transform.rotation.z));
+    addAttribute(rotationAtrribute);
+
+    ui::Attribute* scaleAtrribute = new ui::Attribute("Scale");
+    scaleAtrribute->addFloatEntry("X", &(object->transform.scale.x));
+    scaleAtrribute->addFloatEntry("Y", &(object->transform.scale.y));
+    scaleAtrribute->addFloatEntry("Z", &(object->transform.scale.z));
+    addAttribute(scaleAtrribute);
+
+    // Generating the Interactables
+    GenerateInteractables();
 }
 
 // Hierarchy Window Functions

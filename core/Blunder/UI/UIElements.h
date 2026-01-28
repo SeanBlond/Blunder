@@ -11,13 +11,14 @@
 #include <glm/glm.hpp>
 
 #include "../StateMachine/StateMachine.h"
+#include "../ObjectSystem/HierarchyElement.h"
 #include "../Color.h"
 #include "UIRenderer.h"
 #include "TextInput.h"
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_DROPDOWN };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN };
 
     // Attribute Element Parent Class
     class AttributeElement
@@ -192,6 +193,26 @@ namespace ui
         bool* value;
     };
 
+    // Text Entry
+    class TextEntry : public AttributeElement
+    {
+    public:
+        TextEntry(std::string label, std::string* value) : value(value), text(*value), AttributeElement(label, UI_TEXT_ENTRY) {}
+
+        // Element Functions
+        void setValue(std::string value) { *(this->value) = value; }
+        void setValue(std::string* value) { this->value = value; }
+        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        std::string* value;
+        std::string saveValue;
+        TextInput text;
+    };
+
     // Attribute Group (Parent Object)
     class Attribute
     {
@@ -206,6 +227,9 @@ namespace ui
                 elements[i] = nullptr;
             }
             elements.clear();
+
+            delete dropdown;
+            dropdown = nullptr;
         }
 
         // Getters
@@ -235,35 +259,28 @@ namespace ui
     };
 
 
-    // Hierarchy Stuff
-    // Attribute Element Parent Class
+    // Hierarchy UI Elements
+    // Hierarchy Interactable
     class HierarchyInteractable
     {
     public:
-        HierarchyInteractable(std::string label, ElementType type) : label(label), type(type) {}
+        // Constructor & Deocnstructor
+        HierarchyInteractable(HierarchyInfo* element);
+        ~HierarchyInteractable();
 
-        // Getters
-        std::string getLabel() { return label; }
-        ElementType getType() { return type; }
-
-        // Setters
-        void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
-
-        // Override Functions
+        // Functions
         void OnClick(StateMachine* state);
         void OnHold(StateMachine* state);
         void OnRelease(StateMachine* state);
-        void OnDoubleClick(StateMachine* state);
-
-        bool clicked = false;
-        bool highlighted = false;
-    protected:
-        ElementType type;
-        std::string label;
+        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
+    private:
+        float indentPos;
+        HierarchyInfo* element;
+        ui::Toggle* dropdownButton;
+        ui::Toggle* displayButton;
+        ui::Toggle* renderButton;
+        ui::TextEntry* nameEntry;
     };
-
-    // Camera Item
-    // Lighting Item
 
     // Tools Window
     // Select Tool

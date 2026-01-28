@@ -26,9 +26,6 @@
 int SCREEN_WIDTH = 1500;
 int SCREEN_HEIGHT = 1000;
 
-// Time Manager
-TimeManager Time;
-
 // Mouse Data
 bool wrapMouse = false;
 Mouse mouse;
@@ -50,6 +47,13 @@ StateMachine state(&mouse);
 // Setting up Object System
 obs::ObjectSystem objectSystem;
 int obj::Object::nextID = 0;
+
+// Initialize static members
+TimeManager* TimeManager::instancePtr = nullptr;
+std::mutex TimeManager::mtx;
+
+// Setting up Time Manager
+TimeManager* Time = TimeManager::getInstance();
 
 int main() {
     printf("Initializing...\n");
@@ -108,31 +112,10 @@ int main() {
     // Selecting the default cube
     objectSystem.setSelectedElement(objectSystem.getSelectedFolder()->getHierarchyElement(0));
     state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
-    obj::Object* selectedObject = state.getSelectedObject();
 
     // Attribute UI Creation
     AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64);
-
-    ui::Attribute positionAttribute("Position");
-    positionAttribute.addFloatEntry("X", &(selectedObject->transform.position.x));
-    positionAttribute.addFloatEntry("Y", &(selectedObject->transform.position.y));
-    positionAttribute.addFloatEntry("Z", &(selectedObject->transform.position.z));
-    attributeUI.addAttribute(&positionAttribute);
-
-    ui::Attribute rotationAtrribute("Rotation");
-    rotationAtrribute.addFloatEntry("X", &(selectedObject->transform.rotation.x));
-    rotationAtrribute.addFloatEntry("Y", &(selectedObject->transform.rotation.y));
-    rotationAtrribute.addFloatEntry("Z", &(selectedObject->transform.rotation.z));
-    attributeUI.addAttribute(&rotationAtrribute);
-
-    ui::Attribute scaleAtrribute("Scale");
-    scaleAtrribute.addFloatEntry("X", &(selectedObject->transform.scale.x));
-    scaleAtrribute.addFloatEntry("Y", &(selectedObject->transform.scale.y));
-    scaleAtrribute.addFloatEntry("Z", &(selectedObject->transform.scale.z));
-    attributeUI.addAttribute(&scaleAtrribute);
-
-    std::cout << "Attribute Interactables" << std::endl;
-    attributeUI.GenerateInteractables();
+    attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
     HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
@@ -168,7 +151,7 @@ int main() {
         glViewport(uiwidth, 0, SCREEN_WIDTH - (2.0f * uiwidth), SCREEN_HEIGHT);
 
         // Time Management
-        Time.UpdateTime(glfwGetTime());
+        Time->UpdateTime(glfwGetTime());
 
         // Rotating Camera View
         float aspectRatio = (SCREEN_WIDTH - (2.0f * uiwidth)) / SCREEN_HEIGHT;

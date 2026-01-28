@@ -20,6 +20,7 @@ public:
     bool* getDisplayedAddress() { return &displayed; }
     bool* getRenderedAddress() { return &rendered; }
     bool* getDropdownAddress() { return &dropdown; }
+    virtual std::string* getNameAddress() = 0;
 
     // Setters
     void setDisplayed(bool displayed) { this->displayed = displayed; }
@@ -52,6 +53,7 @@ public:
     obj::Object* getObject() { return object; }
     std::string getName() override { return object->getName(); }
     bool hasChildren() { return children.size() > 0; }
+    std::string* getNameAddress() override { return object->getNameAddress(); }
 
     // Setters
     void setName(std::string name) override { this->object->setName(name); }
@@ -85,6 +87,7 @@ public:
     int getChildFoldersSize() { return childrenFolders.size(); }
     bool hasChildren() { return (elements.size() > 0 || childrenFolders.size() > 0); }
     std::string getName() override { return name; }
+    std::string* getNameAddress() override { return &name; }
 
 
     // Setters

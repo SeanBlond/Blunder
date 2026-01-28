@@ -2,35 +2,49 @@
 #pragma once
 
 #include <iostream>
+#include <mutex>
+
 
 class TimeManager
 {
-public:
-	static float time;
-	static float timeScale;
-	static float deltaTime;
-	static int fps;
-	static float hertz;
+private:
+	// Member variables
+	float time, previousTime;
+	static TimeManager* instancePtr;
 
-	void UpdateTime(float softwareTime)
+	// Mutex to ensure thread safety
+	static std::mutex mtx;
+
+	// Private Constructor
+	TimeManager() {}
+
+public:
+	// Deleting the copy constructor to prevent copies
+	TimeManager(const TimeManager& obj) = delete;
+
+	// Static method to get the TimeManager instance
+	static TimeManager* getInstance()
 	{
-		lastTime = time;
-		time = softwareTime * timeScale;
-		deltaTime = time - lastTime;
-		fps = (int)round(1.0f / deltaTime);
-		hertz = (1.0f / deltaTime);
+		if (instancePtr == nullptr) {
+			std::lock_guard<std::mutex> lock(mtx);
+			if (instancePtr == nullptr)
+				instancePtr = new TimeManager();
+		}
+		return instancePtr;
 	}
 
-private:
-	static float lastTime;
+	// Updating Values
+	void UpdateTime(float softwareTime)
+	{
+		previousTime = time;
+		time = softwareTime;
+	}
+
+	// Getters
+	float getTime() { return time; }
+	float getDeltaTime() { return (time - previousTime); }
+	int getFPS() { return (int)round(1.0f / (time - previousTime)); }
+	float getHertz() { return (1.0f / (time - previousTime)); }
 };
-
-float TimeManager::time = 0.0f;
-float TimeManager::lastTime = 0.0f;
-float TimeManager::timeScale = 0.0f;
-float TimeManager::deltaTime = 0.0f;
-int TimeManager::fps = 0;
-float TimeManager::hertz = 0.0f;
-
 
 #endif // !TIME

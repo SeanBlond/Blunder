@@ -182,6 +182,23 @@ void Toggle::OnRelease(StateMachine* state)
     std::cout << "Toggle Clicked: " << *value << std::endl;
 }
 
+// Text Entry Mouse Functions
+void TextEntry::OnClick(StateMachine* state)
+{
+    saveValue = *value;
+}
+void TextEntry::OnHold(StateMachine* state)
+{
+    // Do nothing, no data to change with mouse slide
+}
+void TextEntry::OnRelease(StateMachine* state)
+{
+    text.setTyping(true);
+    text.selectAll();
+    state->setTextInput(&text);
+    state->changeState(SM_UI_TYPING);
+}
+
 
 // Element Render Functions
 void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
@@ -409,5 +426,81 @@ void Toggle::RenderElement(UIRenderer* renderer, float ypos, float width, float 
     renderer->renderQuad(glm::vec3(width * 0.49f, ypos, 0.25f), glm::vec2(width * 0.1f, width * 0.1f), color * colorMod);
 
     // Draw Check (eventually)
+
+}
+
+void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+{
+    // Updating Text
+    if (text.getStored())
+    {
+        *value = text.getText();
+        text.setStored(false);
+    }
+    if (!text.getTyping())
+    {
+        text.setText(*value);
+    }
+
+    // Drawing Label Text
+    renderer->renderText(label, (width * 0.42f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), RIGHT);
+
+    // Color Modifier
+    glm::vec3 colorMod(1);
+    if (clicked || text.getTyping())
+        colorMod = glm::vec3(0.75f);
+    else if (highlighted)
+        colorMod = glm::vec3(1.25f);
+
+    // Drawing Text Box
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
+
+    // Drawing Value
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+}
+
+
+// Hierarchy Interactable Function Definitions
+// -------------------------------------------
+
+// Constructor
+HierarchyInteractable::HierarchyInteractable(HierarchyInfo* element)
+{
+    this->element = element;
+    dropdownButton = new Toggle("HierarchyDropdown", element->getDropdownAddress(), UI_DROPDOWN);
+    displayButton = new Toggle("HierarchyDisplay", element->getDisplayedAddress());
+    renderButton = new Toggle("HierarchyRender", element->getRenderedAddress());
+    nameEntry = new TextEntry("HierarchyName", element->getNameAddress());
+}
+HierarchyInteractable::~HierarchyInteractable()
+{
+    delete dropdownButton;
+    dropdownButton = nullptr;
+
+    delete displayButton;
+    displayButton = nullptr;
+
+    delete renderButton;
+    renderButton = nullptr;
+
+    delete nameEntry;
+    nameEntry = nullptr;
+}
+
+// Functions
+void HierarchyInteractable::OnClick(StateMachine* state)
+{
+
+}
+void HierarchyInteractable::OnHold(StateMachine* state)
+{
+
+}
+void HierarchyInteractable::OnRelease(StateMachine* state)
+{
+
+}
+void HierarchyInteractable::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+{
 
 }

@@ -27,6 +27,7 @@ namespace obj
         Object* getParent() const { return parent; }
         int getID() const { return id; }
         std::vector<Object*> getChildren() { return children; }
+        std::string* getNameAddress() { return &name; }
 
         // Setters
         void setMesh(Mesh* mesh) { this->mesh = mesh; }
