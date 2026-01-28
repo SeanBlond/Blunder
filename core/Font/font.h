@@ -2,8 +2,8 @@
 #pragma once
 
 #include <iostream>
-#include <sstream>
 #include <fstream>
+#include <sstream>
 #include <regex>
 #include <string>
 
@@ -16,9 +16,10 @@
 enum TextAlign { LEFT, CENTER, RIGHT };
 
 struct Character {
-    glm::ivec2   Size;      // Size of the glyph
-    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
-    unsigned int Advance;   // Horizontal offset to advance to next glyph
+    glm::vec4    Positions; // Corner Positon of the glyph on the bitmap UV  y---w
+    glm::ivec2   Size;      // Size of the glyph                             |   |
+    glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph     |   |
+    unsigned int Advance;   // Horizontal offset to advance to next glyph    x---z
 };
 
 class Font
@@ -39,11 +40,11 @@ public:
 
 private:
     // Font Info
-    float fontSize;
-    float lineHeight;
+    int fontSize;
+    int lineHeight;
     uint8_t firstChar;
     uint8_t lastChar;
-    glm::vec2 bitmapSize;
+    glm::ivec2 bitmapSize;
 
     // OpenGL Rendering Info
     shdr::Shader* textShader;

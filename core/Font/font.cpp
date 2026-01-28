@@ -85,14 +85,24 @@ void Font::ReadFNTFile(std::string filePath)
     {
         file >> tempString;
     }
-    fontSize = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
-    std::cout << "Read for size: " << fontSize << std::endl;
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
+    }
+    fontSize = stoi(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    //std::cout << "Read for size: " << fontSize << std::endl;
     
     // Finding char range
     targetString = "charset=";
     while (tempString.substr(0, targetString.size()) != targetString || file.eof())
     {
         file >> tempString;
+    }
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
     }
     std::string tempValueRead = tempString.substr(targetString.size() + 1, tempString.size() - targetString.size() - 2);
     std::regex charRange(R"(^(\d{1,3})\-(\d{1,3}))");
@@ -103,29 +113,183 @@ void Font::ReadFNTFile(std::string filePath)
 
     // Finding line height
     targetString = "lineHeight=";
-    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    while (tempString.substr(0, targetString.size()) != targetString && !file.eof())
     {
         file >> tempString;
     }
-    lineHeight = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
-    std::cout << "Read for height: " << lineHeight << std::endl;
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
+    }
+    lineHeight = stoi(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    //std::cout << "Read for height: " << lineHeight << std::endl;
 
     // Finding bitmap size
     targetString = "scaleW=";
-    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    while (tempString.substr(0, targetString.size()) != targetString && !file.eof())
     {
         file >> tempString;
     }
-    bitmapSize.x = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
+    }
+    bitmapSize.x = stoi(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
     targetString = "scaleH=";
-    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    while (tempString.substr(0, targetString.size()) != targetString && !file.eof())
     {
         file >> tempString;
     }
-    bitmapSize.y = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
-    std::cout << "Read for Bitmap Size: (" << bitmapSize.x << ", " << bitmapSize.y << ")" << std::endl;
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
+    }
+    bitmapSize.y = stoi(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    //std::cout << "Read for Bitmap Size: (" << bitmapSize.x << ", " << bitmapSize.y << ")" << std::endl;
 
+    // Getting number of characters to read
+    int characterCount = 0;
+    targetString = "count=";
+    while (tempString.substr(0, targetString.size()) != targetString && !file.eof())
+    {
+        file >> tempString;
+    }
+    if (file.eof())
+    {
+        std::cout << "Failed to find target in file" << std::endl;
+        return;
+    }
+    characterCount = stoi(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    //std::cout << "Read for character count: " << characterCount << std::endl;
 
+    // Getting rid of empty line
+    std::getline(file, tempString);
+
+    // Gettind data for each character
+    for (int i = 0; i < characterCount; i++)
+    {
+        // Getting Line Data
+        std::string readLine;
+        getline(file, readLine);
+        std::istringstream lineStream(readLine);
+
+        // Reading line data to character
+        Character tempChar;
+
+        // Finding X pos
+        std::string tempCharData = "";
+        std::string targetString = "x=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        float tempFloat = stof(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+        tempChar.Positions.x = tempFloat / (float)bitmapSize.x;
+
+        // Finding Y pos
+        targetString = "y=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempFloat = stof(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+        tempChar.Positions.y = 1.0f - tempFloat / (float)bitmapSize.y;
+    
+        // Finding Char Size
+        // Finding X size
+        targetString = "width=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempChar.Size.x = stoi(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+
+        // Finding Y size
+        targetString = "height=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempChar.Size.y = stoi(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+        //std::cout << "Read Char Size: (" << tempChar.Size.x << ", " << tempChar.Size.y << ")" << std::endl;
+        
+        // Completing position values
+        tempChar.Positions.z = tempChar.Positions.x + (float)tempChar.Size.x / (float)bitmapSize.x;
+        tempChar.Positions.w = tempChar.Positions.y - (float)tempChar.Size.y / (float)bitmapSize.y;
+        //std::cout << "Read Char Pos: (" << tempChar.Positions.x << ", " << tempChar.Positions.y << ") and (" << 
+        //   tempChar.Positions.z << ", " << tempChar.Positions.w << ")" << std::endl;
+
+        // Finding Bearings 
+        // Finding X bearing
+        targetString = "xoffset=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempChar.Bearing.x = stoi(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+
+        // Finding Y bearing
+        targetString = "yoffset=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempChar.Bearing.y = stoi(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+        //std::cout << "Read Char Bearing: (" << tempChar.Bearing.x << ", " << tempChar.Bearing.y << ")" << std::endl;
+
+        // Finding Advance
+        targetString = "xadvance=";
+        while (tempCharData.substr(0, targetString.size()) != targetString && !file.eof())
+        {
+            lineStream >> tempCharData;
+        }
+        if (file.eof())
+        {
+            std::cout << "Failed to find target in file" << std::endl;
+            return;
+        }
+        tempChar.Advance = stoi(tempCharData.substr(targetString.size(), tempCharData.size() - targetString.size()));
+        //std::cout << "Read Char Advance: " << tempChar.Advance << std::endl;
+        
+        // Adding Character
+        Characters.push_back(tempChar);
+    }
+
+    // It was successful!
+    std::cout << "Successfully loaded .fnt file into characters" << std::endl;
 }
 
 void Font::RenderText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
