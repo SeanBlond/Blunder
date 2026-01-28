@@ -102,6 +102,14 @@ void Mesh::outputMesh()
         std::cout << (vertices[i].TexCoord.x) << ", " << (vertices[i].TexCoord.y) << std::endl;
     }
 }
+void Mesh::addFloatAttribute(std::string label, float value)
+{
+    floatAttributes.push_back(new FloatAttribute(label, value));
+}
+void Mesh::addIntAttribute(std::string label, int value)
+{
+    intAttributes.push_back(new IntAttribute(label, value));
+}
 
 // Operators
 Mesh Mesh::operator=(const Mesh& aMesh)
@@ -321,7 +329,10 @@ extern Mesh* mesh::createSphere(float radius, int segments)
     }
 
     // Returning Mesh
-    return new Mesh(vertices, indices, MESH_SPHERE);
+    Mesh* tempMesh = new Mesh(vertices, indices, MESH_SPHERE);
+    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addFloatAttribute("Radius", radius);
+    return tempMesh;
 }
 extern Mesh* mesh::createCylinder(float radius, float height, int segments)
 {
@@ -439,7 +450,11 @@ extern Mesh* mesh::createCylinder(float radius, float height, int segments)
     }
 
     // Returning Mesh
-    return new Mesh(vertices, indices, MESH_CYLINDER);
+    Mesh* tempMesh = new Mesh(vertices, indices, MESH_CYLINDER);
+    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addFloatAttribute("Height", height);
+    tempMesh->addFloatAttribute("Radius", radius);
+    return tempMesh;
 }
 extern Mesh* mesh::createPlane(float width, float height, int segments)
 {
@@ -503,7 +518,11 @@ extern Mesh* mesh::createPlane(float width, float height, int segments)
     }
 
     // Returning Mesh
-    return new Mesh(vertices, indices, MESH_PLANE);
+    Mesh* tempMesh = new Mesh(vertices, indices, MESH_PLANE);
+    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addFloatAttribute("Width", width);
+    tempMesh->addFloatAttribute("Height", height);
+    return tempMesh;
 }
 extern Mesh* mesh::createTorus(float majorRadius, float minorRadius, int majorSegments, int minorSegments)
 {
@@ -570,7 +589,12 @@ extern Mesh* mesh::createTorus(float majorRadius, float minorRadius, int majorSe
     }
 
     // Returning Mesh Data
-    return new Mesh(vertices, indices, MESH_TORUS);
+    Mesh* tempMesh = new Mesh(vertices, indices, MESH_TORUS);
+    tempMesh->addIntAttribute("Major Subdivisions", majorSegments);
+    tempMesh->addIntAttribute("Minor Subdivisions", minorSegments);
+    tempMesh->addFloatAttribute("Major Radius", majorRadius);
+    tempMesh->addFloatAttribute("Minor Radius", minorRadius);
+    return tempMesh;
 }
 extern Mesh* mesh::createCube(float length, float width, float height, int segments)
 {
@@ -722,6 +746,12 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
             }
         }
     }
+
     // Returning Mesh Data
-    return new Mesh(vertices, indices, MESH_CUBE);
+    Mesh* tempMesh = new Mesh(vertices, indices, MESH_CUBE);
+    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addFloatAttribute("Length", length);
+    tempMesh->addFloatAttribute("Width", width);
+    tempMesh->addFloatAttribute("Height", height);
+    return tempMesh;
 }

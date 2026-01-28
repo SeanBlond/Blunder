@@ -19,6 +19,20 @@ struct Vertex
     glm::vec2 TexCoord;
 };
 
+// Values that primitive meshes could have
+struct FloatAttribute
+{
+    FloatAttribute(std::string label, float value) : attributeLabel(label), attributeValue(value) {}
+    std::string attributeLabel;
+    float attributeValue;
+};
+struct IntAttribute
+{
+    IntAttribute(std::string label, int value) : attributeLabel(label), attributeValue(value) {}
+    std::string attributeLabel;
+    int attributeValue;
+};
+
 class Mesh
 {
 public:
@@ -30,11 +44,15 @@ public:
 
     // Getters
     PrimitiveType getType() { return type; }
+    std::vector<FloatAttribute*> getFloatAttributes() { return floatAttributes; }
+    std::vector<IntAttribute*> getIntAttributes() { return intAttributes; }
 
     // Functions
     void DrawMesh(bool lines = false, bool points = false);
     void updateMesh(const Mesh& mesh);
     void outputMesh();
+    void addFloatAttribute(std::string label, float value);
+    void addIntAttribute(std::string label, int value);
 
     // Operators
     Mesh operator=(const Mesh& aMesh);
@@ -44,6 +62,9 @@ private:
     PrimitiveType type;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+
+    std::vector<FloatAttribute*> floatAttributes;
+    std::vector<IntAttribute*> intAttributes;
 
     void createMesh();
 };

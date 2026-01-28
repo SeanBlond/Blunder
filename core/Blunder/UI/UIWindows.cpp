@@ -215,6 +215,32 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     scaleAtrribute->addFloatEntry("Z", &(object->transform.scale.z));
     addAttribute(scaleAtrribute);
 
+    // Adding Custom Mesh Attributes
+    std::vector<FloatAttribute*> floatAttributes = object->getMesh()->getFloatAttributes();
+    std::vector<IntAttribute*> intAttributes = object->getMesh()->getIntAttributes();
+
+    // Checkinf if the attributes have values before adding them
+    if (floatAttributes.size() != 0 || intAttributes.size() != 0)
+    {
+        // Creating the attribute
+        ui::Attribute* meshAttribute = new ui::Attribute("Mesh");
+
+        // Adding the float attributes
+        for (int i = 0; i < floatAttributes.size(); i++)
+        {
+            meshAttribute->addFloatEntry(floatAttributes[i]->attributeLabel, &(floatAttributes[i]->attributeValue));
+        }
+
+        // Adding the int attributes
+        for (int i = 0; i < intAttributes.size(); i++)
+        {
+            meshAttribute->addIntEntry(intAttributes[i]->attributeLabel, &(intAttributes[i]->attributeValue));
+        }
+
+        // Adding the attributes
+        addAttribute(meshAttribute);
+    }
+
     // Generating the Interactables
     GenerateInteractables();
 }
