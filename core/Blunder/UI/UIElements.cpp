@@ -289,7 +289,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, gl
     //stream << std::fixed << std::setprecision(3) << (*value);
 
     // Drawing Value
-    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -343,7 +343,7 @@ void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, g
     renderer->renderQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, width * 0.1f), colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
-    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -392,7 +392,7 @@ void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm:
     renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -446,7 +446,7 @@ void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     renderer->renderQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, ySize), colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
-    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void Toggle::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -506,7 +506,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
+    text.renderText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -536,5 +536,5 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float y
         renderer->renderQuad(glm::vec3(width * 0.5f + xPos.x, ypos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.renderText(renderer, xPos.x, ypos - (width * 0.035f), textSize, glm::vec3(1.0f));
+    text.renderText(renderer, xPos.x, ypos - (width * 0.05f), textSize, glm::vec3(1.0f));
 }

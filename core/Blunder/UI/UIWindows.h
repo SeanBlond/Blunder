@@ -37,7 +37,7 @@ public:
 
     // Text Sizes
     float smallText() { return (height * 2.2e-4); }
-    float mediumText() { return (height * 3e-4); }
+    float mediumText() { return (height * 2.75e-4); }
     float largText() { return (height * 4e-4); }
 
 protected:

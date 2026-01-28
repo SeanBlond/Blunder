@@ -29,14 +29,10 @@ void AttributeWindow::GenerateInteractables()
         interactables.push_back(dropDownInteractable);
 
         // Other Elements
-        if (attributes[i]->getCollapsed())
+        attributeYPos += 0.1f;
+        if (!attributes[i]->getCollapsed())
         {
-            attributeYPos += 0.1f;
-        }
-        else
-        {
-            attributeYPos += 0.13f;
-
+            attributeYPos += 0.02f;
             for (int j = 0; j < attributes[i]->getElementCount(); j++)
             {
                 // Adding Each Element to interactables
@@ -44,9 +40,9 @@ void AttributeWindow::GenerateInteractables()
                 // Current Corners only works for Float Entries & Sliders
                 glm::vec4 corners = glm::vec4(
                     0.69f - 0.25,
-                    attributeYPos - 0.05f,
+                    attributeYPos - 0.04f,
                     0.69f + 0.25,
-                    attributeYPos + 0.05f
+                    attributeYPos + 0.04f
                 );
 
                 ui::AttributeInteractable tempInteractable(corners, attributes[i]->getElement(j));
@@ -55,12 +51,12 @@ void AttributeWindow::GenerateInteractables()
                 //std::cout << "Interactable Generated at (" << corners.x << ", " << corners.y << ", " << corners.z << ", " << corners.w << ")\n";
 
                 // Updating YPos
-                attributeYPos += 0.12f;
+                attributeYPos += 0.1f;
             }
         }
 
         // Making space for other attributes
-        attributeYPos += 0.05f;
+        attributeYPos += 0.04f;
     }
 }
 void AttributeWindow::DrawAttributeWindow()
@@ -78,7 +74,6 @@ void AttributeWindow::DrawAttributeWindow()
         // Rendering Attribute Label
         renderer.renderText(attributes[i]->getName(), (width / 2), attributeYPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
 
-        // Render Dropdown Button
 
         // Checking if elements should be rendered
         if (attributes[i]->getCollapsed())
@@ -87,10 +82,10 @@ void AttributeWindow::DrawAttributeWindow()
         }
         else
         {
-            attributeYPos -= (width * 0.06f);
+            attributeYPos -= (width * 0.05f);
 
             // Render Elements Container Quad
-            float containerHeight = width * ((attributes[i]->getElementCount() * 0.1f) + ((attributes[i]->getElementCount() + 1) * 0.02f));
+            float containerHeight = width * ((attributes[i]->getElementCount() * 0.08f) + ((attributes[i]->getElementCount() + 1) * 0.02f));
             float containerPosY = attributeYPos - (containerHeight * 0.5f);
             renderer.renderQuad(glm::vec3((width / 2), containerPosY, 0.15f), glm::vec2(0.92f * width, containerHeight), glm::vec3(0.35f));
 
@@ -100,15 +95,15 @@ void AttributeWindow::DrawAttributeWindow()
             {
                 // Render Each Element
                 ui::AttributeElement* element = attributes[i]->getElement(j);
-                element->RenderElement(&renderer, attributeYPos, (width * 0.1f), glm::vec2(0.0f, width), mediumText());
+                element->RenderElement(&renderer, attributeYPos, (width * 0.08f), glm::vec2(0.0f, width), mediumText());
 
                 // Updating YPos
-                attributeYPos -= (width * 0.12f);
+                attributeYPos -= (width * 0.1f);
             }
         }
 
         // Creating Space for Next Attribute
-        attributeYPos -= (width * 0.05f);
+        attributeYPos -= (width * 0.04f);
     }
 }
 void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
