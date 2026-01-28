@@ -16,7 +16,7 @@ private:
 	static std::mutex mtx;
 
 	// Private Constructor
-	TimeManager() {}
+	TimeManager() { time = previousTime = 0.0f; }
 
 public:
 	// Deleting the copy constructor to prevent copies

@@ -102,7 +102,6 @@ int main() {
     printf("Adding Test Object\n");
     objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
     objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
-    //objectSystem.addObject(new obj::Object("cylinder", mesh::createCylinder(1.0f, 2.0f, 12), &testShader, glm::vec3(2, 0, 0)));
     objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
 
     // Testing hierarchy stuff

@@ -11,10 +11,10 @@
 #include <glm/glm.hpp>
 
 #include "../StateMachine/StateMachine.h"
-#include "../ObjectSystem/HierarchyElement.h"
 #include "../Color.h"
 #include "UIRenderer.h"
 #include "TextInput.h"
+#include "../Time.h"
 
 namespace ui
 {
@@ -34,7 +34,7 @@ namespace ui
         void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
 
         // Override Functions
-        virtual void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) = 0;
+        virtual void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) = 0;
         virtual void OnClick(StateMachine* state) = 0;
         virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
@@ -65,7 +65,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = value; }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -96,7 +96,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -126,7 +126,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = value; }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -157,7 +157,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -184,7 +184,7 @@ namespace ui
         // Element Functions
         void setToggle(bool value) { *(this->value) = value; }
         void toggleValue() { *value = !(*value); }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -202,7 +202,7 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize) override;
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -260,26 +260,26 @@ namespace ui
 
 
     // Hierarchy UI Elements
-    // Hierarchy Interactable
-    class HierarchyInteractable
+    // Hierarchy Text Entry
+    class HierarchyTextEntry : public AttributeElement
     {
     public:
-        // Constructor & Deocnstructor
-        HierarchyInteractable(HierarchyInfo* element);
-        ~HierarchyInteractable();
+        HierarchyTextEntry(std::string label, std::string* value) : value(value), text(*value), clickTime(-1.0f), textTriggered(false), AttributeElement(label, UI_TEXT_ENTRY) {}
 
-        // Functions
-        void OnClick(StateMachine* state);
-        void OnHold(StateMachine* state);
-        void OnRelease(StateMachine* state);
-        void RenderElement(UIRenderer* renderer, float ypos, float width, float textSize);
+        // Element Functions
+        void setValue(std::string value) { *(this->value) = value; }
+        void setValue(std::string* value) { this->value = value; }
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
     private:
-        float indentPos;
-        HierarchyInfo* element;
-        ui::Toggle* dropdownButton;
-        ui::Toggle* displayButton;
-        ui::Toggle* renderButton;
-        ui::TextEntry* nameEntry;
+        float clickTime;
+        bool textTriggered;
+        std::string* value;
+        std::string saveValue;
+        TextInput text;
     };
 
     // Tools Window

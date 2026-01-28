@@ -199,10 +199,60 @@ void TextEntry::OnRelease(StateMachine* state)
     state->changeState(SM_UI_TYPING);
 }
 
+// Hierarchy Text Entry Mouse Functions
+void HierarchyTextEntry::OnClick(StateMachine* state)
+{
+    std::cout << "CLICKED" << std::endl;
+
+    // Single Click, setting the object to be selected
+    if (clickTime == -1.0f)
+    {
+        clickTime = TimeManager::getInstance()->getTime();
+        std::cout << "Set New Object Selection" << std::endl;
+    }
+    // Potential Double Click
+    else
+    {
+        // If the clicks occur within 1 second, it will register as a double click, and do text entry
+        if (TimeManager::getInstance()->getTime() - clickTime < 1.0f)
+        {
+            std::cout << "DOUBLE CLICK: Set Name" << std::endl;
+            textTriggered = true;
+            saveValue = *value;
+        }
+        // Otherwise, it will register as a late single click, and reset the clickTime
+        else
+        {
+            std::cout << "Set New Object Selection" << std::endl;
+        }
+
+        // Resetting click time
+        clickTime = -1.0f;
+    }
+}
+void HierarchyTextEntry::OnHold(StateMachine* state)
+{
+    // Do nothing, no data to change with mouse slide
+}
+void HierarchyTextEntry::OnRelease(StateMachine* state)
+{
+    // Checking if typing was triggered
+    if (textTriggered)
+    {
+        text.setTyping(true);
+        text.selectAll();
+        state->setTextInput(&text);
+        state->changeState(SM_UI_TYPING);
+        textTriggered = false;
+    }
+}
+
 
 // Element Render Functions
-void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Updating Text
     if (text.getStored())
     {
@@ -233,7 +283,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float width, fl
 
     // Drawing Label Text
     renderer->renderText(label, (width * 0.42f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), RIGHT);
-    
+
     // Color Modifier
     glm::vec3 colorMod(1);
     if (clicked || text.getTyping())
@@ -242,7 +292,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float width, fl
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Rounding value to 3 decimals places and converting to string
     //std::stringstream stream;
@@ -252,8 +302,10 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float width, fl
     text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Updating Text
     if (text.getStored())
     {
@@ -293,8 +345,8 @@ void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float width, f
         colorMod = glm::vec3(1.25f);
 
     // Drawing Base Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
-    
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+
     // Draw Slider Box
     float sliderWidth = width * 0.5f * getPercentage();
     float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
@@ -304,8 +356,10 @@ void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float width, f
     text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Updating Text
     if (text.getStored())
     {
@@ -345,14 +399,16 @@ void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float width, floa
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
     text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Updating Text
     if (text.getStored())
     {
@@ -392,29 +448,31 @@ void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float width, flo
         colorMod = glm::vec3(1.25f);
 
     // Drawing Base Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
-    
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+
     // Draw Slider Box
     float sliderWidth = width * 0.5f * getPercentage();
     float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
-    renderer->renderQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, width * 0.1f), colors::blunderGreen.rgb() * colorMod);
+    renderer->renderQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, ySize), colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
     text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void Toggle::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void Toggle::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Drawing Label Text
     renderer->renderText(label, (width * 0.42f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), RIGHT);
-    
+
     // Calculating Color
     glm::vec3 color;
     if (*value)
         color = colors::darkerGrey.rgb();
     else
         color = colors::blunderGreen.rgb();
-    
+
     // Color Modifier
     glm::vec3 colorMod(1);
     if (clicked)
@@ -423,14 +481,16 @@ void Toggle::RenderElement(UIRenderer* renderer, float ypos, float width, float 
         colorMod = glm::vec3(1.25f);
 
     // Drawing Toggle Box
-    renderer->renderQuad(glm::vec3(width * 0.49f, ypos, 0.25f), glm::vec2(width * 0.1f, width * 0.1f), color * colorMod);
+    renderer->renderQuad(glm::vec3(width * 0.49f, ypos, 0.25f), glm::vec2(ySize, ySize), color * colorMod);
 
     // Draw Check (eventually)
 
 }
 
-void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
+void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    float width = (xPos.y - xPos.x);
+
     // Updating Text
     if (text.getStored())
     {
@@ -453,54 +513,38 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float width, flo
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, width * 0.1f), colors::darkerGrey.rgb() * colorMod);
+    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
     text.renderText(renderer, (width * 0.69f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), CENTER);
 }
 
-
-// Hierarchy Interactable Function Definitions
-// -------------------------------------------
-
-// Constructor
-HierarchyInteractable::HierarchyInteractable(HierarchyInfo* element)
+void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
-    this->element = element;
-    dropdownButton = new Toggle("HierarchyDropdown", element->getDropdownAddress(), UI_DROPDOWN);
-    displayButton = new Toggle("HierarchyDisplay", element->getDisplayedAddress());
-    renderButton = new Toggle("HierarchyRender", element->getRenderedAddress());
-    nameEntry = new TextEntry("HierarchyName", element->getNameAddress());
-}
-HierarchyInteractable::~HierarchyInteractable()
-{
-    delete dropdownButton;
-    dropdownButton = nullptr;
+    float width = (xPos.y - xPos.x);
 
-    delete displayButton;
-    displayButton = nullptr;
+    // Updating Text
+    if (text.getStored())
+    {
+        *value = text.getText();
+        text.setStored(false);
+    }
+    if (!text.getTyping())
+    {
+        text.setText(*value);
+    }
 
-    delete renderButton;
-    renderButton = nullptr;
+    // Color Modifier
+    glm::vec3 colorMod(1);
+    if (clicked || text.getTyping())
+        colorMod = glm::vec3(0.75f);
+    else if (highlighted)
+        colorMod = glm::vec3(1.25f);
 
-    delete nameEntry;
-    nameEntry = nullptr;
-}
+    // Drawing Text Box
+    if (text.getTyping())
+        renderer->renderQuad(glm::vec3(width * 0.5f + xPos.x, ypos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
 
-// Functions
-void HierarchyInteractable::OnClick(StateMachine* state)
-{
-
-}
-void HierarchyInteractable::OnHold(StateMachine* state)
-{
-
-}
-void HierarchyInteractable::OnRelease(StateMachine* state)
-{
-
-}
-void HierarchyInteractable::RenderElement(UIRenderer* renderer, float ypos, float width, float textSize)
-{
-
+    // Drawing Value
+    text.renderText(renderer, xPos.x, ypos - (width * 0.035f), textSize, glm::vec3(1.0f));
 }

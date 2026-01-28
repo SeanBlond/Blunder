@@ -11,7 +11,6 @@
 #include "../StateMachine/StateMachine.h"
 #include "../ObjectSystem/ObjectSystem.h"
 #include "UIElements.h"
-#include "../Time.h"
 
 // Window Parent Class
 class UIWindow
