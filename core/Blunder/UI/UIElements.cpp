@@ -202,42 +202,24 @@ void TextEntry::OnRelease(StateMachine* state)
 // Hierarchy Text Entry Mouse Functions
 void HierarchyTextEntry::OnClick(StateMachine* state)
 {
-    std::cout << "CLICKED" << std::endl;
-
-    // Single Click, setting the object to be selected
-    if (clickTime == 0.0f)
+    // If the clicks occur within 0.25 second, it will register as a double click, and do text entry
+    if (TimeManager::getInstance()->getTime() - clickTime < 0.25f)
     {
-        clickTime = TimeManager::getInstance()->getTime();
-        
+        textTriggered = true;
+        saveValue = *value;
+    }
+    // Otherwise, it will register as a late single click, and reset the clickTime
+    else
+    {
         // Checking if object reference exists before setting it to be the selected object
         if (object != nullptr)
         {
             state->selectObject(object);
         }
     }
-    // Potential Double Click
-    else
-    {
-        // If the clicks occur within 0.5 second, it will register as a double click, and do text entry
-        if (TimeManager::getInstance()->getTime() - clickTime < 0.5f)
-        {
-            std::cout << "DOUBLE CLICK: Set Name" << std::endl;
-            textTriggered = true;
-            saveValue = *value;
-        }
-        // Otherwise, it will register as a late single click, and reset the clickTime
-        else
-        {
-            // Checking if object reference exists before setting it to be the selected object
-            if (object != nullptr)
-            {
-                state->selectObject(object);
-            }
-        }
 
-        // Resetting click time
-        clickTime = 0.0f;
-    }
+    // Resetting click time
+    clickTime = TimeManager::getInstance()->getTime();
 }
 void HierarchyTextEntry::OnHold(StateMachine* state)
 {

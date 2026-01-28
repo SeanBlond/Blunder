@@ -8,7 +8,6 @@ bool checkUICollision(float xpos, float ypos, ui::AttributeInteractable interact
     return (xCollision && yCollision);
 }
 
-
 // Attribute Window Functions
 void AttributeWindow::GenerateInteractables()
 {
@@ -189,8 +188,6 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
 {
     // Clearing attributes
     ClearAttributes();
-
-
 
     // Adding standard transform attributes
     ui::Attribute* positionAttribute = new ui::Attribute("Position");
@@ -383,24 +380,24 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
 {
     // Rendering the base element UI
     Color baseColor = (objectSystem->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
-    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb());
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb());
     
     // Dropdown Symbol
     if (element->hasChildren())
-        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
     
     // Object Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
     
     // Object Text
     glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
     element->getHierarchyTextUI()->RenderElement(&renderer, yPos, (width * 0.08f), textPosX * width, mediumText());
     
     // Visibility Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
     
     // Render Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.25f), glm::vec2(0.08f * width), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (width * 0.08f);
