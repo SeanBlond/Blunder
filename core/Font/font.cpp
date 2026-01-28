@@ -1,85 +1,12 @@
 #include "font.h"
 
 // Constructor
-Font::Font(std::string fontName, int fontSize = 64)
+Font::Font(std::string fntFile, std::string fontImage)
 {
     projection = glm::mat4(1.0f);
-    texture = 0;
+    bitmapTexture = 0;
 
-    // FreeType
-    FT_Library ft;
-    // All functions return a value different than 0 whenever an error occurred
-    if (FT_Init_FreeType(&ft))
-    {
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-    }
-
-    // find path to font
-    if (fontName.empty())
-    {
-        std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;
-    }
-
-    // load font as face
-    FT_Face face;
-
-    if (FT_New_Face(ft, fontName.c_str(), 0, &face)) {
-        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-    }
-    else {
-        // set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 64);
-
-        // disable byte-alignment restriction
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-        // load first 128 characters of ASCII set
-        for (unsigned char c = 0; c < 128; c++)
-        {
-            // Load character glyph 
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-            {
-                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-                continue;
-            }
-
-            // generate texture
-            glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-            );
-
-            // set texture options
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            // now store character for later use
-            Character character = {
-                texture,
-                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                static_cast<unsigned int>(face->glyph->advance.x)
-            };
-            Characters.insert(std::pair<char, Character>(c, character));
-        }
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-
-    // destroy FreeType once we're finished
-    FT_Done_Face(face);
-    FT_Done_FreeType(ft);
+    ReadFNTFile(fntFile);
 
     // Vertice Info
     float vertices[]{
@@ -140,6 +67,66 @@ Font::Font(std::string fontName, int fontSize = 64)
     textShader = new shdr::Shader(textVertexShader, textFragmentShader, 1);
 }
 
+void Font::ReadFNTFile(std::string filePath)
+{
+    std::ifstream file(filePath);
+
+    // Checking if file was opened correctly
+    if (!file)
+    {
+        std::cout << "FAILED TO OPEN .fnt FILE AT PATH " << filePath << std::endl;
+        return;
+    }
+
+    // Finding Text Size
+    std::string tempString = "";
+    std::string targetString = "size=";
+    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    {
+        file >> tempString;
+    }
+    fontSize = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    std::cout << "Read for size: " << fontSize << std::endl;
+    
+    // Finding char range
+    targetString = "charset=";
+    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    {
+        file >> tempString;
+    }
+    std::string tempValueRead = tempString.substr(targetString.size() + 1, tempString.size() - targetString.size() - 2);
+    std::regex charRange(R"(^(\d{1,3})\-(\d{1,3}))");
+    std::smatch matches;
+    std::regex_search(tempValueRead, matches, charRange);
+    firstChar = stoi(matches[1]);
+    lastChar = stoi(matches[2]);
+
+    // Finding line height
+    targetString = "lineHeight=";
+    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    {
+        file >> tempString;
+    }
+    lineHeight = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    std::cout << "Read for height: " << lineHeight << std::endl;
+
+    // Finding bitmap size
+    targetString = "scaleW=";
+    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    {
+        file >> tempString;
+    }
+    bitmapSize.x = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    targetString = "scaleH=";
+    while (tempString.substr(0, targetString.size()) != targetString || file.eof())
+    {
+        file >> tempString;
+    }
+    bitmapSize.y = stof(tempString.substr(targetString.size(), tempString.size() - targetString.size()));
+    std::cout << "Read for Bitmap Size: (" << bitmapSize.x << ", " << bitmapSize.y << ")" << std::endl;
+
+
+}
 
 void Font::RenderText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
 {
@@ -208,7 +195,7 @@ void Font::RenderText(std::string text, float x, float y, float scale, glm::vec3
         textShader->setMat4("transform", transform);
 
         // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindTexture(GL_TEXTURE_2D, bitmapTexture);
 
         // update content of textVBO memory
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);

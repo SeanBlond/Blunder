@@ -14,9 +14,6 @@
 #include <Blunder/UI/TextInput.h>
 #include <Blunder/Keystroke.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -75,12 +72,11 @@ int main()
     glm::mat4 projection = smath::orthographic(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
 
     // Setting Up Renderer
-    ui::UIRenderer renderer("assets/fonts/Lato-Regular.ttf", 64, projection);
+    ui::UIRenderer renderer("assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", projection);
     text.setTyping(true);
 
     // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
+    /*while (!glfwWindowShouldClose(window))
     {
         // render
         // ------
@@ -96,7 +92,7 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
-    }
+    }*/
 
     glfwTerminate();
     return 0;

@@ -17,7 +17,7 @@ class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize) : width(width), height(height), renderer(fontName, fontSize, smath::orthographic(0.0f, width, 0.0f, height)) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath) : width(width), height(height), renderer(fntFilePath, bitmapFilePath, smath::orthographic(0.0f, width, 0.0f, height)) {}
 
     // Getters
     float getWidth() { return width; }
@@ -54,7 +54,7 @@ class AttributeWindow : public UIWindow
 {
 public:
     // Constructor & Desconstructor
-    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
+    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fntFilePath, bitmapFilePath), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
     ~AttributeWindow()
     {
         ClearAttributes();
@@ -87,7 +87,7 @@ class HierarchyWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), objectSystem(objectSystem), clickedElement(nullptr) {}
+    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fntFilePath, bitmapFilePath), objectSystem(objectSystem), clickedElement(nullptr) {}
     ~HierarchyWindow()
     {
         interactables.clear();

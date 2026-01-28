@@ -56,6 +56,14 @@ std::mutex TimeManager::mtx;
 TimeManager* Time = TimeManager::getInstance();
 
 int main() {
+    // ASCII STUFF
+    std::cout << std::endl;
+    for (int i = 32; i <= 126; i++)
+    {
+        std::cout << (char)i;
+    }
+    std::cout << "DONE" << std::endl;
+
     printf("Initializing...\n");
     if (!glfwInit()) {
         printf("GLFW failed to init!");

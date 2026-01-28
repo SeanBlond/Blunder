@@ -3,13 +3,13 @@ using namespace ui;
 
 // UI Quads
 // Constructors and Deconstructor
-UIRenderer::UIRenderer(std::string fontName, int fontSize, glm::mat4 projection)
+UIRenderer::UIRenderer(std::string fntFilePath, std::string bitmapFilePath, glm::mat4 projection)
 { 
     // Setting Up Projection Matrix;
     this->projection = projection;
 
     // Setting Up Text Renderer
-    textRenderer = new Font(fontName, fontSize);
+    textRenderer = new Font(fntFilePath, bitmapFilePath);
 
     // Shaders
     const char* quadVertexShader = R"(

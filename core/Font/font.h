@@ -2,7 +2,9 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <sstream>
+#include <fstream>
+#include <regex>
 #include <string>
 
 #include "../shader/shader.h"
@@ -11,14 +13,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 enum TextAlign { LEFT, CENTER, RIGHT };
 
 struct Character {
-    unsigned int TextureID; // ID handle of the glyph texture
-    glm::ivec2   Size;      // Size of glyph
+    glm::ivec2   Size;      // Size of the glyph
     glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
     unsigned int Advance;   // Horizontal offset to advance to next glyph
 };
@@ -27,7 +25,7 @@ class Font
 {
 public:
     // Constructors
-    Font(std::string fontName, int fontSize);
+    Font(std::string fntFile, std::string fontImage);
 
     // Getters
     Character getCharacter(std::string::const_iterator character) { return Characters[*character]; }
@@ -36,14 +34,23 @@ public:
     void setProjection(glm::mat4 projection) { this->projection = projection; }
 
     // Functions
+    void ReadFNTFile(std::string filePath);
     void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
 
 private:
+    // Font Info
+    float fontSize;
+    float lineHeight;
+    uint8_t firstChar;
+    uint8_t lastChar;
+    glm::vec2 bitmapSize;
+
+    // OpenGL Rendering Info
     shdr::Shader* textShader;
     glm::mat4 projection;
-    std::map<GLchar, Character> Characters;
+    std::vector<Character> Characters;
     unsigned int textVAO, textVBO;
-    unsigned int texture;
+    unsigned int bitmapTexture;
 };
 
 #endif // !FONT

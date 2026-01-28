@@ -31,7 +31,7 @@ namespace ui
     {
     public:
         // Constructors and Deconstructor
-        UIRenderer(std::string fontName, int fontSize, glm::mat4 projection);
+        UIRenderer(std::string fntFilePath, std::string bitmapFilePath, glm::mat4 projection);
         ~UIRenderer();
 
         // Getters
