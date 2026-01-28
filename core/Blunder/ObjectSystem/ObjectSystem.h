@@ -30,18 +30,19 @@ namespace obs
     {
     public:
         // Constructor & Deocnstructor
-        ObjectSystem();
+        ObjectSystem(StateMachine* state);
         ~ObjectSystem();
 
         // Getters
         Folder* getSelectedFolder() { return selectedFolder; }
         Folder* getRootFolder() { return rootFolder; }
         RenderSettings getRenderSettings() { return renderSettings; }
-        HierarchyElement* getSelectedElement() { return selectedElement; }
+        //HierarchyElement* getS() { return selectedElement; }
+        obj::Object* getSelectedObject() { return state->getSelectedObject(); }
 
         // Setters
         void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
-        void setSelectedElement(HierarchyElement* element) { this->selectedElement = element; }
+        //void setSelectedElement(HierarchyElement* element) { state->selectObject(element->getObject()); selectedElement = selectedElement; }
         void setRenderSettings(RenderSettings renderSettings) { this->renderSettings = renderSettings; }
 
         //Functions
@@ -53,9 +54,10 @@ namespace obs
         void Render(glm::mat4 projection, glm::mat4 view);
 
     private:
+        StateMachine* state;
         Folder* selectedFolder;
         Folder* rootFolder;
-        HierarchyElement* selectedElement;
+        //HierarchyElement* selectedElement;
         RenderSettings renderSettings;
     };
 }

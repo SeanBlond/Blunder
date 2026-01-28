@@ -205,16 +205,21 @@ void HierarchyTextEntry::OnClick(StateMachine* state)
     std::cout << "CLICKED" << std::endl;
 
     // Single Click, setting the object to be selected
-    if (clickTime == -1.0f)
+    if (clickTime == 0.0f)
     {
         clickTime = TimeManager::getInstance()->getTime();
-        std::cout << "Set New Object Selection" << std::endl;
+        
+        // Checking if object reference exists before setting it to be the selected object
+        if (object != nullptr)
+        {
+            state->selectObject(object);
+        }
     }
     // Potential Double Click
     else
     {
-        // If the clicks occur within 1 second, it will register as a double click, and do text entry
-        if (TimeManager::getInstance()->getTime() - clickTime < 1.0f)
+        // If the clicks occur within 0.5 second, it will register as a double click, and do text entry
+        if (TimeManager::getInstance()->getTime() - clickTime < 0.5f)
         {
             std::cout << "DOUBLE CLICK: Set Name" << std::endl;
             textTriggered = true;
@@ -223,11 +228,15 @@ void HierarchyTextEntry::OnClick(StateMachine* state)
         // Otherwise, it will register as a late single click, and reset the clickTime
         else
         {
-            std::cout << "Set New Object Selection" << std::endl;
+            // Checking if object reference exists before setting it to be the selected object
+            if (object != nullptr)
+            {
+                state->selectObject(object);
+            }
         }
 
         // Resetting click time
-        clickTime = -1.0f;
+        clickTime = 0.0f;
     }
 }
 void HierarchyTextEntry::OnHold(StateMachine* state)

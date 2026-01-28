@@ -352,9 +352,7 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 
     // Folder Text
     glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
-    std::cout << "Width: " << (textPosX.y - textPosX.x) << std::endl;
     folder->getHierarchyTextUI()->RenderElement(&renderer, yPos, (width * 0.08f), textPosX * width, mediumText());
-    //renderer.renderText(folder->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
 
     // Visibility Symbol
     renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
@@ -384,7 +382,7 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos)
 {
     // Rendering the base element UI
-    Color baseColor = (objectSystem->getSelectedElement() == element ? colors::grey.rgb() : colors::lightgrey.rgb());
+    Color baseColor = (objectSystem->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.2f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb());
     
     // Dropdown Symbol
@@ -395,7 +393,8 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
     renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.25f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
     
     // Object Text
-    renderer.renderText(element->getName(), (width * 0.2f) + (width * 0.08f * indent), yPos - (width * 0.03f), mediumText(), colors::white.rgb(), LEFT);
+    glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
+    element->getHierarchyTextUI()->RenderElement(&renderer, yPos, (width * 0.08f), textPosX * width, mediumText());
     
     // Visibility Symbol
     renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.25f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));

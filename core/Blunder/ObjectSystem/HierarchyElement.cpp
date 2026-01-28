@@ -14,7 +14,7 @@ HierarchyElement::HierarchyElement(obj::Object* object, HierarchyType type, Hier
 
     // Creating the UI Name Asset
     std::string entryLabel = (object->getName() + "-Entry");
-    nameEntry = new ui::HierarchyTextEntry(entryLabel, object->getNameAddress());
+    nameEntry = new ui::HierarchyTextEntry(entryLabel, object->getNameAddress(), object);
 }
 
 void HierarchyElement::changeParent(HierarchyElement* parent)
@@ -41,7 +41,6 @@ void HierarchyElement::removeChild(HierarchyElement* element)
         children.erase(children.begin() + index);
     }
 }
-
 void HierarchyElement::EraseObject(bool deleteChildren)
 {
     // Removing this object from the parent
@@ -71,7 +70,6 @@ void HierarchyElement::EraseObject(bool deleteChildren)
         children.clear();
     }
 }
-
 void HierarchyElement::DrawElementUI()
 {
     std::cout << "TODO: DRAW UI ELEMENT" << std::endl;

@@ -45,7 +45,7 @@ OrbitCamera camera(1.25f, 2.0f, 7.5f);
 StateMachine state(&mouse);
 
 // Setting up Object System
-obs::ObjectSystem objectSystem;
+obs::ObjectSystem objectSystem(&state);
 int obj::Object::nextID = 0;
 
 // Initialize static members
@@ -109,7 +109,7 @@ int main() {
     objectSystem.addFolder("Test 2");
 
     // Selecting the default cube
-    objectSystem.setSelectedElement(objectSystem.getSelectedFolder()->getHierarchyElement(0));
+    //objectSystem.setSelectedElement(objectSystem.getSelectedFolder()->getHierarchyElement(0));
     state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
     // Attribute UI Creation

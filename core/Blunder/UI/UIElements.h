@@ -264,7 +264,7 @@ namespace ui
     class HierarchyTextEntry : public AttributeElement
     {
     public:
-        HierarchyTextEntry(std::string label, std::string* value) : value(value), text(*value), clickTime(-1.0f), textTriggered(false), AttributeElement(label, UI_TEXT_ENTRY) {}
+        HierarchyTextEntry(std::string label, std::string* value, obj::Object* object = nullptr) : value(value), text(*value), object(object), clickTime(-1.0f), textTriggered(false), AttributeElement(label, UI_TEXT_ENTRY) {}
 
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
@@ -275,6 +275,7 @@ namespace ui
         void OnRelease(StateMachine* state) override;
 
     private:
+        obj::Object* object;
         float clickTime;
         bool textTriggered;
         std::string* value;

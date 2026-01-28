@@ -2,14 +2,15 @@
 using namespace obs;
 
 // Constructor & Deocnstructor
-ObjectSystem::ObjectSystem()
+ObjectSystem::ObjectSystem(StateMachine* state)
 {
+    this->state = state;
     rootFolder = new Folder("Scene");
     selectedFolder = rootFolder;
     renderSettings.backfaceCull = true;
     renderSettings.renderTriangles = true;
     renderSettings.mode = OR_SIMPLE;
-    selectedElement = nullptr;
+    //selectedElement = nullptr;
 }
 ObjectSystem::~ObjectSystem()
 {
