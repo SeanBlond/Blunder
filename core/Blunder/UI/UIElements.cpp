@@ -179,7 +179,6 @@ void Toggle::OnRelease(StateMachine* state)
     // Toggling the value
     state->exitState();
     *value = !(*value);
-    std::cout << "Toggle Clicked: " << *value << std::endl;
 }
 
 // Text Entry Mouse Functions
@@ -208,7 +207,7 @@ void HierarchyTextEntry::OnClick(StateMachine* state)
         textTriggered = true;
         saveValue = *value;
     }
-    // Otherwise, it will register as a late single click, and reset the clickTime
+    // Otherwise, it will register as a single click
     else
     {
         // Checking if object reference exists before setting it to be the selected object

@@ -99,7 +99,6 @@ int main() {
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
     // Creating Default Objects
-    printf("Adding Test Object\n");
     objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
     objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
     objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
@@ -118,7 +117,6 @@ int main() {
 
     // Hierarchy UI Creation
     HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
-    std::cout << "Hierarchy Interactables" << std::endl;
     hierarchyUI.GenerateInteractables();
 
 

@@ -27,7 +27,6 @@ void AttributeWindow::GenerateInteractables()
         );
         ui::AttributeInteractable dropDownInteractable(dropdownCorners, attributes[i]->getDropDownButton());
         interactables.push_back(dropDownInteractable);
-        std::cout << "Interactable Generated at (" << dropdownCorners.x << ", " << dropdownCorners.y << ", " << dropdownCorners.z << ", " << dropdownCorners.w << ")\n";
 
         // Other Elements
         if (attributes[i]->getCollapsed())
@@ -114,6 +113,12 @@ void AttributeWindow::DrawAttributeWindow()
 }
 void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
+    // Checking if StateMachine selected object differs from attribute object, and if it does, changes it
+    if (attributeObject != state->getSelectedObject())
+    {
+        CreateUIfromObject(state->getSelectedObject());
+    }
+
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     xpos /= width;
@@ -186,6 +191,13 @@ void AttributeWindow::ClearAttributes()
 }
 void AttributeWindow::CreateUIfromObject(obj::Object* object)
 {
+    // Checking if object exists
+    if (object == nullptr)
+        return;
+    
+    // Updating Attribute Object
+    attributeObject = object;
+
     // Clearing attributes
     ClearAttributes();
 
@@ -282,7 +294,6 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
         (0.08f * indent) + 0.08f,
         yPos + 0.04f
     );
-    std::cout << "Interactable Generated at (" << tempCorners.x << ", " << tempCorners.y << ", " << tempCorners.z << ", " << tempCorners.w << ")\n";
     ui::AttributeInteractable elementDropdown(tempCorners, new ui::Toggle("element-dropdown", element->getDropdownAddress(), ui::UI_DROPDOWN));
     interactables.push_back(elementDropdown);
 
@@ -303,7 +314,6 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
         0.88f,
         yPos + 0.04f
     );
-    std::cout << "Interactable Generated at (" << tempCorners.x << ", " << tempCorners.y << ", " << tempCorners.z << ", " << tempCorners.w << ")\n";
     ui::AttributeInteractable elementVisibility(tempCorners, new ui::Toggle("element-dropdown", element->getDisplayedAddress()));
     interactables.push_back(elementVisibility);
 
@@ -314,7 +324,6 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
         0.96f,
         yPos + 0.04f
     );
-    std::cout << "Interactable Generated at (" << tempCorners.x << ", " << tempCorners.y << ", " << tempCorners.z << ", " << tempCorners.w << ")\n";
     ui::AttributeInteractable elementRender(tempCorners, new ui::Toggle("element-dropdown", element->getRenderedAddress()));
     interactables.push_back(elementRender);
 

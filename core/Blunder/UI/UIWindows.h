@@ -54,7 +54,7 @@ class AttributeWindow : public UIWindow
 {
 public:
     // Constructor & Desconstructor
-    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), clickedElement(nullptr) {}
+    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fontName, int fontSize, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fontName, fontSize), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
     ~AttributeWindow()
     {
         ClearAttributes();
@@ -76,11 +76,10 @@ public:
     void CreateUIfromObject(obj::Object* object);
 
 private:
+    obj::Object* attributeObject;
     std::vector<ui::Attribute*> attributes;
     std::vector<ui::AttributeInteractable> interactables;
     ui::AttributeElement* clickedElement;
-
-    
 };
 
 // Hierarchy Window
