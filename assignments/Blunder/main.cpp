@@ -120,11 +120,11 @@ int main() {
     state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
     // Attribute UI Creation
-    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64);
+    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png");
     attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
-    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/fonts/Lato-Regular.ttf", 64, &objectSystem);
+    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", &objectSystem);
     hierarchyUI.GenerateInteractables();
 
 

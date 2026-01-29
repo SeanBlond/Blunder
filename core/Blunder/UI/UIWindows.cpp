@@ -105,6 +105,9 @@ void AttributeWindow::DrawAttributeWindow()
         // Creating Space for Next Attribute
         attributeYPos -= (width * 0.04f);
     }
+
+    // Rendering the text
+    renderer.renderText();
 }
 void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -459,6 +462,9 @@ void HierarchyWindow::DrawAttributeWindow()
 
     // Starting the UI Draw from the root folder
     DrawUIFolder(objectSystem->getRootFolder(), 0, yPos);
+
+    // Rendering the text
+    renderer.renderText();
 }
 void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
