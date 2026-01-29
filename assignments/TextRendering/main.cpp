@@ -75,6 +75,9 @@ int main()
     ui::UIRenderer renderer("assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", projection);
     text.setTyping(true);
 
+    // Test Objkect
+    shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -82,10 +85,10 @@ int main()
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         //text.addText(&renderer, 10.0f, 690.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
         //std::string cursorText = "Current Cursor Position: " + std::to_string(text.getCursor());
-        renderer.addText("T", 10.0f, 650.0f, 0.45f, colors::white.rgb(), CENTER);
+        renderer.addText("RqH79j", 10.0f, 650.0f, 0.45f, colors::white.rgb(), CENTER);
         renderer.renderText();
 
 

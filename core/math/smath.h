@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <stdio.h>
 #include <math.h>
 #include <vector>
@@ -308,10 +309,17 @@ namespace smath
         }
         std::cout << std::endl;
     }
-    inline void outputVec3(glm::vec3 vector)
+    inline std::string outputVec3(glm::vec3 vector)
     {
-
-        std::cout << "(" << (vector.x) << ", " << (vector.y) << ", " << (vector.z) << ")" << std::endl;
+        std::ostringstream output;
+        output << "(" << (vector.x) << ", " << (vector.y) << ", " << (vector.z) << ")";
+        return output.str();
+    }
+    inline std::string outputVec2(glm::vec2 vector)
+    {
+        std::ostringstream output;
+        output << "(" << (vector.x) << ", " << (vector.y) << ")";
+        return output.str();
     }
 
     template <typename T>

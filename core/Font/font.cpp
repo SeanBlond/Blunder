@@ -28,7 +28,7 @@ Font::Font(std::string fntFile, std::string fontImage)
 
     // Position Attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)0);
 
     // TexCoord Attribute
     glEnableVertexAttribArray(1);
@@ -40,7 +40,6 @@ Font::Font(std::string fntFile, std::string fontImage)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
 
     // Creating Shader
     const char* textVertexShader = R"(
@@ -325,7 +324,6 @@ void Font::UpdateMesh()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, textEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
@@ -365,18 +363,18 @@ void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 co
         // Checking for New Line
         if (text[i] == '\n')
         {
-            y -= lineHeight *1.3 * scale;
+            y -= lineHeight * 1.3 * scale;
             x = initialX;
             continue;
         }
         else if (text[i] == ' ')
         {
-            x += (ch.Advance >> 6) * scale;
+            x += ch.Advance * scale;
             continue;
         }
 
         float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - ((ch.Size.y - ch.Bearing.y) * scale);
+        float ypos = y - ((ch.Size.y + ch.Bearing.y) * scale);
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
 
@@ -392,7 +390,7 @@ void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 co
 
 
         // Adding Index Information
-        unsigned int offset = indices.size();
+        unsigned int offset = vertices.size() - 4;
         unsigned int tempIndices[6] = {
             offset,     offset + 1,  offset + 2,
             offset + 2, offset + 3,  offset
@@ -400,7 +398,7 @@ void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 co
         indices.insert(indices.end(), std::begin(tempIndices), std::end(tempIndices));
 
         // now advance cursors for next glyph
-        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+        x += ch.Advance * scale;
     }
 }
 void Font::RenderText(glm::mat4 projection)
@@ -415,8 +413,7 @@ void Font::RenderText(glm::mat4 projection)
 
     // Rendeing the meshes
     glBindVertexArray(textVAO);
-    int count = vertices.size() * 2 / 3;
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0); 
     glBindVertexArray(0);
 
     // Clearing Vertices & Indices after rendering
