@@ -47,7 +47,7 @@ namespace ui
         void resetSelection();
         void updateSelection();
         void selectAll();
-        void renderText(ui::UIRenderer* renderer, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+        void addText(ui::UIRenderer* renderer, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
         std::string returnSelected();
         std::string cutSelected();
 

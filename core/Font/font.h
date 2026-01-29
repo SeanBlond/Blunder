@@ -15,11 +15,19 @@
 
 enum TextAlign { LEFT, CENTER, RIGHT };
 
-struct Character {
+struct Character 
+{
     glm::vec4    Positions; // Corner Positon of the glyph on the bitmap UV  y---w
     glm::ivec2   Size;      // Size of the glyph                             |   |
     glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph     |   |
     unsigned int Advance;   // Horizontal offset to advance to next glyph    x---z
+};
+
+struct TextVertex 
+{
+    glm::vec2 Position;
+    glm::vec2 TexCoord;
+    glm::vec3 TextColor;
 };
 
 class Font
@@ -27,16 +35,16 @@ class Font
 public:
     // Constructors
     Font(std::string fntFile, std::string fontImage);
+    ~Font();
 
     // Getters
-    Character getCharacter(std::string::const_iterator character) { return Characters[*character]; }
-
-    // Setters
-    void setProjection(glm::mat4 projection) { this->projection = projection; }
+    Character getCharacter(char character) { return Characters[(int)character - firstChar]; }
 
     // Functions
     void ReadFNTFile(std::string filePath);
-    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+    void AddText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+    void RenderText(glm::mat4 projection);
+    void UpdateMesh();
 
 private:
     // Font Info
@@ -48,9 +56,11 @@ private:
 
     // OpenGL Rendering Info
     shdr::Shader* textShader;
-    glm::mat4 projection;
+    shdr::Texture2D* fontBitmap;
     std::vector<Character> Characters;
-    unsigned int textVAO, textVBO;
+    std::vector<TextVertex> vertices;
+    std::vector<unsigned int> indices;
+    unsigned int textVAO, textVBO, textEBO;
     unsigned int bitmapTexture;
 };
 

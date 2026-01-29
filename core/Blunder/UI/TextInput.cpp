@@ -105,7 +105,7 @@ std::string TextInput::cutSelected()
 
     return substring;
 }
-void TextInput::renderText(ui::UIRenderer* renderer, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
+void TextInput::addText(ui::UIRenderer* renderer, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
 {
     // Rendering Cursor & Selection
     if (typing)
@@ -126,7 +126,7 @@ void TextInput::renderText(ui::UIRenderer* renderer, float x, float y, float sca
     }
 
     // Rendering Text
-    renderer->renderText(text, x, y, scale, color, alignment);
+    renderer->addText(text, x, y, scale, color, alignment);
 }
 glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, float y, float scale, TextAlign alignment, Font* font)
 {
@@ -138,10 +138,9 @@ glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, fl
     if (alignment == RIGHT)
     {
         float textWidth = 0;
-        std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++)
+        for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (c == (text.end() - 1) ? 0 : font->getCharacter(c).Bearing.x) + font->getCharacter(c).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(i).Bearing.x) + font->getCharacter(i).Advance >> 6;
         }
         alignmentOffset = textWidth * scale;
     }
@@ -149,9 +148,9 @@ glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, fl
     {
         float textWidth = 0;
         std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++)
+        for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (c == (text.end() - 1) ? 0 : font->getCharacter(c).Bearing.x) + font->getCharacter(c).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(i).Bearing.x) + font->getCharacter(i).Advance >> 6;
         }
         alignmentOffset = textWidth * scale * 0.5;
     }
@@ -159,9 +158,9 @@ glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, fl
     // iterate through all characters
     std::string::const_iterator c;
     float xpos, ypos;
-    for (c = text.begin(); c != text.end() + cursor; c++)
+    for (int i = 0; i < text.size(); i++)
     {
-        Character ch = font->getCharacter(c);
+        Character ch = font->getCharacter(i);
 
         // Checking for New Line
         if (*c == '\n')
@@ -184,7 +183,7 @@ glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, fl
     }
     if (text.length() > 0)
     {
-        Character ch = font->getCharacter(text.end() - 1);
+        Character ch = font->getCharacter(text[text.size() - 1]);
         xpos = x + ch.Bearing.x * scale - alignmentOffset;
     }
     else

@@ -72,7 +72,7 @@ void AttributeWindow::DrawAttributeWindow()
         renderer.renderQuad(glm::vec3((width / 2), attributeYPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
 
         // Rendering Attribute Label
-        renderer.renderText(attributes[i]->getName(), (width / 2), attributeYPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
+        renderer.addText(attributes[i]->getName(), (width / 2), attributeYPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
 
 
         // Checking if elements should be rendered
@@ -452,7 +452,7 @@ void HierarchyWindow::DrawAttributeWindow()
 
     // Rendering Hierarchy Label
     renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
-    renderer.renderText("Hierarchy", (width / 2), yPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
+    renderer.addText("Hierarchy", (width / 2), yPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
 
     // Updating yPos
     yPos -= (width * 0.1f);

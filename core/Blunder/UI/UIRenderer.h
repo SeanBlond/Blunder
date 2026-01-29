@@ -36,13 +36,13 @@ namespace ui
 
         // Getters
         Font* getTextRenderer() { return textRenderer; }
-
         // Setters
         void setProjection(glm::mat4 projection) { this->projection = projection; }
 
         // Functions
         //void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color);
-        void renderText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+        void addText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+        void renderText();
         void renderQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color);
         void renderTextureQuad(glm::vec3 position, glm::vec2 size, UITexture texture);
 

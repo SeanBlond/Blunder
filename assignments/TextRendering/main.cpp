@@ -76,23 +76,24 @@ int main()
     text.setTyping(true);
 
     // render loop
-    /*while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window))
     {
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        text.renderText(&renderer, 10.0f, 690.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
-        //lato.RenderText(text.getText(), 10.0f, 690.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
+        //text.addText(&renderer, 10.0f, 690.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
         //std::string cursorText = "Current Cursor Position: " + std::to_string(text.getCursor());
-        //lato.RenderText(cursorText, 10.0f, 650.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
+        renderer.addText("T", 10.0f, 650.0f, 0.45f, colors::white.rgb(), CENTER);
+        renderer.renderText();
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
-    }*/
+    }
 
     glfwTerminate();
     return 0;

@@ -113,10 +113,13 @@ UIRenderer::~UIRenderer()
 }
 
 // Functions
-void UIRenderer::renderText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
+void UIRenderer::addText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
 {
-    textRenderer->setProjection(projection);
-    textRenderer->RenderText(text, x, y, scale, color, alignment);
+    textRenderer->AddText(text, x, y, scale, color, alignment);
+}
+void UIRenderer::renderText()
+{
+    textRenderer->RenderText(projection);
 }
 void UIRenderer::renderQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color)
 {
