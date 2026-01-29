@@ -3,15 +3,16 @@ using namespace ui;
 
 // UI Quads
 // Constructors and Deconstructor
-UIRenderer::UIRenderer(std::string fntFilePath, std::string bitmapFilePath)
+UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, float textHeight)
 { 
     // Setting Up Text Renderer
-    textRenderer = new Font(fntFilePath, bitmapFilePath);
+    textRenderer = new Font(fntFilePath, fontBitmapFilePath);
+    this->textHeight = textHeight;
 
     // Shaders
     const char* quadVertexShader = R"(
         #version 330 core
-        layout (location = 0) in vec2 vertex;
+        layout (location = 0) in vec3 vertex;
         layout (location = 1) in vec2 TexCoord;
         layout (location = 2) in vec3 UIColor;
         out vec2 TexCoords;
@@ -21,7 +22,7 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string bitmapFilePath)
 
         void main()
         {
-            gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
+            gl_Position = projection * vec4(vertex, 1.0);
             TexCoords = TexCoord;
             Color = UIColor;
         }  
@@ -45,6 +46,15 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string bitmapFilePath)
 
     // Setting Up Shader
     quadShader = new shdr::Shader(quadVertexShader, quadFragmentShader, 1);
+
+    // Creating the UI Bitmap
+    uiBitmap = new shdr::Texture2D(uiBitmapFilePath.c_str(), GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE_WRAP_S);
+
+    // Setting up UI Bitmap UV data
+    createBitmapUVData();
+
+    // Temp Quad Data
+    addQuad(glm::vec3(0), glm::vec2(1), glm::vec3(1));
 
     // Configuring VAO, VBO, and EBO
     glGenVertexArrays(1, &VAO);
@@ -105,8 +115,43 @@ UIRenderer::~UIRenderer()
 }
 
 // Functions
-void UIRenderer::addText(std::string text, glm::vec3(position), float scale, glm::vec3 color, TextAlign alignment)
+void UIRenderer::createBitmapUVData()
 {
+    // corner vec4 format
+    // y---w
+    // |   |
+    // |   |
+    // x---z
+
+    // Getting each icon from each row from top to bottom
+    for (int i = 6; i > 0; i--)
+    {
+        // Left Icon
+        glm::vec4 tempCorner = glm::vec4(
+            1.0f,
+            (float)i / 6.0f,
+            0.5f,
+            (float)(i - 1) / 6.0f
+            );
+        uiTextureCorners.push_back(tempCorner);
+        
+        // Right Icon
+        tempCorner = glm::vec4(
+            0.5f,
+            (float)i / 6.0f,
+            0.0f,
+            (float)(i - 1) / 6.0f
+            );
+        uiTextureCorners.push_back(tempCorner);
+    }
+
+}
+void UIRenderer::addText(std::string text, glm::vec3 position, float scale, glm::vec3 color, TextAlign alignment)
+{
+    // Raising text if the value is not set
+    if (position.z <= 0.0f)
+        position.z = textHeight;
+
     textRenderer->AddText(text, position, scale, color, alignment);
 }
 void UIRenderer::renderText(glm::mat4 projection)

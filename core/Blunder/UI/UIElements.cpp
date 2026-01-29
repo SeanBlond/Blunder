@@ -493,7 +493,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     }
 
     // Drawing Label Text
-    renderer->addText(label, (width * 0.42f), ypos - (width * 0.035f), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3((width * 0.42f), ypos - (width * 0.035f), 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -503,10 +503,10 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->renderQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, (width * 0.69f), ypos - (width * 0.0275f), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), ypos - (width * 0.0275f), 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
 void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -536,5 +536,5 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float y
         renderer->addQuad(glm::vec3(width * 0.5f + xPos.x, ypos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, xPos.x, ypos - (width * 0.05f), textSize, glm::vec3(1.0f));
+    text.addText(renderer, glm::vec3(xPos.x, ypos - (width * 0.05f), 0), textSize, glm::vec3(1.0f));
 }

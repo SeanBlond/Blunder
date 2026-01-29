@@ -343,7 +343,7 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         float textWidth = 0;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance * scale;
         }
         alignmentOffset = textWidth * scale;
     }
@@ -352,7 +352,7 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         float textWidth = 0;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance * scale;
         }
         alignmentOffset = textWidth * scale * 0.5;
     }
@@ -415,9 +415,10 @@ void Font::RenderText(glm::mat4 projection)
     UpdateMesh();
 
     // Setting up shader and texture
-    textShader->setMat4("projection", projection);
-    textShader->useShader();
     fontBitmap->Bind(0);
+    textShader->setMat4("projection", projection);
+    textShader->setInt("text", 0);
+    textShader->useShader();
 
     // Rendeing the meshes
     glBindVertexArray(textVAO);

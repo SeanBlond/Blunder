@@ -17,7 +17,7 @@ class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath) : width(width), height(height), renderer(fntFilePath, bitmapFilePath) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : width(width), height(height), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
 
     // Getters
     float getWidth() { return width; }
@@ -25,10 +25,10 @@ public:
     glm::mat4 getProjection() { return smath::orthographic(0.0f, width, 0.0f, height); }
 
     // Setters
-    void setWidth(float width) { this->width = width; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
-    void setHeight(float height) { this->height = height; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
-    void setDimensions(float width, float height, float xoffset, float yoffset) { this->width = width; this->height = height; this->xoffset = xoffset; this->yoffset = yoffset; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
-    void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { this->width = dimensions.x; this->height = dimensions.y; this->xoffset = offset.x; this->yoffset = offset.y; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
+    void setWidth(float width) { this->width = width; }
+    void setHeight(float height) { this->height = height; }
+    void setDimensions(float width, float height, float xoffset, float yoffset) { this->width = width; this->height = height; this->xoffset = xoffset; this->yoffset = yoffset; }
+    void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { this->width = dimensions.x; this->height = dimensions.y; this->xoffset = offset.x; this->yoffset = offset.y; }
 
     // Functions
     virtual void GenerateInteractables() = 0;
@@ -55,7 +55,7 @@ class AttributeWindow : public UIWindow
 {
 public:
     // Constructor & Desconstructor
-    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fntFilePath, bitmapFilePath), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
+    AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
     ~AttributeWindow()
     {
         ClearAttributes();
@@ -88,7 +88,7 @@ class HierarchyWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fntFilePath, bitmapFilePath), objectSystem(objectSystem), clickedElement(nullptr) {}
+    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), clickedElement(nullptr) {}
     ~HierarchyWindow()
     {
         interactables.clear();

@@ -55,15 +55,8 @@ std::mutex TimeManager::mtx;
 // Setting up Time Manager
 TimeManager* Time = TimeManager::getInstance();
 
-int main() {
-    // ASCII STUFF
-    std::cout << std::endl;
-    for (int i = 32; i <= 126; i++)
-    {
-        std::cout << (char)i;
-    }
-    std::cout << "DONE" << std::endl;
-
+int main() 
+{
     printf("Initializing...\n");
     if (!glfwInit()) {
         printf("GLFW failed to init!");
@@ -120,11 +113,11 @@ int main() {
     state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
     // Attribute UI Creation
-    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png");
+    AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", "assets/Bitmap/UIBitmap.png");
     attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
-    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", &objectSystem);
+    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem);
     hierarchyUI.GenerateInteractables();
 
 
