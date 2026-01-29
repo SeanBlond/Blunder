@@ -25,35 +25,35 @@ namespace ui
     };
 
     constexpr int NUM_TEXTURES = 11;
-    enum UITexture { UI_DISPLAY_T, UI_DISPLAY_F, UI_DROPDOWN_T, UI_DROPDOWN_F, UI_RENDER_T, UI_RENDER_F, UI_FOLDER_SYMBOL, UI_OBJECT_SYMBOL, UI_LIGHT_SYMBOL, UI_CAMERA_SYMBOL };
+    enum UITexture { UI_NO_TEXTURE = -1, UI_DISPLAY_T, UI_DISPLAY_F, UI_DROPDOWN_T, UI_DROPDOWN_F, UI_RENDER_T, UI_RENDER_F, UI_FOLDER_SYMBOL, UI_OBJECT_SYMBOL, UI_LIGHT_SYMBOL, UI_CAMERA_SYMBOL };
 
     class UIRenderer
     {
     public:
         // Constructors and Deconstructor
-        UIRenderer(std::string fntFilePath, std::string bitmapFilePath, glm::mat4 projection);
+        UIRenderer(std::string fntFilePath, std::string bitmapFilePath);
         ~UIRenderer();
 
         // Getters
         Font* getTextRenderer() { return textRenderer; }
-        // Setters
-        void setProjection(glm::mat4 projection) { this->projection = projection; }
 
         // Functions
         //void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color);
-        void addText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
-        void renderText();
-        void renderQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color);
-        void renderTextureQuad(glm::vec3 position, glm::vec2 size, UITexture texture);
+        void addText(std::string text, glm::vec3(position), float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+        void renderText(glm::mat4 projection);
+        void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture = UI_NO_TEXTURE);
+        void UpdateMesh();
+        void renderQuads(glm::mat4 projection);
 
     private:
         Font* textRenderer;
         shdr::Shader* quadShader;
-        shdr::Shader* quadTextureShader;
-        glm::mat4 projection;
-        unsigned int VAO, VBO;
-        std::vector<shdr::Texture2D*> ui_textures;
-        //std::vector<UIQuad> quads;
+        unsigned int VAO, VBO, EBO;
+        std::vector<TextVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        shdr::Texture2D* uiBitmap;
+        std::vector<glm::vec4> uiTextureCorners;
     };
 }
 

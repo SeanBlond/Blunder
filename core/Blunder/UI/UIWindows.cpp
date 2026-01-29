@@ -59,17 +59,17 @@ void AttributeWindow::GenerateInteractables()
         attributeYPos += 0.04f;
     }
 }
-void AttributeWindow::DrawAttributeWindow()
+void AttributeWindow::DrawWindow()
 {
     // Rendering Base Quad
-    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb());
+    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb(), getProjection());
 
     // Drawing Each Attribute
     float attributeYPos = height - (width * 0.1f);
     for (int i = 0; i < attributes.size(); i++)
     {
         // Rendering Label Box
-        renderer.renderQuad(glm::vec3((width / 2), attributeYPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
+        renderer.renderQuad(glm::vec3((width / 2), attributeYPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f), getProjection());
 
         // Rendering Attribute Label
         renderer.addText(attributes[i]->getName(), (width / 2), attributeYPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
@@ -87,7 +87,7 @@ void AttributeWindow::DrawAttributeWindow()
             // Render Elements Container Quad
             float containerHeight = width * ((attributes[i]->getElementCount() * 0.08f) + ((attributes[i]->getElementCount() + 1) * 0.02f));
             float containerPosY = attributeYPos - (containerHeight * 0.5f);
-            renderer.renderQuad(glm::vec3((width / 2), containerPosY, 0.15f), glm::vec2(0.92f * width, containerHeight), glm::vec3(0.35f));
+            renderer.renderQuad(glm::vec3((width / 2), containerPosY, 0.15f), glm::vec2(0.92f * width, containerHeight), glm::vec3(0.35f), getProjection());
 
             attributeYPos -= (width * 0.07f);
 
@@ -107,7 +107,7 @@ void AttributeWindow::DrawAttributeWindow()
     }
 
     // Rendering the text
-    renderer.renderText();
+    renderer.renderText(getProjection());
 }
 void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -371,24 +371,24 @@ void HierarchyWindow::GenerateInteractables()
 void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 {
     // Rendering the base folder UI
-    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb());
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.08f * width), colors::lightgrey.rgb(), getProjection());
 
     // Dropdown Symbol
     if (folder->hasChildren())
-        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F), getProjection());
 
     // Folder Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), ui::UI_FOLDER_SYMBOL);
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), ui::UI_FOLDER_SYMBOL, getProjection());
 
     // Folder Text
     glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
     folder->getHierarchyTextUI()->RenderElement(&renderer, yPos, (width * 0.08f), textPosX * width, mediumText());
 
     // Visibility Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F), getProjection());
 
     // Render Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.15f), glm::vec2(0.08f * width), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F), getProjection());
 
     // Changing yPos
     yPos -= (width * 0.08f);
@@ -413,24 +413,24 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
 {
     // Rendering the base element UI
     Color baseColor = (objectSystem->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
-    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb());
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.08f * width), baseColor.rgb(), getProjection());
     
     // Dropdown Symbol
     if (element->hasChildren())
-        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer.renderTextureQuad(glm::vec3((width * 0.08f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F), getProjection());
     
     // Object Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL);
+    renderer.renderTextureQuad(glm::vec3((width * 0.16f) + (width * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * width), ui::UI_OBJECT_SYMBOL, getProjection());
     
     // Object Text
     glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
     element->getHierarchyTextUI()->RenderElement(&renderer, yPos, (width * 0.08f), textPosX * width, mediumText());
     
     // Visibility Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.84f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F), getProjection());
     
     // Render Symbol
-    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer.renderTextureQuad(glm::vec3((width * 0.92f), yPos, 0.15f), glm::vec2(0.08f * width), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F), getProjection());
 
     // Changing yPos
     yPos -= (width * 0.08f);
@@ -445,16 +445,16 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
         }
     }
 }
-void HierarchyWindow::DrawAttributeWindow()
+void HierarchyWindow::DrawWindow()
 {
     // Rendering Base Quads
-    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb());
-    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.01f), glm::vec2(width*0.92f, height - (width * 0.08f)), colors::darkerGrey.rgb());
+    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb(), getProjection());
+    renderer.renderQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.01f), glm::vec2(width*0.92f, height - (width * 0.08f)), colors::darkerGrey.rgb(), getProjection());
 
     float yPos = height - (width * 0.1f);
 
     // Rendering Hierarchy Label
-    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
+    renderer.renderQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f), getProjection());
     renderer.addText("Hierarchy", (width / 2), yPos - (width * 0.035f), largText(), glm::vec3(1.0f), CENTER);
 
     // Updating yPos
@@ -464,7 +464,7 @@ void HierarchyWindow::DrawAttributeWindow()
     DrawUIFolder(objectSystem->getRootFolder(), 0, yPos);
 
     // Rendering the text
-    renderer.renderText();
+    renderer.renderText(getProjection());
 }
 void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {

@@ -12,9 +12,9 @@ Font::Font(std::string fntFile, std::string fontImage)
     fontBitmap = new shdr::Texture2D(fontImage.c_str(), GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE_WRAP_S);
 
     // Temp Vertex Info to bind VAO and EBO to
-    AddText("W", 0, 0, 1, glm::vec3(1));
+    AddText("W", glm::vec3(0), 1, glm::vec3(1));
 
-    // Configuring VAO and VBO
+    // Configuring VAO, VBO, and EBO
     glGenVertexArrays(1, &textVAO);
     glGenBuffers(1, &textVBO);
     glGenBuffers(1, &textEBO);
@@ -28,7 +28,7 @@ Font::Font(std::string fntFile, std::string fontImage)
 
     // Position Attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(TextVertex), (void*)0);
 
     // TexCoord Attribute
     glEnableVertexAttribArray(1);
@@ -44,7 +44,7 @@ Font::Font(std::string fntFile, std::string fontImage)
     // Creating Shader
     const char* textVertexShader = R"(
         #version 330 core
-        layout (location = 0) in vec2 vertex;
+        layout (location = 0) in vec3 vertex;
         layout (location = 1) in vec2 TexCoord;
         layout (location = 2) in vec3 TextColor;
         out vec2 TexCoords;
@@ -54,7 +54,7 @@ Font::Font(std::string fntFile, std::string fontImage)
 
         void main()
         {
-            gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
+            gl_Position = projection * vec4(vertex, 1.0);
             TexCoords = TexCoord;
             Color = TextColor;
         }  
@@ -85,6 +85,10 @@ Font::~Font()
     delete fontBitmap;
     textShader = nullptr;
     fontBitmap = nullptr;
+
+    glDeleteVertexArrays(1, &textVAO);
+    glDeleteBuffers(1, &textVBO);
+    glDeleteBuffers(1, &textEBO);
 }
 
 void Font::ReadFNTFile(std::string filePath)
@@ -326,8 +330,12 @@ void Font::UpdateMesh()
 
     glBindVertexArray(0);
 }
-void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
+void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 color, TextAlign alignment)
 {
+    // Setting x and y values
+    float x = position.x;
+    float y = position.y;
+
     // Calculating Alignment
     float alignmentOffset = 0;
     if (alignment == RIGHT)
@@ -380,11 +388,11 @@ void Font::AddText(std::string text, float x, float y, float scale, glm::vec3 co
 
         // Adding Vertex Information
         TextVertex tempVertices[4] = {
-                         // Positions                    // TexCoord (Flipped)                       // TextColor
-            TextVertex({ glm::vec2(xpos,     ypos),      glm::vec2(ch.Positions.x, ch.Positions.w),  color }),  // Bottom Left
-            TextVertex({ glm::vec2(xpos + w, ypos),      glm::vec2(ch.Positions.z, ch.Positions.w),  color }),  // Bottom Right
-            TextVertex({ glm::vec2(xpos + w, ypos + h),  glm::vec2(ch.Positions.z, ch.Positions.y),  color }),  // Top Right
-            TextVertex({ glm::vec2(xpos,     ypos + h),  glm::vec2(ch.Positions.x, ch.Positions.y),  color }),   // Top Left
+                         // Positions                                // TexCoord                                 // TextColor
+            TextVertex({ glm::vec3(xpos,     ypos,     position.z),  glm::vec2(ch.Positions.x, ch.Positions.w),  color }),  // Bottom Left
+            TextVertex({ glm::vec3(xpos + w, ypos,     position.z),  glm::vec2(ch.Positions.z, ch.Positions.w),  color }),  // Bottom Right
+            TextVertex({ glm::vec3(xpos + w, ypos + h, position.z),  glm::vec2(ch.Positions.z, ch.Positions.y),  color }),  // Top Right
+            TextVertex({ glm::vec3(xpos,     ypos + h, position.z),  glm::vec2(ch.Positions.x, ch.Positions.y),  color }),   // Top Left
         };
         vertices.insert(vertices.end(), std::begin(tempVertices), std::end(tempVertices));
 

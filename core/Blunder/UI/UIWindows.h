@@ -17,11 +17,12 @@ class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath) : width(width), height(height), renderer(fntFilePath, bitmapFilePath, smath::orthographic(0.0f, width, 0.0f, height)) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string bitmapFilePath) : width(width), height(height), renderer(fntFilePath, bitmapFilePath) {}
 
     // Getters
     float getWidth() { return width; }
     float getHeight() { return height; }
+    glm::mat4 getProjection() { return smath::orthographic(0.0f, width, 0.0f, height); }
 
     // Setters
     void setWidth(float width) { this->width = width; renderer.setProjection(smath::orthographic(0, width, 0, height)); }
@@ -31,7 +32,7 @@ public:
 
     // Functions
     virtual void GenerateInteractables() = 0;
-    virtual void DrawAttributeWindow() = 0;
+    virtual void DrawWindow() = 0;
     virtual void ManageUIInteraction(GLFWwindow* window, StateMachine* state) = 0;
 
 
@@ -70,7 +71,7 @@ public:
     // Functions
     // Once UI Quads are better optimized, GenerateInteractables should be reworked
     void GenerateInteractables() override;
-    void DrawAttributeWindow() override;
+    void DrawWindow() override;
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
     void ClearAttributes();
     void CreateUIfromObject(obj::Object* object);
@@ -105,7 +106,7 @@ public:
     void GenerateInteractables() override;
     void DrawUIFolder(Folder* folder, int indent, float& yPos);
     void DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos);
-    void DrawAttributeWindow() override;
+    void DrawWindow() override;
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
 
 private:

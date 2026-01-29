@@ -25,7 +25,7 @@ struct Character
 
 struct TextVertex 
 {
-    glm::vec2 Position;
+    glm::vec3 Position;
     glm::vec2 TexCoord;
     glm::vec3 TextColor;
 };
@@ -42,7 +42,7 @@ public:
 
     // Functions
     void ReadFNTFile(std::string filePath);
-    void AddText(std::string text, float x, float y, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+    void AddText(std::string text, glm::vec3 position, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
     void RenderText(glm::mat4 projection);
     void UpdateMesh();
 

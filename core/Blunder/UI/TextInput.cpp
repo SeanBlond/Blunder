@@ -105,28 +105,28 @@ std::string TextInput::cutSelected()
 
     return substring;
 }
-void TextInput::addText(ui::UIRenderer* renderer, float x, float y, float scale, glm::vec3 color, TextAlign alignment)
+void TextInput::addText(ui::UIRenderer* renderer, glm::vec3 position, float scale, glm::vec3 color, TextAlign alignment)
 {
     // Rendering Cursor & Selection
     if (typing)
     {
         // Cursor
-        glm::vec2 cursorPos = getCursorPosition(text, cursor, x, y, scale, alignment, renderer->getTextRenderer());
+        glm::vec2 cursorPos = getCursorPosition(text, cursor, position.x, position.y, scale, alignment, renderer->getTextRenderer());
         //renderer->renderQuad(glm::vec3(cursorPos, 0), glm::vec2(5, scale), glm::vec3(0.8f));
-        renderer->renderQuad(glm::vec3(cursorPos, 0.25f), glm::vec2(3, 60 * scale), glm::vec3(0.8f));
+        renderer->addQuad(glm::vec3(cursorPos, 0.25f), glm::vec2(3, 60 * scale), glm::vec3(0.8f));
 
         // Selection
         if (selecting)
         {
-            glm::vec2 selectEndPos = getCursorPosition(text, (selectPos - (int)text.length()), x, y, scale, alignment, renderer->getTextRenderer());
+            glm::vec2 selectEndPos = getCursorPosition(text, (selectPos - (int)text.length()), position.x, position.y, scale, alignment, renderer->getTextRenderer());
             glm::vec2 selectPos = (cursorPos + selectEndPos) * 0.5f;
             float selectSize = abs(selectEndPos.x - cursorPos.x);
-            renderer->renderQuad(glm::vec3(selectPos, 0.24f), glm::vec2(selectSize, 60 * scale), colors::selectionBlue.rgb());
+            renderer->addQuad(glm::vec3(selectPos, 0.24f), glm::vec2(selectSize, 60 * scale), colors::selectionBlue.rgb());
         }
     }
 
     // Rendering Text
-    renderer->addText(text, x, y, scale, color, alignment);
+    renderer->addText(text, position, scale, color, alignment);
 }
 glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, float y, float scale, TextAlign alignment, Font* font)
 {
