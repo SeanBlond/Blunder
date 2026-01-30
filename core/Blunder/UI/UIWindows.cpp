@@ -222,25 +222,32 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     addAttribute(scaleAtrribute);
 
     // Adding Custom Mesh Attributes
-    std::vector<FloatAttribute*> floatAttributes = object->getMesh()->getFloatAttributes();
-    std::vector<IntAttribute*> intAttributes = object->getMesh()->getIntAttributes();
-
-    // Checkinf if the attributes have values before adding them
-    if (floatAttributes.size() != 0 || intAttributes.size() != 0)
+    // Checking if the attributes have values before adding them
+    if (object->getMesh()->hasAttributes())
     {
         // Creating the attribute
         ui::Attribute* meshAttribute = new ui::Attribute("Mesh");
 
         // Adding the float attributes
-        for (int i = 0; i < floatAttributes.size(); i++)
+        for (int i = 0; i < object->getMesh()->getNumFloatAttributes(); i++)
         {
-            meshAttribute->addFloatEntry(floatAttributes[i]->attributeLabel, &(floatAttributes[i]->attributeValue));
+            FloatAttribute* attribute = object->getMesh()->getFloatAttribute(i);
+            // Checking if the attribute should be a slider (has limits?)
+            if (attribute->hasLimits)
+                meshAttribute->addFloatSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]);
+            else
+                meshAttribute->addFloatEntry(attribute->attributeLabel, &(attribute->attributeValue));
         }
 
         // Adding the int attributes
-        for (int i = 0; i < intAttributes.size(); i++)
+        for (int i = 0; i < object->getMesh()->getNumIntAttributes(); i++)
         {
-            meshAttribute->addIntEntry(intAttributes[i]->attributeLabel, &(intAttributes[i]->attributeValue));
+            IntAttribute* attribute = object->getMesh()->getIntAttribute(i);
+            // Checking if the attribute should be a slider (has limits?)
+            if (attribute->hasLimits)
+                meshAttribute->addIntSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]);
+            else
+                meshAttribute->addIntEntry(attribute->attributeLabel, &(attribute->attributeValue));
         }
 
         // Adding the attributes

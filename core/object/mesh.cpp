@@ -47,8 +47,64 @@ void Mesh::createMesh()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
+bool Mesh::PrimitiveChanges()
+{
+    // Checking if the mesh is based on a primitive
+    if (type == 0)
+        return false;
+
+    // Checking if the attribute values have been changed
+    bool changed = false;
+    for (int i = 0; i < floatAttributes.size(); i++) // Float attributes
+    {
+        if (floatAttributes[i]->attributeValue != storedFloatAttributes[i]->attributeValue)
+        {
+            // Changding stored data to match public attribute
+            storedFloatAttributes[i]->attributeValue = floatAttributes[i]->attributeValue;
+            changed = true;
+        }
+    }    
+    for (int i = 0; i < intAttributes.size(); i++) // Float attributes
+    {
+        if (intAttributes[i]->attributeValue != storedIntAttributes[i]->attributeValue)
+        {
+            // Changding stored data to match public attribute
+            storedIntAttributes[i]->attributeValue = intAttributes[i]->attributeValue;
+            changed = true;
+        }
+    }
+
+    // Nothing changed
+    return changed;
+}
 void Mesh::DrawMesh(bool lines, bool points)
 {
+    // Checking if mesh needs to be updated
+    if (PrimitiveChanges())
+    {
+        // Changed the mesh based on what primitive this mesh is
+        if (type == MESH_PLANE)
+        {
+            UpdateMesh(mesh::createPlane(floatAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, intAttributes[0]->attributeValue));
+        }
+        else if (type == MESH_CUBE)
+        {
+            UpdateMesh(mesh::createCube(floatAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, floatAttributes[2]->attributeValue, intAttributes[0]->attributeValue));
+        }
+        else if (type == MESH_SPHERE)
+        {
+            UpdateMesh(mesh::createSphere(floatAttributes[0]->attributeValue, intAttributes[0]->attributeValue));
+        }
+        else if (type == MESH_CYLINDER)
+        {
+            UpdateMesh(mesh::createCylinder(floatAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, intAttributes[0]->attributeValue));
+        }
+        else if (type == MESH_TORUS)
+        {
+            UpdateMesh(mesh::createTorus(floatAttributes[0]->attributeValue, intAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, intAttributes[1]->attributeValue));
+        }
+    }
+
     // Drawing the mesh
     glBindVertexArray(VAO);
 
@@ -73,14 +129,14 @@ void Mesh::DrawMesh(bool lines, bool points)
 
     glBindVertexArray(0);
 }
-void Mesh::updateMesh(const Mesh& mesh)
+void Mesh::UpdateMesh(const Mesh& mesh)
 {
     this->vertices = mesh.vertices;
     this->indices = mesh.indices;
 
     glBindVertexArray(VAO);
 
-    std::cout << "Updating mesh with " << vertices.size() << " vertices" << std::endl;
+    //std::cout << "Updating mesh with " << vertices.size() << " vertices" << std::endl;
 
     // Updating VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -103,19 +159,21 @@ void Mesh::outputMesh()
         std::cout << (vertices[i].TexCoord.x) << ", " << (vertices[i].TexCoord.y) << std::endl;
     }
 }
-void Mesh::addFloatAttribute(std::string label, float value)
+void Mesh::addFloatAttribute(std::string label, float value, bool hasLimits, float lowerLimit, float upperLimit)
 {
-    floatAttributes.push_back(new FloatAttribute(label, value));
+    floatAttributes.push_back(new FloatAttribute(label, value, hasLimits, lowerLimit, upperLimit));
+    storedFloatAttributes.push_back(new FloatAttribute(label, value, hasLimits, lowerLimit, upperLimit));
 }
-void Mesh::addIntAttribute(std::string label, int value)
+void Mesh::addIntAttribute(std::string label, int value, bool hasLimits, int lowerLimit, int upperLimit)
 {
-    intAttributes.push_back(new IntAttribute(label, value));
+    intAttributes.push_back(new IntAttribute(label, value, hasLimits, lowerLimit, upperLimit));
+    storedIntAttributes.push_back(new IntAttribute(label, value, hasLimits, lowerLimit, upperLimit));
 }
 
 // Operators
 Mesh Mesh::operator=(const Mesh& aMesh)
 {
-    updateMesh(aMesh);
+    UpdateMesh(aMesh);
 
     return *this;
 }
@@ -331,7 +389,7 @@ extern Mesh* mesh::createSphere(float radius, int segments)
 
     // Returning Mesh
     Mesh* tempMesh = new Mesh(vertices, indices, MESH_SPHERE);
-    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addIntAttribute("Subdivisions", segments, true);
     tempMesh->addFloatAttribute("Radius", radius);
     return tempMesh;
 }
@@ -452,7 +510,7 @@ extern Mesh* mesh::createCylinder(float radius, float height, int segments)
 
     // Returning Mesh
     Mesh* tempMesh = new Mesh(vertices, indices, MESH_CYLINDER);
-    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addIntAttribute("Subdivisions", segments, true);
     tempMesh->addFloatAttribute("Height", height);
     tempMesh->addFloatAttribute("Radius", radius);
     return tempMesh;
@@ -520,7 +578,7 @@ extern Mesh* mesh::createPlane(float width, float height, int segments)
 
     // Returning Mesh
     Mesh* tempMesh = new Mesh(vertices, indices, MESH_PLANE);
-    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addIntAttribute("Subdivisions", segments, true);
     tempMesh->addFloatAttribute("Width", width);
     tempMesh->addFloatAttribute("Height", height);
     return tempMesh;
@@ -591,8 +649,8 @@ extern Mesh* mesh::createTorus(float majorRadius, float minorRadius, int majorSe
 
     // Returning Mesh Data
     Mesh* tempMesh = new Mesh(vertices, indices, MESH_TORUS);
-    tempMesh->addIntAttribute("Major Subdivisions", majorSegments);
-    tempMesh->addIntAttribute("Minor Subdivisions", minorSegments);
+    tempMesh->addIntAttribute("Major Subdivisions", majorSegments, true);
+    tempMesh->addIntAttribute("Minor Subdivisions", minorSegments, true);
     tempMesh->addFloatAttribute("Major Radius", majorRadius);
     tempMesh->addFloatAttribute("Minor Radius", minorRadius);
     return tempMesh;
@@ -750,7 +808,7 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
 
     // Returning Mesh Data
     Mesh* tempMesh = new Mesh(vertices, indices, MESH_CUBE);
-    tempMesh->addIntAttribute("Subdivisions", segments);
+    tempMesh->addIntAttribute("Subdivisions", segments, true);
     tempMesh->addFloatAttribute("Length", length);
     tempMesh->addFloatAttribute("Width", width);
     tempMesh->addFloatAttribute("Height", height);

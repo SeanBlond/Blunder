@@ -108,8 +108,8 @@ void UIRenderer::createBitmapUVData()
     // |   |
     // x---z
 
-    // Getting each icon from each row from top to bottom
-    for (int i = 5; i > 0; i--)
+    // Getting each icon from each row from top to bottom (pngs are flipped!)
+    for (int i = 1; i <= 5; i++)
     {
         // Left Icon
         glm::vec4 tempCorner = glm::vec4(
