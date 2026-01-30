@@ -61,10 +61,10 @@ void AttributeWindow::GenerateInteractables()
 }
 void AttributeWindow::DrawWindow()
 {
-    // Rendering Base Quad
+    // Adding Base Quad
     renderer.addQuad(glm::vec3(width / 2.0f, height / 2.0f, 0.0f), glm::vec2(width, height), colors::grey.rgb());
 
-    // Drawing Each Attribute
+    // Adding Each Attribute
     float attributeYPos = height - (width * 0.1f);
     for (int i = 0; i < attributes.size(); i++)
     {
@@ -72,7 +72,7 @@ void AttributeWindow::DrawWindow()
         renderer.addQuad(glm::vec3((width / 2), attributeYPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
 
         // Adding Attribute Label
-        renderer.addText(attributes[i]->getName(), glm::vec3((width / 2), attributeYPos - (width * 0.035f), 0), largText(), glm::vec3(1.0f), CENTER);
+        renderer.addText(attributes[i]->getName(), glm::vec3((width / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
 
 
         // Checking if elements should be rendered
@@ -458,7 +458,7 @@ void HierarchyWindow::DrawWindow()
 
     // Adding Hierarchy Label
     renderer.addQuad(glm::vec3((width / 2), yPos, 0.1f), glm::vec2(0.92f * width, 0.12f * width), glm::vec3(0.51f));
-    renderer.addText("Hierarchy", glm::vec3((width / 2), yPos - (width * 0.035f), 0), largText(), glm::vec3(1.0f), CENTER);
+    renderer.addText("Hierarchy", glm::vec3((width / 2), yPos, 0), largText(), glm::vec3(1.0f), CENTER);
 
     // Updating yPos
     yPos -= (width * 0.1f);

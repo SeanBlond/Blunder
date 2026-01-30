@@ -121,7 +121,7 @@ void TextInput::addText(ui::UIRenderer* renderer, glm::vec3 position, float scal
             glm::vec2 selectEndPos = getCursorPosition(text, (selectPos - (int)text.length()), position.x, position.y, scale, alignment, renderer->getTextRenderer());
             glm::vec2 selectPos = (cursorPos + selectEndPos) * 0.5f;
             float selectSize = abs(selectEndPos.x - cursorPos.x);
-            renderer->addQuad(glm::vec3(selectPos, 0.24f), glm::vec2(selectSize, 60 * scale), colors::selectionBlue.rgb());
+            renderer->addQuad(glm::vec3(selectPos, 0.225f), glm::vec2(selectSize, 60 * scale), colors::selectionBlue.rgb());
         }
     }
 
@@ -130,67 +130,82 @@ void TextInput::addText(ui::UIRenderer* renderer, glm::vec3 position, float scal
 }
 glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, float y, float scale, TextAlign alignment, Font* font)
 {
-    // Storing initial X
-    float initialX = x;
-
     // Calculating Alignment
     float alignmentOffset = 0;
+    float xpos = 0.0f;
+    float ypos = 0.0f;
+
     if (alignment == RIGHT)
     {
         float textWidth = 0;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(i).Bearing.x) + font->getCharacter(i).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(text[i]).Bearing.x) + font->getCharacter(text[i]).Advance;
         }
         alignmentOffset = textWidth * scale;
     }
     else if (alignment == CENTER)
     {
         float textWidth = 0;
-        std::string::const_iterator c;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(i).Bearing.x) + font->getCharacter(i).Advance >> 6;
+            textWidth += (i == (text.size() - 1) ? 0 : font->getCharacter(text[i]).Bearing.x) + font->getCharacter(text[i]).Advance;
         }
-        alignmentOffset = textWidth * scale * 0.5;
+        alignmentOffset = textWidth * scale * 0.5f;
     }
 
-    // iterate through all characters
-    std::string::const_iterator c;
-    float xpos, ypos;
-    for (int i = 0; i < text.size(); i++)
+    // Offsetting X
+    x -= (alignmentOffset);
+
+    // Storing initial X
+    float initialX = x;
+
+    // Checking if the cursor is at the beginning
+    if (text.size() + cursor == 0)
     {
-        Character ch = font->getCharacter(i);
+        // Returning space right before the first char
+        Character ch = font->getCharacter(text[0]);
 
         // Checking for New Line
-        if (*c == '\n')
+        if (text[0] == '\n')
         {
-            y -= ch.Size.y * 1.3 * scale;
+            y -= font->getLineHeight() * 1.3 * scale;
             x = initialX;
-            continue;
         }
-        else if (*c == ' ')
+        else if (text[0] == ' ')
         {
-            x += (ch.Advance >> 6) * scale;
-            continue;
+            x += ch.Advance * scale;
         }
 
-        xpos = x + ch.Bearing.x * scale - alignmentOffset;
-        ypos = y - ((ch.Size.y - ch.Bearing.y) * scale);
+        // Calculating pos relative to the letter
+        xpos = x + (ch.Bearing.x * scale);
+        ypos = y;
+    }
 
-        // now advance cursors for next glyph
-        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
-    }
-    if (text.length() > 0)
+    // Iterate through all characters
+    for (int i = 0; i < text.size() + cursor; i++)
     {
-        Character ch = font->getCharacter(text[text.size() - 1]);
-        xpos = x + ch.Bearing.x * scale - alignmentOffset;
+        Character ch = font->getCharacter(text[i]);
+
+        // Checking for New Line
+        if (text[i] == '\n')
+        {
+            y -= font->getLineHeight() * 1.3 * scale;
+            x = initialX;
+        }
+        else if (text[i] == ' ')
+        {
+            x += ch.Advance * scale;
+        }
+
+        // Advancing to next character
+        x += ch.Advance * scale;
+
+        // Calculating pos relative to the letter
+        xpos = x + (ch.Bearing.x * scale);
+        ypos = y;
+
     }
-    else
-    {
-        xpos = x - alignmentOffset;
-    }
-    ypos = y + (46 * scale * 0.5f);
 
     return glm::vec2(xpos, ypos);
 }

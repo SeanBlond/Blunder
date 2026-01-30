@@ -24,7 +24,6 @@ namespace ui
         glm::vec2 size;
     };
 
-    constexpr int NUM_TEXTURES = 11;
     enum UITexture { 
         UI_NO_TEXTURE = -1, 
         UI_DROPDOWN_T, 

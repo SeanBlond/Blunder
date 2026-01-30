@@ -39,6 +39,7 @@ public:
 
     // Getters
     Character getCharacter(char character) { return Characters[(int)character - firstChar]; }
+    float getLineHeight() { return lineHeight; }
 
     // Functions
     void ReadFNTFile(std::string filePath);

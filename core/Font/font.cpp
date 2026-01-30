@@ -343,7 +343,7 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         float textWidth = 0;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance * scale;
+            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance;
         }
         alignmentOffset = textWidth * scale;
     }
@@ -352,9 +352,9 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         float textWidth = 0;
         for (int i = 0; i < text.size(); i++)
         {
-            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance * scale;
+            textWidth += (i == (text.size() - 1) ? 0 : getCharacter(text[i]).Bearing.x) + getCharacter(text[i]).Advance;
         }
-        alignmentOffset = textWidth * scale * 0.5;
+        alignmentOffset = textWidth * scale * 0.5f;
     }
 
     // Offsetting X
@@ -381,8 +381,8 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
             continue;
         }
 
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - ((ch.Size.y + ch.Bearing.y) * scale);
+        float xpos = x + (ch.Bearing.x * scale);
+        float ypos = y - (ch.Size.y + ch.Bearing.y) * scale + (lineHeight * scale * 0.7f);
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
 
@@ -411,21 +411,25 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
 }
 void Font::RenderText(glm::mat4 projection)
 {
-    // Updating Mesh Data
-    UpdateMesh();
+    // Checking if there is text to draw ebefore attempting to render it
+    if (vertices.size() != 0)
+    {
+        // Updating Mesh Data
+        UpdateMesh();
 
-    // Setting up shader and texture
-    fontBitmap->Bind(0);
-    textShader->setMat4("projection", projection);
-    textShader->setInt("text", 0);
-    textShader->useShader();
+        // Setting up shader and texture
+        fontBitmap->Bind(0);
+        textShader->setMat4("projection", projection);
+        textShader->setInt("text", 0);
+        textShader->useShader();
 
-    // Rendeing the meshes
-    glBindVertexArray(textVAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0); 
-    glBindVertexArray(0);
+        // Rendeing the meshes
+        glBindVertexArray(textVAO);
+        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
-    // Clearing Vertices & Indices after rendering
-    vertices.clear();
-    indices.clear();
+        // Clearing Vertices & Indices after rendering
+        vertices.clear();
+        indices.clear();
+    }
 }

@@ -85,6 +85,7 @@ int main()
         stbi_image_free(images[0].pixels); // Free the image data after setting the icon
     }
 
+
     //Initialization goes here!
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

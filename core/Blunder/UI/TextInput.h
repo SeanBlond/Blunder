@@ -21,7 +21,7 @@ namespace ui
     class TextInput
     {
     public:
-        TextInput(std::string text, int cursor = 0) : text(text), typing(false) { setCursor(cursor); setSelection(0); }
+        TextInput(std::string text, int cursor = 0) : text(text), typing(false) { setCursor(cursor); setSelection(0); resetSelection(); }
 
         // Getters
         int getCursor() { return cursor; }

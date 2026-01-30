@@ -72,7 +72,7 @@ int main()
     glm::mat4 projection = smath::orthographic(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
 
     // Setting Up Renderer
-    ui::UIRenderer renderer("assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", "assets/Bitmap/UIBitmap.png");
+    ui::UIRenderer renderer("assets/Bitmap/LatoRegularBitmap.fnt", "assets/Bitmap/LatoRegularBitmap.png", "assets/Bitmap/UIBitmap.png", 1.0f);
     text.setTyping(true);
 
     // Test Objkect
@@ -86,10 +86,11 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //text.addText(&renderer, 10.0f, 690.0f, 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
+        text.addText(&renderer, glm::vec3(10.0f, 690.0f, 0.0f), 0.45f, glm::vec3(0.5f, 0.8f, 0.2f));
         //std::string cursorText = "Current Cursor Position: " + std::to_string(text.getCursor());
-        renderer.addText("RqH79j", glm::vec3(10.0f, 650.0f, 0.0f), 0.45f, colors::white.rgb(), CENTER);
+        //renderer.addText("RqH79jX.,/;sdy", glm::vec3(10.0f, 650.0f, 0.0f), 0.45f, colors::white.rgb());
         renderer.renderText(projection);
+        renderer.renderQuads(projection);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

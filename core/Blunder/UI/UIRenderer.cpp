@@ -38,7 +38,7 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, 
 
         void main()
         {    
-            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
+            vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).a);
             fragColor = vec4(Color, 1.0) * sampled;
             //fragColor = vec4(TexCoords, 0.0, 1.0);
         }  
@@ -82,21 +82,6 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, 
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    // Loading UI Texture bitmap
-
-    // Loading Textures for each texture enum value
-    //ui_textures.resize(11);
-    //ui_textures[UI_DISPLAY_T] = new shdr::Texture2D("assets/UI-Textures/Display_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_DISPLAY_F] = new shdr::Texture2D("assets/UI-Textures/Display_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_DROPDOWN_T] = new shdr::Texture2D("assets/UI-Textures/Dropdown_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_DROPDOWN_F] = new shdr::Texture2D("assets/UI-Textures/Dropdown_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_RENDER_T] = new shdr::Texture2D("assets/UI-Textures/Render_T.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_RENDER_F] = new shdr::Texture2D("assets/UI-Textures/Render_F.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_FOLDER_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Folder_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_OBJECT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Object_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_LIGHT_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Light_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
-    //ui_textures[UI_CAMERA_SYMBOL] = new shdr::Texture2D("assets/UI-Textures/Camera_Symbol.png", GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT);
 }
 UIRenderer::~UIRenderer()
 {
@@ -124,23 +109,23 @@ void UIRenderer::createBitmapUVData()
     // x---z
 
     // Getting each icon from each row from top to bottom
-    for (int i = 6; i > 0; i--)
+    for (int i = 5; i > 0; i--)
     {
         // Left Icon
         glm::vec4 tempCorner = glm::vec4(
-            1.0f,
-            (float)i / 6.0f,
+            0.0f,
+            (float)(i - 1) / 5.0f,
             0.5f,
-            (float)(i - 1) / 6.0f
+            (float)i / 5.0f
             );
         uiTextureCorners.push_back(tempCorner);
         
         // Right Icon
         tempCorner = glm::vec4(
             0.5f,
-            (float)i / 6.0f,
-            0.0f,
-            (float)(i - 1) / 6.0f
+            (float)(i - 1) / 5.0f,
+            1.0f,
+            (float)i / 5.0f
             );
         uiTextureCorners.push_back(tempCorner);
     }
@@ -163,13 +148,13 @@ void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UI
     // Getting the TexCoord location of the texture
     glm::vec4 uvCoords;
     if (texture == UI_NO_TEXTURE)
-        uvCoords = glm::vec4(0);
+        uvCoords = glm::vec4(0.25f, 0.1f, 0.25f, 0.1f);
     else
         uvCoords = uiTextureCorners[texture];
 
     // Adding Vertex Information
     TextVertex tempVertices[4] = {
-                        // Positions                                                         // TexCoord                         // TextColor
+                        // Positions                                                                     // TexCoord                         // Color
         TextVertex({ glm::vec3(position.x - (size.x / 2.0f), position.y - (size.y / 2.0f), position.z),  glm::vec2(uvCoords.x, uvCoords.w),  color }),  // Bottom Left
         TextVertex({ glm::vec3(position.x + (size.x / 2.0f), position.y - (size.y / 2.0f), position.z),  glm::vec2(uvCoords.z, uvCoords.w),  color }),  // Bottom Right
         TextVertex({ glm::vec3(position.x + (size.x / 2.0f), position.y + (size.y / 2.0f), position.z),  glm::vec2(uvCoords.z, uvCoords.y),  color }),  // Top Right
@@ -202,20 +187,24 @@ void UIRenderer::UpdateMesh()
 }
 void UIRenderer::renderQuads(glm::mat4 projection)
 {
-    // Updating Mesh Data
-    UpdateMesh();
+    // Checking if there are quads to draw ebefore attempting to render it
+    if (vertices.size() != 0)
+    {
+        // Updating Mesh Data
+        UpdateMesh();
 
-    // Setting up shader and texture
-    quadShader->setMat4("projection", projection);
-    quadShader->useShader();
-    uiBitmap->Bind(0);
+        // Setting up shader and texture
+        quadShader->setMat4("projection", projection);
+        quadShader->useShader();
+        uiBitmap->Bind(0);
 
-    // Rendeing the meshes
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+        // Rendeing the meshes
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
 
-    // Clearing Vertices & Indices after rendering
-    vertices.clear();
-    indices.clear();
+        // Clearing Vertices & Indices after rendering
+        vertices.clear();
+        indices.clear();
+    }
 }
