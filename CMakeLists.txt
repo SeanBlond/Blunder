@@ -22,7 +22,6 @@ include(external/glfw.cmake)
 include(external/imgui.cmake)
 include(external/glm.cmake)
 
-add_subdirectory(external/freetype)
 add_subdirectory(core)
 add_subdirectory(assignments/Blunder)
 add_subdirectory(assignments/TextRendering)
