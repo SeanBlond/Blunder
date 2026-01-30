@@ -194,8 +194,8 @@ void UIRenderer::renderQuads(glm::mat4 projection)
         UpdateMesh();
 
         // Setting up shader and texture
-        quadShader->setMat4("projection", projection);
         quadShader->useShader();
+        quadShader->setMat4("projection", projection);
         uiBitmap->Bind(0);
 
         // Rendeing the meshes

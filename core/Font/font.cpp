@@ -418,10 +418,10 @@ void Font::RenderText(glm::mat4 projection)
         UpdateMesh();
 
         // Setting up shader and texture
+        textShader->useShader();
         fontBitmap->Bind(0);
         textShader->setMat4("projection", projection);
         textShader->setInt("text", 0);
-        textShader->useShader();
 
         // Rendeing the meshes
         glBindVertexArray(textVAO);
