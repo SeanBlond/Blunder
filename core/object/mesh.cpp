@@ -101,7 +101,7 @@ void Mesh::DrawMesh(bool lines, bool points)
         }
         else if (type == MESH_TORUS)
         {
-            UpdateMesh(mesh::createTorus(floatAttributes[0]->attributeValue, intAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, intAttributes[1]->attributeValue));
+            UpdateMesh(mesh::createTorus(floatAttributes[0]->attributeValue, floatAttributes[1]->attributeValue, intAttributes[0]->attributeValue, intAttributes[1]->attributeValue));
         }
     }
 
@@ -661,8 +661,9 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    float colStep = ((float)width / (float)segments);
-    float rowStep = ((float)height / (float)segments);
+    float widthStep = ((float)width / (float)segments);
+    float heightStep = ((float)height / (float)segments);
+    float lengthStep = ((float)length / (float)segments);
 
     // Generating Vertices
     // XY Planes
@@ -675,8 +676,8 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
 
             // Positions
             tempVertex.Position = glm::vec3(
-                col * colStep - (width * 0.5f),
-                row * rowStep - (height * 0.5f),
+                col * widthStep - (width * 0.5f),
+                row * heightStep - (height * 0.5f),
                 length * 0.5f
             );
 
@@ -694,8 +695,8 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
 
             // Creating vertice at opposite side
             tempVertex.Position = glm::vec3(
-                col * colStep - (width * 0.5f),
-                -row * rowStep + (height * 0.5f),
+                col * widthStep - (width * 0.5f),
+                -row * heightStep + (height * 0.5f),
                 -length * 0.5f
             );
             tempVertex.Normal.z *= -1;
@@ -713,9 +714,9 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
 
             // Positions
             tempVertex.Position = glm::vec3(
-                col * colStep - (width * 0.5f),
+                col * widthStep - (width * 0.5f),
                 height * 0.5f,
-                -row * rowStep + (length * 0.5f)
+                -row * lengthStep + (length * 0.5f)
             );
 
             // Normals
@@ -732,9 +733,9 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
 
             // Creating vertice at opposite side
             tempVertex.Position = glm::vec3(
-                col * colStep - (width * 0.5f),
+                col * widthStep - (width * 0.5f),
                 -height * 0.5f,
-                row * rowStep - (length * 0.5f)
+                row * lengthStep - (length * 0.5f)
             );
             tempVertex.Normal.y *= -1;
             vertices.push_back(tempVertex);
@@ -752,8 +753,8 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
             // Positions
             tempVertex.Position = glm::vec3(
                 width * 0.5f,
-                col * colStep - (height * 0.5f),
-                row * rowStep - (length * 0.5f)
+                col * heightStep - (height * 0.5f),
+                row * lengthStep - (length * 0.5f)
             );
 
             // Normals
@@ -771,8 +772,8 @@ extern Mesh* mesh::createCube(float length, float width, float height, int segme
             // Creating vertice at opposite side
             tempVertex.Position = glm::vec3(
                 -width * 0.5f,
-                col * colStep - (height * 0.5f),
-                -row * rowStep + (length * 0.5f)
+                col * heightStep - (height * 0.5f),
+                -row * lengthStep + (length * 0.5f)
             );
             tempVertex.Normal.x *= -1;
             vertices.push_back(tempVertex);
