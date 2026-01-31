@@ -382,7 +382,7 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         }
 
         float xpos = x + (ch.Bearing.x * scale);
-        float ypos = y - (ch.Size.y + ch.Bearing.y) * scale + (lineHeight * scale * 0.7f);
+        float ypos = y - (ch.Size.y + ch.Bearing.y) * scale + (lineHeight * scale * 0.65f);
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
 

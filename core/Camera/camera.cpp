@@ -34,15 +34,7 @@ glm::vec3 OrbitCamera::getPosition()
 }
 glm::mat4 OrbitCamera::getViewMatrix()
 {
-    glm::vec3 cameraPosition = glm::vec3(
-        distance * sin(phi) * cos(theta) + pivot.x,
-        distance * cos(phi) + pivot.y,
-        distance * sin(phi) * sin(theta) + pivot.z
-    );
-
-    glm::mat4 viewMatrix = smath::lookat(cameraPosition, pivot, glm::vec3(0.0f, 1.0f, 0.0f));
-
-    return viewMatrix;
+    return smath::lookat(getPosition(), pivot, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 // Setters
@@ -85,7 +77,6 @@ void OrbitCamera::addAngles(float theta, float phi)
     this->theta = smath::clamp(this->theta, -6.2f, 6.2f);
     this->phi += phi;
 }
-
 void OrbitCamera::setDistance(float distance)
 {
     this->distance = distance;

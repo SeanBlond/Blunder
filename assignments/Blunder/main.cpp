@@ -101,7 +101,7 @@ int main()
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
     // Creating Default Objects
-    objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
+    objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader, glm::vec3(1, 0, 1)));
     //objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
     //objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
 
@@ -121,6 +121,11 @@ int main()
     HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem);
     hierarchyUI.GenerateInteractables();
 
+    // Viewport UI Creation
+    ViewportWindow viewportUI(0.5f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem, &camera);
+
+    std::cout << "Camera normal: " << smath::outputVec3(camera.getCameraNormal()) << std::endl;
+    std::cout << "Camera pos: " << smath::outputVec3(camera.getPosition()) << std::endl;
 
     // Creating Axis Line
     Line xAxisLine(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f);
@@ -154,7 +159,7 @@ int main()
 
         // Rotating Camera View
         float aspectRatio = (SCREEN_WIDTH - (2.0f * uiwidth)) / SCREEN_HEIGHT;
-        projection = camera.getProjectionMatrix(aspectRatio, 0.1f, 100.0f);;
+        projection = camera.getProjectionMatrix(aspectRatio, 0.1f, 100.0f);
         glm::mat4 view = camera.getViewMatrix();
 
         // State Machine Managment
@@ -173,6 +178,10 @@ int main()
         yAxisLine.drawLine();
         zAxisLine.setTransformation(projection * view);
         zAxisLine.drawLine();
+
+        // Drawing Viewport UI
+        viewportUI.setDimensions(SCREEN_WIDTH - (2 * uiwidth), SCREEN_HEIGHT, uiwidth, 0);
+        viewportUI.DrawWindow();
 
         //Drawing Attribute UI
         glViewport(0, 0, uiwidth, SCREEN_HEIGHT);

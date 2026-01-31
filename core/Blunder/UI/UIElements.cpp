@@ -538,3 +538,104 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float y
     // Drawing Value
     text.addText(renderer, glm::vec3(xPos.x, ypos, 0), textSize, glm::vec3(1.0f));
 }
+
+
+// ViewNav Element
+void ViewNav::CreateMesh()
+{
+    // Create Mesh
+    // Mesh vertices & indices
+    std::vector<Vertex> vertices = 
+    {
+        // Position                     Color                    TexCoord (not used)
+        Vertex( {glm::vec3(0, 0, 0),    glm::vec3(1, 1, 1),      glm::vec2(0) }),
+        Vertex( {glm::vec3(-1, 0, 0),   glm::vec3(0.3f, 0, 0),   glm::vec2(0) }),  // -X : 1
+        Vertex( {glm::vec3(0, -1, 0),   glm::vec3(0, 0.3f, 0),   glm::vec2(0) }),  // -Y : 2
+        Vertex( {glm::vec3(0, 0, -1),   glm::vec3(0, 0, 0.3f),   glm::vec2(0) }),  // -Z : 3
+        Vertex( {glm::vec3(1, 0, 0),    glm::vec3(0.9f, 0, 0),   glm::vec2(0) }),  //  X : 4
+        Vertex( {glm::vec3(0, 1, 0),    glm::vec3(0, 0.9f, 0),   glm::vec2(0) }),  //  Y : 5
+        Vertex( {glm::vec3(0, 0, 1),    glm::vec3(0, 0, 0.9f),   glm::vec2(0) }),  //  Z : 6
+    };
+    std::vector<unsigned int> indices =
+    {
+        1, 2, 3,
+        3, 2, 4,
+        4, 2, 6,
+        6, 2, 1,
+        1, 5, 3,
+        3, 5, 4,
+        4, 5, 6,
+        6, 5, 1,
+    };
+    
+    // Creating mesh object
+    navMesh = new Mesh(vertices, indices);
+
+    // Creating Shaders
+    const char* navVertexShader = R"(
+        #version 330 core
+        layout (location = 0) in vec3 vertex;
+        layout (location = 1) in vec3 LineColor;
+        layout (location = 2) in vec2 TexCoord;
+        out vec2 TexCoords;
+        out vec3 Color;
+        
+        uniform mat4 transform;
+
+        void main()
+        {
+            gl_Position = transform * vec4(vertex, 1.0);
+            TexCoords = TexCoord;
+            Color = LineColor;
+        }  
+        )";
+
+    const char* navFragmentShader = R"(
+        #version 330 core
+        in vec2 TexCoords;
+        in vec3 Color;
+        out vec4 fragColor;
+
+        void main()
+        {    
+            fragColor = vec4(Color, 1.0);
+        }  
+        )";
+    
+    // Creating shader object
+    navShader = new shdr::Shader(navVertexShader, navFragmentShader, 1);
+
+}
+ViewNav::~ViewNav()
+{
+    delete navMesh;
+    delete navShader;
+    navMesh = nullptr;
+    navShader = nullptr;
+}
+
+// Functions
+void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+{
+    // Setting up viewport to be drawn to
+    glViewport(xPos.x, ypos, xPos.y, ySize);
+
+    // Shader settings
+    navShader->useShader();
+    navShader->setMat4("transform", transform);
+
+    // Drawing points and lines
+    navMesh->DrawMesh(false, true, false);
+}
+void ViewNav::OnClick(StateMachine* state)
+{
+
+}
+void ViewNav::OnHold(StateMachine* state)
+{
+
+}
+void ViewNav::OnRelease(StateMachine* state)
+{
+
+}

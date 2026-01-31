@@ -538,3 +538,25 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
         }
     }
 }
+
+// Viewport Window Functions
+void ViewportWindow::GenerateInteractables()
+{
+    // Do nothing (yet)
+}
+void ViewportWindow::DrawWindow()
+{
+    // Setting ViewNav draw values
+    int navSize = (int)(width * 0.15f);
+    glm::ivec2 navPos = glm::ivec2(xoffset + width - navSize, height - navSize);
+    glm::mat4 transform = activeCamera->getProjectionMatrix((width / height), 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(1));
+
+    // Drawing the ViewNav
+    viewNavElement.setTransform(transform);
+    viewNavElement.RenderElement(&renderer, navPos.y, navSize, glm::vec2(navPos.x, navSize), smallText());
+
+}
+void ViewportWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
+{
+    // Do nothing (yet)
+}

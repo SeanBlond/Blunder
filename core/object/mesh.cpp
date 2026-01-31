@@ -77,7 +77,7 @@ bool Mesh::PrimitiveChanges()
     // Nothing changed
     return changed;
 }
-void Mesh::DrawMesh(bool lines, bool points)
+void Mesh::DrawMesh(bool lines, bool points, bool backfaceCull)
 {
     // Checking if mesh needs to be updated
     if (PrimitiveChanges())
@@ -109,14 +109,26 @@ void Mesh::DrawMesh(bool lines, bool points)
     glBindVertexArray(VAO);
 
     // Backfill Culling
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    if (backfaceCull)
+    {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+    else
+    {
+        glDisable(GL_CULL_FACE);
+    }
 
     // Rendering Lines or Faces
     if (lines)
-        glPolygonMode(GL_FRONT, GL_LINE);
+    {
+        glLineWidth(3.0f);
+        glDrawElements(GL_LINES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    }
     else
-        glPolygonMode(GL_FRONT, GL_FILL);
+    {
+        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+    }
 
     // Rendering Points
     if (points)
@@ -124,9 +136,8 @@ void Mesh::DrawMesh(bool lines, bool points)
         glPointSize(10.0f);
         glDrawArrays(GL_POINTS, 0, vertices.size());
     }
-    // Rendering the Object
-    glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
 
+    glPolygonMode(GL_FRONT, GL_FILL);
     glBindVertexArray(0);
 }
 void Mesh::UpdateMesh(const Mesh& mesh)

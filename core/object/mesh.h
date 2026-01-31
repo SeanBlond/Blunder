@@ -55,7 +55,7 @@ public:
     IntAttribute* getIntAttribute(int index) { index = smath::clamp(index, 0, (int)intAttributes.size()); return intAttributes[index]; }
 
     // Functions
-    void DrawMesh(bool lines = false, bool points = false);
+    void DrawMesh(bool lines = false, bool points = false, bool backfaceCull = true);
     void UpdateMesh(const Mesh& mesh);
     void outputMesh();
     void addFloatAttribute(std::string label, float value, bool hasLimits = false, float lowerLimit = 0, float upperLimit = 100);

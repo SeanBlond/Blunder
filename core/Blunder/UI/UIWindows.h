@@ -37,9 +37,9 @@ public:
 
 
     // Text Sizes
-    float smallText() { return (height * 2.2e-4); }
-    float mediumText() { return (height * 2.75e-4); }
-    float largText() { return (height * 4e-4); }
+    float smallText() const { return (height * 2.2e-4); }
+    float mediumText() const { return (height * 2.75e-4); }
+    float largText() const { return (height * 4e-4); }
 
 protected:
     float width;
@@ -113,6 +113,33 @@ private:
     std::vector<ui::AttributeInteractable> interactables;
     obs::ObjectSystem* objectSystem;
     ui::AttributeElement* clickedElement;
+};
+
+// Viewport Window
+class ViewportWindow : public UIWindow
+{
+public:
+    // Constructor & Deconstructor
+    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, Camera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav") {}
+    ~ViewportWindow() {}
+
+    // Getters
+
+
+    // Setters
+
+
+    // Functions
+    void GenerateInteractables() override;
+    void DrawWindow() override;
+    void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
+
+private:
+    Camera* activeCamera;
+    obs::ObjectSystem* objectSystem;
+    ui::ViewNav viewNavElement;
+    std::vector<ui::Attribute*> attributes;
+    std::vector<ui::AttributeInteractable> interactables;
 };
 
 #endif // !UIWINDOWS

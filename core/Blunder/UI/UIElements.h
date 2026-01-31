@@ -18,7 +18,7 @@
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_VIEW_NAV };
 
     // Attribute Element Parent Class
     class AttributeElement
@@ -283,6 +283,30 @@ namespace ui
         TextInput text;
     };
 
+
+    // Viewport UI Elements
+    class ViewNav : public AttributeElement
+    {
+    public:
+        ViewNav(std::string label) : AttributeElement(label, UI_VIEW_NAV) { CreateMesh(); }
+        ~ViewNav();
+
+        // Setters
+        void setTransform(glm::mat4 transform) { this->transform = transform; }
+
+        // Functions
+        void CreateMesh();
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        Mesh* navMesh;
+        glm::mat4 transform;
+        glm::vec2 initialMousePos;
+        shdr::Shader* navShader;
+    };
     // Tools Window
     // Select Tool
     // Move Tool
