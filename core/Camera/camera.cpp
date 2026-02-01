@@ -15,6 +15,10 @@ float OrbitCamera::getTheta()
 {
     return theta;
 }
+glm::vec2 OrbitCamera::getAngles() 
+{ 
+    return glm::vec2(theta, phi); 
+}
 float OrbitCamera::getDistance()
 {
     return distance;
@@ -49,7 +53,7 @@ void OrbitCamera::addPivot(glm::vec3 pivot)
 
 void OrbitCamera::setPhi(float phi)
 {
-    this->phi = phi;
+    this->phi = smath::clamp(phi, 0.01f, 3.1f);
 }
 void OrbitCamera::setTheta(float theta)
 {
@@ -57,25 +61,21 @@ void OrbitCamera::setTheta(float theta)
 }
 void OrbitCamera::setAngles(glm::vec2 angles)
 {
-    this->theta = angles.x;
-    this->phi = angles.y;
+    setAngles(angles.x, angles.y);
 }
 void OrbitCamera::setAngles(float theta, float phi)
 {
-    this->theta = theta;
-    this->phi = phi;
+    setTheta(theta);
+    setPhi(phi);
 }
 void OrbitCamera::addAngles(glm::vec2 angles)
 {
-    this->theta += angles.x;
-    this->phi += angles.y;
-    this->phi = smath::clamp(this->phi, 0.01f, 3.1f);
+    addAngles(angles.x, angles.y);
 }
 void OrbitCamera::addAngles(float theta, float phi)
 {
-    this->theta += theta;
-    this->theta = smath::clamp(this->theta, -6.2f, 6.2f);
-    this->phi += phi;
+    setTheta(this->theta + theta);
+    setPhi(this->phi + phi);
 }
 void OrbitCamera::setDistance(float distance)
 {

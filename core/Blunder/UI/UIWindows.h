@@ -120,8 +120,11 @@ class ViewportWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, Camera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav") {}
-    ~ViewportWindow() {}
+    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav", 0.01f), clickedElement(nullptr) {}
+    ~ViewportWindow() 
+    {
+        interactables.clear();
+    }
 
     // Getters
 
@@ -135,11 +138,12 @@ public:
     void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
 
 private:
-    Camera* activeCamera;
+    OrbitCamera* activeCamera;
     obs::ObjectSystem* objectSystem;
     ui::ViewNav viewNavElement;
     std::vector<ui::Attribute*> attributes;
     std::vector<ui::AttributeInteractable> interactables;
+    ui::AttributeElement* clickedElement;
 };
 
 #endif // !UIWINDOWS

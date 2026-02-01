@@ -1,8 +1,9 @@
 #include "StateMachine.h"
 
 // Cosntructor & Destructor
-StateMachine::StateMachine(Mouse* mouse)
+StateMachine::StateMachine(Mouse* mouse, OrbitCamera* activeCamera)
 {
+    this->activeCamera = activeCamera;
     this->mouse = mouse;
     currentState = SM_NONE;
     transforming = false;

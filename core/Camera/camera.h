@@ -53,6 +53,7 @@ public:
     glm::vec3 getPivot();
     float getPhi();
     float getTheta();
+    glm::vec2 getAngles();
     float getDistance();
     glm::vec3 getCameraNormal() override;
     glm::vec3 getPosition() override;

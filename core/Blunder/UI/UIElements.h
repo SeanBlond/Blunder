@@ -288,7 +288,7 @@ namespace ui
     class ViewNav : public AttributeElement
     {
     public:
-        ViewNav(std::string label) : AttributeElement(label, UI_VIEW_NAV) { CreateMesh(); }
+        ViewNav(std::string label, float speed = 1.0f) : AttributeElement(label, UI_VIEW_NAV), speed(speed) { CreateMesh(); }
         ~ViewNav();
 
         // Setters
@@ -302,9 +302,15 @@ namespace ui
         void OnRelease(StateMachine* state) override;
 
     private:
+        // UI Stuff
+        glm::vec2 initialMousePos;
+        glm::vec2 storedCameraOrbit;
+        bool slideStarted;
+        float speed;
+
+        // Rendering Stuff
         Mesh* navMesh;
         glm::mat4 transform;
-        glm::vec2 initialMousePos;
         shdr::Shader* navShader;
     };
     // Tools Window

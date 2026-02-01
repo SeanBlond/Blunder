@@ -321,6 +321,12 @@ namespace smath
         output << "(" << (vector.x) << ", " << (vector.y) << ")";
         return output.str();
     }
+    inline std::string outputVec4(glm::vec4 vector)
+    {
+        std::ostringstream output;
+        output << "(" << (vector.x) << ", " << (vector.y) << ", " << (vector.z) << ", " << (vector.w) << ")";
+        return output.str();
+    }
 
     template <typename T>
     inline int vectorFind(std::vector<T> vector, T value)

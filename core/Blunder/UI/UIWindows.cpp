@@ -542,21 +542,88 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
 // Viewport Window Functions
 void ViewportWindow::GenerateInteractables()
 {
-    // Do nothing (yet)
+    // ViewNav interactable
+    glm::vec4 tempCorners = glm::vec4(
+        0.85,
+        0.0f,
+        1.0f, 
+        0.15f
+    );
+    ui::AttributeInteractable viewNavInteract(tempCorners, &viewNavElement);
+    interactables.push_back(viewNavInteract);
 }
 void ViewportWindow::DrawWindow()
 {
     // Setting ViewNav draw values
     int navSize = (int)(width * 0.15f);
-    glm::ivec2 navPos = glm::ivec2(xoffset + width - navSize, height - navSize);
-    glm::mat4 transform = activeCamera->getProjectionMatrix((width / height), 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(1));
+    glm::mat4 transform = activeCamera->getProjectionMatrix(1, 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(3));
 
     // Drawing the ViewNav
     viewNavElement.setTransform(transform);
-    viewNavElement.RenderElement(&renderer, navPos.y, navSize, glm::vec2(navPos.x, navSize), smallText());
+    viewNavElement.RenderElement(&renderer, height, navSize, glm::vec2(width, width + xoffset), smallText());
 
+    // Setting viewport size
+    glViewport(xoffset, 0, width, height);
+
+    // Rendering Quads
+    renderer.renderQuads(getProjection());
 }
 void ViewportWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Do nothing (yet)
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    xpos = (xpos - xoffset) / width;
+    ypos = (ypos - yoffset) / width;
+
+    // Checking if Mouse Position is within the UI bounds
+    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (height / width))
+    {
+        //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
+        for (int i = 0; i < interactables.size(); i++)
+        {
+            // Highlighting an Element
+            if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
+            {
+                // Clicking an Element
+                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+                {
+                    state->changeState(SM_UI_INTERACT);
+                    interactables[i].element->clicked = true;
+                    clickedElement = (interactables[i].element);
+                    clickedElement->OnClick(state);
+                }
+
+                // Highilighting an Element
+                else
+                    interactables[i].element->highlighted = true;
+            }
+
+            // Unhighlighting an Element
+            else if (interactables[i].element->highlighted)
+                interactables[i].element->highlighted = false;
+
+
+        }
+    }
+
+    // Managing Clicked Element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->OnHold(state);
+
+        // Unclicking an Element
+        if (clickedElement->clicked && !glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+        {
+            clickedElement->OnRelease(state);
+            clickedElement->clicked = false;
+
+            // Checking if Dropdown Button was clicked
+            if (clickedElement->getType() == ui::UI_DROPDOWN)
+            {
+                GenerateInteractables();
+            }
+
+            clickedElement = nullptr;
+        }
+    }
 }

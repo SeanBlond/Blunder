@@ -29,7 +29,7 @@ class StateMachine
 {
 public:
     // Cosntructor & Destructor
-    StateMachine(Mouse* mouse);
+    StateMachine(Mouse* mouse, OrbitCamera* activeCamera);
     ~StateMachine();
 
     // Getters
@@ -39,6 +39,7 @@ public:
     bool getUIInteraction() { return UIInteracting; }
     ui::TextInput* getTextInput() { return textInput; }
     Mouse* getMouse() { return mouse; }
+    OrbitCamera* getCamera() { return activeCamera; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }
@@ -56,6 +57,7 @@ private:
     EditingState currentState;
     obj::Object* selectedObject;
     Mouse* mouse;
+    OrbitCamera* activeCamera;
     ui::TextInput* textInput;
     glm::vec3 saveValue;
     glm::vec3 stateAxis;

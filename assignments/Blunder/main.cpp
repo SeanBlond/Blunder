@@ -42,7 +42,7 @@ void character_callback(GLFWwindow* window, unsigned int codepoint);
 OrbitCamera camera(1.25f, 2.0f, 7.5f);
 
 // State Machine Info
-StateMachine state(&mouse);
+StateMachine state(&mouse, &camera);
 
 // Setting up Object System
 obs::ObjectSystem objectSystem(&state);
@@ -123,9 +123,7 @@ int main()
 
     // Viewport UI Creation
     ViewportWindow viewportUI(0.5f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem, &camera);
-
-    std::cout << "Camera normal: " << smath::outputVec3(camera.getCameraNormal()) << std::endl;
-    std::cout << "Camera pos: " << smath::outputVec3(camera.getPosition()) << std::endl;
+    viewportUI.GenerateInteractables();
 
     // Creating Axis Line
     Line xAxisLine(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f);
@@ -181,26 +179,26 @@ int main()
 
         // Drawing Viewport UI
         viewportUI.setDimensions(SCREEN_WIDTH - (2 * uiwidth), SCREEN_HEIGHT, uiwidth, 0);
+        viewportUI.ManageUIInteraction(window, &state);
         viewportUI.DrawWindow();
 
-        //Drawing Attribute UI
+        // Managing Attribute UI
         glViewport(0, 0, uiwidth, SCREEN_HEIGHT);
         glDisable(GL_DEPTH);
-        attributeUI.DrawWindow();
-
-        // Managing Attribute UI
         attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
         attributeUI.ManageUIInteraction(window, &state);
+        attributeUI.DrawWindow();
 
-        // Drawing Hierarchy UI
-        glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
-        glDisable(GL_DEPTH);
-        hierarchyUI.DrawWindow();
 
         // Managing Hierarchy UI
+        glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
+        glDisable(GL_DEPTH);
         hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageUIInteraction(window, &state);
+        hierarchyUI.DrawWindow();
 
+
+        // Swapping buffer
         glfwSwapBuffers(window);
     }
 

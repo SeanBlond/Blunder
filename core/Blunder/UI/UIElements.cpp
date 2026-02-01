@@ -558,14 +558,12 @@ void ViewNav::CreateMesh()
     };
     std::vector<unsigned int> indices =
     {
-        1, 2, 3,
-        3, 2, 4,
-        4, 2, 6,
-        6, 2, 1,
-        1, 5, 3,
-        3, 5, 4,
-        4, 5, 6,
-        6, 5, 1,
+        0, 1, 0,
+        0, 2, 0,
+        0, 3, 0,
+        0, 4, 0,
+        0, 5, 0,
+        0, 6, 0,
     };
     
     // Creating mesh object
@@ -617,25 +615,39 @@ ViewNav::~ViewNav()
 // Functions
 void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    // Adding background when highlighted
+    if (highlighted)
+        renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize), colors::lightgrey.rgb());
+
     // Setting up viewport to be drawn to
-    glViewport(xPos.x, ypos, xPos.y, ySize);
+    glViewport(xPos.y - ySize, ypos - ySize, ySize, ySize);
 
     // Shader settings
     navShader->useShader();
     navShader->setMat4("transform", transform);
 
     // Drawing points and lines
-    navMesh->DrawMesh(false, true, false);
+    navMesh->DrawMesh(true, true, false);
 }
 void ViewNav::OnClick(StateMachine* state)
 {
-
+    // Storing Initial Mouse Pos and camera settings
+    slideStarted = false;
+    initialMousePos = state->getMouse()->mousePos;
+    storedCameraOrbit = state->getCamera()->getAngles();
 }
 void ViewNav::OnHold(StateMachine* state)
 {
-
+    // Checking if value should slide with mouse
+    if (glm::length(state->getMouse()->mousePos - initialMousePos) > 1.0f || slideStarted)
+    {
+        slideStarted = true;
+        glm::vec2 mouseDelta = (state->getMouse()->mousePos - initialMousePos) * glm::vec2(1, -1);
+        glm::vec2 calcAngle = storedCameraOrbit + mouseDelta * speed;
+        state->getCamera()->setAngles(calcAngle);
+    }
 }
 void ViewNav::OnRelease(StateMachine* state)
 {
-
+    slideStarted = false;
 }
