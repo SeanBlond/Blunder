@@ -212,9 +212,6 @@ void UIRenderer::UpdateMesh()
 }
 void UIRenderer::renderQuads(glm::mat4 projection)
 {
-    // Updating Mesh Data
-    UpdateMesh();
-
     // Checking if there are quads to draw before attempting to render it
     if (indices.size() != 0)
     {
@@ -231,5 +228,8 @@ void UIRenderer::renderQuads(glm::mat4 projection)
         glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
+        // Clearing the mesh data
+        vertices.clear();
+        indices.clear();
     }
 }

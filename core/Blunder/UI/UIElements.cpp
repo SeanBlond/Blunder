@@ -616,7 +616,7 @@ ViewNav::~ViewNav()
 void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
     // Adding background when highlighted
-    if (highlighted)
+    if (highlighted || clicked)
         renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize * 0.9f), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
 
     // Setting up viewport to be drawn to
@@ -649,6 +649,9 @@ void ViewNav::OnHold(StateMachine* state)
 }
 void ViewNav::OnRelease(StateMachine* state)
 {
-    state->exitState();
-    slideStarted = false;
+    if (slideStarted)
+    {
+        state->exitState();
+        slideStarted = false;
+    }
 }
