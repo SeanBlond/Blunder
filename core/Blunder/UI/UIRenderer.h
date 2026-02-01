@@ -16,14 +16,7 @@
 
 namespace ui
 {
-    struct UIQuad
-    {
-        UIQuad(glm::vec3 position, glm::vec3 color, glm::vec2 size) : position(position), color(color), size(size) {}
-        glm::vec3 position;
-        glm::vec3 color;
-        glm::vec2 size;
-    };
-
+    enum QuadStyle { QUAD_RECT, QUAD_CIRCLE };
     enum UITexture { 
         UI_NO_TEXTURE = -1, 
         UI_DROPDOWN_T, 
@@ -36,6 +29,14 @@ namespace ui
         UI_CAMERA_SYMBOL,
         UI_OBJECT_SYMBOL, 
         UI_LIGHT_SYMBOL, 
+    };
+    struct UIVertex
+    {
+        glm::vec3 Position;
+        glm::vec2 TexCoord;
+        glm::vec3 TextColor;
+        glm::vec2 UVCoord;
+        int Style;
     };
 
     class UIRenderer
@@ -51,7 +52,7 @@ namespace ui
         // Functions
         void createBitmapUVData();
         void addText(std::string text, glm::vec3 position, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
-        void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture = UI_NO_TEXTURE);
+        void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT);
         void UpdateMesh();
         void renderText(glm::mat4 projection);
         void renderQuads(glm::mat4 projection);
@@ -61,7 +62,8 @@ namespace ui
         Font* textRenderer;
         shdr::Shader* quadShader;
         unsigned int VAO, VBO, EBO;
-        std::vector<TextVertex> vertices;
+        int currentQuadCount;
+        std::vector<UIVertex> vertices;
         std::vector<unsigned int> indices;
 
         shdr::Texture2D* uiBitmap;

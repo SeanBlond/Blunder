@@ -101,7 +101,7 @@ int main()
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
     // Creating Default Objects
-    objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader, glm::vec3(1, 0, 1)));
+    objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
     //objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
     //objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
 
@@ -184,7 +184,7 @@ int main()
 
         // Managing Attribute UI
         glViewport(0, 0, uiwidth, SCREEN_HEIGHT);
-        glDisable(GL_DEPTH);
+        //glDisable(GL_DEPTH);
         attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
         attributeUI.ManageUIInteraction(window, &state);
         attributeUI.DrawWindow();
@@ -192,7 +192,7 @@ int main()
 
         // Managing Hierarchy UI
         glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
-        glDisable(GL_DEPTH);
+        //glDisable(GL_DEPTH);
         hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageUIInteraction(window, &state);
         hierarchyUI.DrawWindow();

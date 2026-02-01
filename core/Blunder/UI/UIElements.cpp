@@ -617,7 +617,7 @@ void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::
 {
     // Adding background when highlighted
     if (highlighted)
-        renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize), colors::lightgrey.rgb());
+        renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize * 0.9f), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
 
     // Setting up viewport to be drawn to
     glViewport(xPos.y - ySize, ypos - ySize, ySize, ySize);
@@ -649,5 +649,6 @@ void ViewNav::OnHold(StateMachine* state)
 }
 void ViewNav::OnRelease(StateMachine* state)
 {
+    state->exitState();
     slideStarted = false;
 }

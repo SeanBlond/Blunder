@@ -542,12 +542,12 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
 // Viewport Window Functions
 void ViewportWindow::GenerateInteractables()
 {
-    // ViewNav interactable
+    // ViewNav interactable 
     glm::vec4 tempCorners = glm::vec4(
-        0.85,
-        0.0f,
-        1.0f, 
-        0.15f
+        0.8575,
+        0.0075f,
+        0.9925f,
+        0.1425
     );
     ui::AttributeInteractable viewNavInteract(tempCorners, &viewNavElement);
     interactables.push_back(viewNavInteract);

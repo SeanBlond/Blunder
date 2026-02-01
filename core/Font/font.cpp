@@ -388,7 +388,7 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
 
         // Adding Vertex Information
         TextVertex tempVertices[4] = {
-                         // Positions                                // TexCoord                                 // TextColor
+            //           Positions                                   TexCoord                                    Color
             TextVertex({ glm::vec3(xpos,     ypos,     position.z),  glm::vec2(ch.Positions.x, ch.Positions.w),  color }),  // Bottom Left
             TextVertex({ glm::vec3(xpos + w, ypos,     position.z),  glm::vec2(ch.Positions.z, ch.Positions.w),  color }),  // Bottom Right
             TextVertex({ glm::vec3(xpos + w, ypos + h, position.z),  glm::vec2(ch.Positions.z, ch.Positions.y),  color }),  // Top Right
