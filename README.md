@@ -13,9 +13,8 @@ Blunder is still under development and doesn't have a stable public release. It 
 A quick little backlog of features that will be added to Blunder (this just exists to help me keep track of what needs to be done)
 
 * \[x] Fix Cube generation and torus UI interaction
-* \[ ] Add object creation UI
-* \[ ] Change UIRender class to be a singleton
 * \[ ] Add Viewport direction control
+* \[ ] Add object creation UI
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)
 * \[ ] Work on shader/material system (different viewport modes, UI material options, etc)
