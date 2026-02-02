@@ -660,7 +660,6 @@ void ViewNav::OnRelease(StateMachine* state)
     {
         // Getting the mouse position relative to the center of the ViewNav
         glm::vec2 relativeMousePos = (state->getMouse()->mousePos - glm::vec2(screenPos)) / (0.5f * screenPos.z) * glm::vec2(1, -1);
-        std::cout << "Mouse Position: " << smath::outputVec2(relativeMousePos) << std::endl;
 
         // Checking which point the mouse is closest to (if at all)
         ViewAxis closestAxis = getClosestAxis(relativeMousePos, 0.1f);
@@ -674,7 +673,7 @@ void ViewNav::OnRelease(StateMachine* state)
             }
             else if (closestAxis == VIEW_NEGATIVE_X)
             {
-                state->getCamera()->setAngles(0, -smath::PI / 2);
+                state->getCamera()->setAngles(smath::PI, smath::PI / 2);
             }
             else if (closestAxis == VIEW_POSITIVE_Y)
             {
@@ -682,7 +681,7 @@ void ViewNav::OnRelease(StateMachine* state)
             }
             else if (closestAxis == VIEW_NEGATIVE_Y)
             {
-                state->getCamera()->setAngles(-smath::PI / 2, 0);
+                state->getCamera()->setAngles(smath::PI / 2, smath::PI);
             }
             else if (closestAxis == VIEW_POSITIVE_Z)
             {
