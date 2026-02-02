@@ -567,6 +567,7 @@ void ViewportWindow::DrawWindow()
 
     // Rendering Quads
     renderer.renderQuads(getProjection());
+    renderer.renderText(getProjection());
 }
 void ViewportWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
 {

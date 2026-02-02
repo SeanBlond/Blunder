@@ -117,6 +117,16 @@ namespace colors
 	
 	const Color blunderGreen(0.57f, 0.66f, 0.33f);
 	const Color selectionBlue(0.33f, 0.57f, 0.66f);
+	
+	const Color red(1, 0, 0);
+	const Color green(0, 1, 0);
+	const Color blue(0, 0, 1);
+	const Color darkRed(0.3f, 0, 0);
+	const Color darkGreen(0, 0.3f, 0);
+	const Color darkBlue(0, 0, 0.3f);
+	const Color lightRed(1, 0.3f, 0.3f);
+	const Color lightGreen(0.3f, 1, 0.3f);
+	const Color lightBlue(0.3f, 0.3f, 1);
 }
 
 

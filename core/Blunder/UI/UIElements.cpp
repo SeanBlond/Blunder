@@ -546,23 +546,28 @@ void ViewNav::CreateMesh()
     // Mesh vertices & indices
     std::vector<Vertex> vertices = 
     {
-        // Position                     Color                    TexCoord (not used)
-        Vertex( {glm::vec3(0, 0, 0),    glm::vec3(1, 1, 1),      glm::vec2(0) }),
-        Vertex( {glm::vec3(-1, 0, 0),   glm::vec3(0.3f, 0, 0),   glm::vec2(0) }),  // -X : 1
-        Vertex( {glm::vec3(0, -1, 0),   glm::vec3(0, 0.3f, 0),   glm::vec2(0) }),  // -Y : 2
-        Vertex( {glm::vec3(0, 0, -1),   glm::vec3(0, 0, 0.3f),   glm::vec2(0) }),  // -Z : 3
-        Vertex( {glm::vec3(1, 0, 0),    glm::vec3(0.9f, 0, 0),   glm::vec2(0) }),  //  X : 4
-        Vertex( {glm::vec3(0, 1, 0),    glm::vec3(0, 0.9f, 0),   glm::vec2(0) }),  //  Y : 5
-        Vertex( {glm::vec3(0, 0, 1),    glm::vec3(0, 0, 0.9f),   glm::vec2(0) }),  //  Z : 6
+        // Position                     Color                     TexCoord (not used)
+        Vertex( {glm::vec3(0, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),
+        Vertex( {glm::vec3(1, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),  //  X : 1
+        Vertex( {glm::vec3(0, 0, 0),    colors::darkRed.rgb(),   glm::vec2(0) }),
+        Vertex( {glm::vec3(-1, 0, 0),   colors::darkRed.rgb(),   glm::vec2(0) }),  // -X : 3
+        Vertex( {glm::vec3(0, 0, 0),    colors::green.rgb(),     glm::vec2(0) }),
+        Vertex( {glm::vec3(0, 1, 0),    colors::green.rgb(),     glm::vec2(0) }),  //  Y : 5
+        Vertex( {glm::vec3(0, 0, 0),    colors::darkGreen.rgb(), glm::vec2(0) }),
+        Vertex( {glm::vec3(0, -1, 0),   colors::darkGreen.rgb(), glm::vec2(0) }),  // -Y : 7
+        Vertex( {glm::vec3(0, 0, 0),    colors::blue.rgb(),      glm::vec2(0) }),
+        Vertex( {glm::vec3(0, 0, 1),    colors::blue.rgb(),      glm::vec2(0) }),  //  Z : 9
+        Vertex( {glm::vec3(0, 0, 0),    colors::darkBlue.rgb(),  glm::vec2(0) }),
+        Vertex( {glm::vec3(0, 0, -1),   colors::darkBlue.rgb(),  glm::vec2(0) }),  // -Z : 11
     };
     std::vector<unsigned int> indices =
     {
         0, 1, 0,
-        0, 2, 0,
-        0, 3, 0,
-        0, 4, 0,
-        0, 5, 0,
-        0, 6, 0,
+        2, 3, 2,
+        4, 5, 4,
+        6, 7, 6,
+        8, 9, 8,
+        10, 11, 10,
     };
     
     // Creating mesh object
@@ -621,6 +626,37 @@ void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::
     if (highlighted || clicked)
         renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize * 0.9f), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
 
+    // Unique data for each axis
+    glm::vec3 axisColors[] = { colors::white.rgb(), colors::red.rgb(), colors::darkRed.rgb(), colors::green.rgb(), colors::darkGreen.rgb(), colors::blue.rgb(), colors::darkBlue.rgb() };
+    std::string axisTitles[] = { "", "+X", "-X", "+Y", "-Y", "+Z", "-Z" };
+
+    // Adding quads for each point
+    glm::vec4 axises[7] =
+    {
+        glm::vec4(0, 0, 0, 1),   // POSITIVE_X
+        glm::vec4(1, 0, 0, 1),   // POSITIVE_X
+        glm::vec4(-1, 0, 0, 1),  // NEGATIVE_X
+        glm::vec4(0, 1, 0, 1),   // POSITIVE_Y
+        glm::vec4(0, -1, 0, 1),  // NEGATIVE_Y
+        glm::vec4(0, 0, 1, 1),   // POSITIVE_Z
+        glm::vec4(0, 0, -1, 1),  // NEGATIVE_Z
+    };
+    for (int i = 0; i < 7; i++)
+    {
+        // Getting the coordinate of the axis point
+        glm::vec3 axisPos = glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), 0) + glm::vec3(ySize * 0.5f, ySize * 0.5f, -1) * glm::vec3(transform * axises[i]);
+
+        // Adding the quad for each axis
+        renderer->addQuad(axisPos, glm::vec2(ySize * 0.13f), axisColors[i], UI_NO_TEXTURE, QUAD_CIRCLE);
+
+        // (Conditionally) Adding the text 
+        if (highlighted || clicked)
+        {
+            glm::vec3 textColor = (i % 2 == 0 ? glm::vec3(1) : glm::vec3(0));
+            renderer->addText(axisTitles[i], axisPos + glm::vec3(0, 0, 0.01f), ySize * 0.00125f, textColor, CENTER);
+        }
+    }
+
     // Setting up viewport to be drawn to
     glViewport(xPos.y - ySize, ypos - ySize, ySize, ySize);
 
@@ -628,8 +664,8 @@ void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::
     navShader->useShader();
     navShader->setMat4("transform", transform);
 
-    // Drawing points and lines
-    navMesh->DrawMesh(true, true, false);
+    // Drawing lines
+    navMesh->DrawMesh(true, false, false);
 }
 void ViewNav::OnClick(StateMachine* state)
 {
