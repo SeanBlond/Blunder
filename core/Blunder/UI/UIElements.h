@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <functional>
 #include <iomanip>
 #include <vector>
 
@@ -307,9 +308,12 @@ namespace ui
         glm::vec2 storedCameraOrbit;
         bool slideStarted;
         float speed;
+        enum ViewAxis { VIEW_NONE = -1, VIEW_POSITIVE_X, VIEW_NEGATIVE_X, VIEW_POSITIVE_Y, VIEW_NEGATIVE_Y, VIEW_POSITIVE_Z, VIEW_NEGATIVE_Z };
+        ViewAxis getClosestAxis(glm::vec2 position, float distanceClamp);
 
         // Rendering Stuff
         Mesh* navMesh;
+        glm::vec3 screenPos;
         glm::mat4 transform;
         shdr::Shader* navShader;
     };

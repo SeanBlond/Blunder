@@ -237,7 +237,6 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
     }
 }
 
-
 // Element Render Functions
 void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
@@ -615,6 +614,9 @@ ViewNav::~ViewNav()
 // Functions
 void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
+    // Updating screen position
+    screenPos = glm::vec3(xPos.y - ySize * 0.5f, ySize * 0.5f, ySize);
+
     // Adding background when highlighted
     if (highlighted || clicked)
         renderer->addQuad(glm::vec3(xPos.x - (0.5f * ySize), ypos - (0.5f * ySize), -0.99999f), glm::vec2(ySize * 0.9f), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
@@ -654,4 +656,74 @@ void ViewNav::OnRelease(StateMachine* state)
         state->exitState();
         slideStarted = false;
     }
+    else
+    {
+        // Getting the mouse position relative to the center of the ViewNav
+        glm::vec2 relativeMousePos = (state->getMouse()->mousePos - glm::vec2(screenPos)) / (0.5f * screenPos.z) * glm::vec2(1, -1);
+        std::cout << "Mouse Position: " << smath::outputVec2(relativeMousePos) << std::endl;
+
+        // Checking which point the mouse is closest to (if at all)
+        ViewAxis closestAxis = getClosestAxis(relativeMousePos, 0.1f);
+        
+        // Setting the View Axis (if a axis button was clicked)
+        if (closestAxis != VIEW_NONE)
+        {
+            if (closestAxis == VIEW_POSITIVE_X)
+            {
+                state->getCamera()->setAngles(0, smath::PI / 2);
+            }
+            else if (closestAxis == VIEW_NEGATIVE_X)
+            {
+                state->getCamera()->setAngles(0, -smath::PI / 2);
+            }
+            else if (closestAxis == VIEW_POSITIVE_Y)
+            {
+                state->getCamera()->setAngles(smath::PI / 2, 0);
+            }
+            else if (closestAxis == VIEW_NEGATIVE_Y)
+            {
+                state->getCamera()->setAngles(-smath::PI / 2, 0);
+            }
+            else if (closestAxis == VIEW_POSITIVE_Z)
+            {
+                state->getCamera()->setAngles(smath::PI / 2, smath::PI / 2);
+            }
+            else if (closestAxis == VIEW_NEGATIVE_Z)
+            {
+                state->getCamera()->setAngles(-smath::PI / 2, smath::PI / 2);
+            }
+        }
+    }
+}
+ViewNav::ViewAxis ViewNav::getClosestAxis(glm::vec2 position, float distanceClamp)
+{
+    // Checking which point the position is closest to (if it's close at all)
+    ViewAxis closestAxis = VIEW_NONE;
+    float depth = 0; // For checking if an axis is "above" another
+
+    // Temporary array of each possible axis
+    glm::vec4 axises[6] =
+    {
+        glm::vec4(1, 0, 0, 1),   // POSITIVE_X
+        glm::vec4(-1, 0, 0, 1),  // NEGATIVE_X
+        glm::vec4(0, 1, 0, 1),   // POSITIVE_Y
+        glm::vec4(0, -1, 0, 1),  // NEGATIVE_Y
+        glm::vec4(0, 0, 1, 1),   // POSITIVE_Z
+        glm::vec4(0, 0, -1, 1),  // NEGATIVE_Z
+    };
+
+    // Checking each axis
+    for (int i = 0; i < 6; i++)
+    {
+        glm::vec3 testPos = glm::vec3(transform * axises[i]);
+        if (glm::distance(position, glm::vec2(testPos)) <= distanceClamp && testPos.z < depth)
+        {
+            closestAxis = (ViewAxis)i;
+            depth - testPos.z;
+        }
+    }
+
+    // Returning closest axis
+    return closestAxis;
+
 }
