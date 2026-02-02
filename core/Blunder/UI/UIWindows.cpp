@@ -556,7 +556,7 @@ void ViewportWindow::DrawWindow()
 {
     // Setting ViewNav draw values
     int navSize = (int)(width * 0.15f);
-    glm::mat4 transform = activeCamera->getProjectionMatrix(1, 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(3));
+    glm::mat4 transform = smath::orthographic(-2, 2, -2, 2, 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(1.5f));
 
     // Drawing the ViewNav
     viewNavElement.setTransform(transform);

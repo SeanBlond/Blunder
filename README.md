@@ -14,6 +14,7 @@ A quick little backlog of features that will be added to Blunder (this just exis
 
 * \[x] Fix Cube generation and torus UI interaction
 * \[ ] Add object creation UI
+* \[ ] Change UIRender class to be a singleton
 * \[ ] Add Viewport direction control
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)
