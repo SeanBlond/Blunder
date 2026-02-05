@@ -88,6 +88,21 @@ namespace ui
 
         // Setters
         void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
+        void setCorners(glm::vec4 corners) 
+        {
+            position.setCorners(corners);
+        }
+        void setCorners(float left_x, float right_x, float bottom_y, float top_y) {
+            position.setCorners(left_x, right_x, bottom_y, top_y);
+        }
+        void setPositions(glm::vec4 corners, float split)
+        {
+            position.setPositions(corners, split);
+        }
+        void setPositions(float left_x, float right_x, float bottom_y, float top_y, float split)
+        {
+            position.setPositions(left_x, right_x, bottom_y, top_y, split);
+        }
 
         // Override Functions
         virtual void RenderElement(UIRenderer* renderer, float textSize) = 0;
@@ -97,8 +112,8 @@ namespace ui
 
         bool clicked = false;
         bool highlighted = false;
-        ElementPosition position;
     protected:
+        ElementPosition position;
         ElementType type;
         std::string label;
     };
