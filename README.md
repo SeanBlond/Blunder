@@ -18,6 +18,7 @@ A quick little backlog of features that will be added to Blunder (this just exis
 * \[ ] Add object creation UI
 * \[ ] Add Color UI Element
 * \[ ] Renovate Colors.h to have a good list of what colors are being used in Blunder
+* \[ ] Renovate Attribute UI positioning system with better data structures
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)
 * \[ ] Work on shader/material system (different viewport modes, UI material options, etc)

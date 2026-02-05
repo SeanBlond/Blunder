@@ -186,7 +186,6 @@ int main()
 
         // Managing Attribute UI
         glViewport(0, 0, uiwidth, SCREEN_HEIGHT);
-        //glDisable(GL_DEPTH);
         attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
         attributeUI.ManageUIInteraction(window, &state);
         attributeUI.DrawWindow();
@@ -194,7 +193,6 @@ int main()
 
         // Managing Hierarchy UI
         glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
-        //glDisable(GL_DEPTH);
         hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageUIInteraction(window, &state);
         hierarchyUI.DrawWindow();

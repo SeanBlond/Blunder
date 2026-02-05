@@ -21,11 +21,66 @@ namespace ui
 {
     enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_VIEW_NAV };
 
+    struct WindowPosition;
+    struct ElementPosition
+    {
+        /*
+               THE STRUCTURE
+            (x,w)----|----(z,w)
+             |       |       |
+             |       |       |
+             |       |       |
+            (x,y)----|----(z,y)
+                     ^
+                   split
+        */
+
+        ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
+            : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {
+        }
+        ElementPosition(glm::vec2 bottomCorner, glm::vec2 topCorner, float split, WindowPosition* parentWindow)
+            : left_x(bottomCorner.x), right_x(topCorner.x), bottom_y(bottomCorner.y), top_y(topCorner.y), split(split), parentWindow(parentWindow) {
+        }
+        ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
+            : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {
+        }
+
+        // Multi-Getters
+        glm::vec4 getCorners() { return glm::vec4(left_x, right_x, bottom_y, top_y); }
+
+        // Multi-Setters
+        void setCorners(glm::vec4 corners) {
+            left_x = corners.x;
+            right_x = corners.z;
+            bottom_y = corners.y;
+            top_y = corners.z;
+        }
+        void setCorners(float left_x, float right_x, float bottom_y, float top_y) {
+            this->left_x = left_x;
+            this->right_x = right_x;
+            this->bottom_y = bottom_y;
+            this->top_y = top_y;
+        }
+        void setPositions(glm::vec4 corners, float split)
+        {
+            setCorners(corners);
+            this->split = split;
+        }
+        void setPositions(float left_x, float right_x, float bottom_y, float top_y, float split)
+        {
+            setCorners(left_x, right_x, bottom_y, top_y);
+            this->split = split;
+        }
+
+        float left_x, right_x, bottom_y, top_y, split;
+        WindowPosition* parentWindow;
+    };
+
     // Attribute Element Parent Class
     class AttributeElement
     {
     public:
-        AttributeElement(std::string label, ElementType type) : label(label), type(type) {}
+        AttributeElement(std::string label, ElementPosition position, ElementType type, WindowPosition* parentWindow) : label(label), type(type) {}
 
         // Getters
         std::string getLabel() { return label; }
@@ -35,13 +90,14 @@ namespace ui
         void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
 
         // Override Functions
-        virtual void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) = 0;
+        virtual void RenderElement(UIRenderer* renderer, float textSize) = 0;
         virtual void OnClick(StateMachine* state) = 0;
         virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
 
         bool clicked = false;
         bool highlighted = false;
+        ElementPosition position;
     protected:
         ElementType type;
         std::string label;
