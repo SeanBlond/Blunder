@@ -81,6 +81,10 @@ private:
     std::vector<ui::Attribute*> attributes;
     std::vector<ui::AttributeInteractable> interactables;
     ui::AttributeElement* clickedElement;
+
+
+    // REMOVE AT SOME POINT
+    int testDropdownValue;
 };
 
 // Hierarchy Window

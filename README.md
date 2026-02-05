@@ -13,8 +13,11 @@ Blunder is still under development and doesn't have a stable public release. It 
 A quick little backlog of features that will be added to Blunder (this just exists to help me keep track of what needs to be done)
 
 * \[x] Fix Cube generation and torus UI interaction
-* \[ ] Add Viewport direction control
+* \[x] Add Viewport direction control
+* \[x] Add Dropdown UI Element
 * \[ ] Add object creation UI
+* \[ ] Add Color UI Element
+* \[ ] Renovate Colors.h to have a good list of what colors are being used in Blunder
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)
 * \[ ] Work on shader/material system (different viewport modes, UI material options, etc)

@@ -219,7 +219,13 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     scaleAtrribute->addFloatEntry("X", &(object->transform.scale.x));
     scaleAtrribute->addFloatEntry("Y", &(object->transform.scale.y));
     scaleAtrribute->addFloatEntry("Z", &(object->transform.scale.z));
+    // Adding Test Dropdown REMOVE AT SOME POINT
+    std::vector<std::string> options = { "Option 1", "Option 2", "Option 3", "Option 4" };
+    testDropdownValue = 0;
+    scaleAtrribute->addDropdown("Test", &testDropdownValue, options);
     addAttribute(scaleAtrribute);
+
+
 
     // Adding Custom Mesh Attributes
     // Checking if the attributes have values before adding them

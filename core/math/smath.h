@@ -338,4 +338,21 @@ namespace smath
         }
         return -1;
     }
+
+    inline bool checkUICollision(glm::vec2 pos, glm::vec4 corners)
+    {
+        bool xCollision = (pos.x > corners.x && pos.x < corners.z);
+        bool yCollision = (pos.y > corners.y && pos.y < corners.w);
+        return (xCollision && yCollision);
+    }
+    inline bool checkUICollision_Y(glm::vec2 pos, glm::vec2 corners_y)
+    {
+        bool yCollision = (pos.y > corners_y.x && pos.y < corners_y.y);
+        return yCollision;
+    }
+    inline bool checkUICollision_X(glm::vec2 pos, glm::vec2 corners_x)
+    {
+        bool xCollision = (pos.x > corners_x.x && pos.x < corners_x.y);
+        return xCollision;
+    }
 }

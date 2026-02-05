@@ -43,7 +43,7 @@ namespace ui
     {
     public:
         // Constructors and Deconstructor
-        UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, float textHeight = 1.0f);
+        UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, float textHeight = 0.8f);
         ~UIRenderer();
 
         // Getters

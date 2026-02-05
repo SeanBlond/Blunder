@@ -145,7 +145,9 @@ int main()
         glfwSetWindowSizeLimits(window, (SCREEN_HEIGHT / 2), 400, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
         //Clear framebuffer
-        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+        //glm::vec3 viewportColor = glm::vec3(0.3f);
+        glm::vec3 viewportColor = colors::murkyGrey.rgb();
+        glClearColor(viewportColor.x, viewportColor.y, viewportColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // UI Math

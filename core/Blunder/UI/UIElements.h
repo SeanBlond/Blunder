@@ -214,12 +214,34 @@ namespace ui
         TextInput text;
     };
 
+    class Dropdown : public AttributeElement
+    {
+    public:
+        Dropdown(std::string label, int* value, std::vector<std::string> options) : value(value), options(options), optionSize(glm::vec2(0)), firstOptionYPos(0), droppedDown(false), AttributeElement(label, UI_DROPDOWN) {}
+
+        // Element Functions
+        void addOption(std::string option) { options.push_back(option); }
+        void addOptions(std::vector<std::string> options) { this->options.insert(this->options.end(), options.begin(), options.end()); }
+        void removeOption(int index) { options.erase(options.begin() + index); }
+        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        int* value;
+        bool droppedDown;
+        glm::vec2 optionSize;
+        float firstOptionYPos;
+        std::vector<std::string> options; // Index corresponds to value
+    };
+
     // Attribute Group (Parent Object)
     class Attribute
     {
     public:
         // Constructor & Deconstructor
-        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_DROPDOWN); }
+        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_TOGGLE); }
         ~Attribute()
         {
             for (int i = 0; i < elements.size(); i++)
@@ -251,6 +273,8 @@ namespace ui
         void addIntEntry(std::string label, int* value, float speed = 1.0f);
         void addIntSlider(std::string label, int* value, float speed = 1.0f, int min = 0, int max = 10);
         void addToggle(std::string label, bool* value);
+        void addTextEntry(std::string label, std::string* value);
+        void addDropdown(std::string label, int* value, std::vector<std::string> options);
 
     private:
         std::string attributeName;

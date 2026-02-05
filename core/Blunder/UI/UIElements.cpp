@@ -23,6 +23,14 @@ void Attribute::addToggle(std::string label, bool* value)
 {
     elements.push_back(new Toggle(label, value));
 }
+void Attribute::addTextEntry(std::string label, std::string* value)
+{
+    elements.push_back(new TextEntry(label, value));
+}
+void Attribute::addDropdown(std::string label, int* value, std::vector<std::string> options)
+{
+    elements.push_back(new Dropdown(label, value, options));
+}
 
 
 // Float Entry Mouse Functions
@@ -198,6 +206,45 @@ void TextEntry::OnRelease(StateMachine* state)
     state->changeState(SM_UI_TYPING);
 }
 
+// Dropdown Mouse Functions
+void Dropdown::OnClick(StateMachine* state)
+{
+    // Activating dropdown
+    droppedDown = true;
+
+    // Clamping value to bhe within the options range
+    *value = smath::clamp(*value, 0, (int)options.size());
+}
+void Dropdown::OnHold(StateMachine* state)
+{
+    // Checking if option ui values have been set before checking mouse 
+    if (optionSize.x != 0)
+    {
+        // Checking each options for a mouse y-collision
+        for (int i = 0; i < options.size(); i++)
+        {
+            // Setting corners
+            glm::vec2 optionCorners = glm::vec2(
+                firstOptionYPos - (optionSize.y / 2) + (optionSize.y * (i + 1)),
+                firstOptionYPos + (optionSize.y / 2) + (optionSize.y * (i + 1))
+            );
+
+            // Checking collision
+            if (smath::checkUICollision_Y(state->getMouse()->mousePos, optionCorners))
+            {
+                *value = i;
+            }
+        }
+    }
+}
+void Dropdown::OnRelease(StateMachine* state)
+{
+    // Resetting values
+    droppedDown = false;
+    optionSize = glm::vec2(0);
+    firstOptionYPos = 0;
+}
+
 // Hierarchy Text Entry Mouse Functions
 void HierarchyTextEntry::OnClick(StateMachine* state)
 {
@@ -236,6 +283,7 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
         textTriggered = false;
     }
 }
+
 
 // Element Render Functions
 void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
@@ -508,6 +556,62 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
+void Dropdown::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+{
+    float width = (xPos.y - xPos.x);
+
+    // Drawing Label Text
+    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+
+    // Color Modifier
+    glm::vec3 colorMod(1);
+    if (clicked)
+        colorMod = glm::vec3(0.75f);
+    else if (highlighted)
+        colorMod = glm::vec3(1.25f);
+
+    // Drawing Dropdown Box
+    renderer->addQuad(glm::vec3(width * 0.69, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+
+    // Drawing Dropdown Icon
+    ui::UITexture dropdownIcon = (droppedDown ? UI_DROPDOWN_T : UI_DROPDOWN_F);
+    renderer->addQuad(glm::vec3(width * 0.48, ypos, 0.21f), glm::vec2(width * 0.08f), colors::lightestgrey.rgb(), dropdownIcon);
+
+    // Drawing each option if dropped down
+    if (droppedDown)
+    {
+        // Setting optionYSize for UI interaction
+        optionSize = glm::vec2(0.5f * width, ySize);
+        firstOptionYPos = (4 * width) - ypos - (ySize / 2); // TODO: Make it so a magic number (4) doesn't have to be used to find ui height
+
+        // Drawing a quad that outlines the options
+        float outlineYSize = ySize * options.size() + (width * 0.005f) + (options.size() / 2);
+        float outlineYPos = ypos - (ySize / 2) - (outlineYSize / 2);
+        renderer->addQuad(glm::vec3(width * 0.69, outlineYPos, 0.89f), glm::vec2(width * 0.52f, outlineYSize), glm::vec3(0.35f));
+
+        // Drawing each option
+        for (int i = 0; i < options.size(); i++)
+        {
+            float optionYPos = ypos - (ySize * (i + 1));
+            
+            // Highlighting the option if it is currently selected
+            glm::vec3 optionColor = (i == *value ? colors::blunderGreen.rgb() : colors::darkerGrey.rgb());
+
+            // Drawing Dropdown Box
+            renderer->addQuad(glm::vec3(width * 0.69, optionYPos, 0.9f), glm::vec2(width * 0.5f, ySize), optionColor);
+
+            // Drawing Option Circle
+            renderer->addQuad(glm::vec3(width * 0.48, optionYPos, 0.91f), glm::vec2(width * 0.02f), colors::lightestgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
+
+            // Drawing Value
+            renderer->addText(options[i], glm::vec3((width * 0.52f), optionYPos, 1), textSize, glm::vec3(1.0f), LEFT);
+        }
+    }
+
+    // Drawing Value
+    renderer->addText(options[*value], glm::vec3((width * 0.52f), ypos, 0), textSize, glm::vec3(1.0f), LEFT);
+}
+
 void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 {
     float width = (xPos.y - xPos.x);
@@ -537,7 +641,6 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float y
     // Drawing Value
     text.addText(renderer, glm::vec3(xPos.x, ypos, 0), textSize, glm::vec3(1.0f));
 }
-
 
 // ViewNav Element
 void ViewNav::CreateMesh()
