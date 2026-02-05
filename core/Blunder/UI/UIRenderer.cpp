@@ -170,6 +170,19 @@ void UIRenderer::renderText(glm::mat4 projection)
 }
 void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture, QuadStyle style)
 {
+    // Converting position & size to corners and depth so the other addQuad() function can be called
+    glm::vec4 corners = glm::vec4(
+        position.x - (size.x / 2.0f),
+        position.y - (size.y / 2.0f),
+        position.x + (size.x / 2.0f),
+        position.y + (size.y / 2.0f)
+    );
+    float depth = position.z;
+
+    addQuad(corners, depth, color, texture, style);
+}
+void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT)
+{
     // Getting the TexCoord location of the texture
     glm::vec4 uvCoords;
     if (texture == UI_NO_TEXTURE)
@@ -178,12 +191,19 @@ void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UI
         uvCoords = uiTextureCorners[texture];
 
     // Adding Vertex Information
+    /*
+        (x,w)------(z,w)
+         |            |
+         |            |
+         |            |
+        (x,y)------(z,y)
+    */
     UIVertex tempVertices[4] = {
         //           Positions                                                                           TexCoord                            Color   UV Coords       Style
-        UIVertex({ glm::vec3(position.x - (size.x / 2.0f), position.y - (size.y / 2.0f), position.z),  glm::vec2(uvCoords.x, uvCoords.w),  color,  glm::vec2(0, 0),  style }),  // Bottom Left
-        UIVertex({ glm::vec3(position.x + (size.x / 2.0f), position.y - (size.y / 2.0f), position.z),  glm::vec2(uvCoords.z, uvCoords.w),  color,  glm::vec2(1, 0),  style }),  // Bottom Right
-        UIVertex({ glm::vec3(position.x + (size.x / 2.0f), position.y + (size.y / 2.0f), position.z),  glm::vec2(uvCoords.z, uvCoords.y),  color,  glm::vec2(1, 1),  style }),  // Top Right
-        UIVertex({ glm::vec3(position.x - (size.x / 2.0f), position.y + (size.y / 2.0f), position.z),  glm::vec2(uvCoords.x, uvCoords.y),  color,  glm::vec2(0, 1),  style }),  // Top Left
+        UIVertex({ glm::vec3(corners.x, corners.y, depth),  glm::vec2(uvCoords.x, uvCoords.w),  color,  glm::vec2(0, 0),  style }),  // Bottom Left
+        UIVertex({ glm::vec3(corners.z, corners.y, depth),  glm::vec2(uvCoords.z, uvCoords.w),  color,  glm::vec2(1, 0),  style }),  // Bottom Right
+        UIVertex({ glm::vec3(corners.z, corners.w, depth),  glm::vec2(uvCoords.z, uvCoords.y),  color,  glm::vec2(1, 1),  style }),  // Top Right
+        UIVertex({ glm::vec3(corners.x, corners.w, depth),  glm::vec2(uvCoords.x, uvCoords.y),  color,  glm::vec2(0, 1),  style }),  // Top Left
     };
     vertices.insert(vertices.end(), std::begin(tempVertices), std::end(tempVertices));
 
@@ -196,6 +216,7 @@ void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UI
     };
     indices.insert(indices.end(), std::begin(tempIndices), std::end(tempIndices));
 }
+
 void UIRenderer::UpdateMesh()
 {
     glBindVertexArray(VAO);

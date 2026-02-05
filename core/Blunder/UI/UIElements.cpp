@@ -3,8 +3,8 @@
 using namespace ui;
 
 // Attribute Functions
-void Attribute::addFloatEntry(std::string label, float* value, float speed) 
-{ 
+void Attribute::addFloatEntry(std::string label, float* value, float speed)
+{
     elements.push_back(new FloatEntry(label, value, speed));
 }
 void Attribute::addFloatSlider(std::string label, float* value, float speed, float min, float max)
@@ -174,14 +174,8 @@ void IntSlider::OnRelease(StateMachine* state)
 }
 
 // Toggle Mouse Functions
-void Toggle::OnClick(StateMachine* state)
-{
-    // Toggle does not do anything on click
-}
-void Toggle::OnHold(StateMachine* state)
-{
-    // Toggle does nothing on hold
-}
+void Toggle::OnClick(StateMachine* state) {}
+void Toggle::OnHold(StateMachine* state) {}
 void Toggle::OnRelease(StateMachine* state)
 {
     // Toggling the value
@@ -194,10 +188,7 @@ void TextEntry::OnClick(StateMachine* state)
 {
     saveValue = *value;
 }
-void TextEntry::OnHold(StateMachine* state)
-{
-    // Do nothing, no data to change with mouse slide
-}
+void TextEntry::OnHold(StateMachine* state) {}
 void TextEntry::OnRelease(StateMachine* state)
 {
     text.setTyping(true);
@@ -267,10 +258,7 @@ void HierarchyTextEntry::OnClick(StateMachine* state)
     // Resetting click time
     clickTime = TimeManager::getInstance()->getTime();
 }
-void HierarchyTextEntry::OnHold(StateMachine* state)
-{
-    // Do nothing, no data to change with mouse slide
-}
+void HierarchyTextEntry::OnHold(StateMachine* state) {}
 void HierarchyTextEntry::OnRelease(StateMachine* state)
 {
     // Checking if typing was triggered
@@ -286,9 +274,11 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
 
 
 // Element Render Functions
-void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void FloatEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -319,7 +309,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, gl
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -329,17 +319,17 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, gl
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(glm::vec4(position.left_x, position.bottom_y, position.right_x, position.top_y), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Rounding value to 3 decimals places and converting to string
     //std::stringstream stream;
     //stream << std::fixed << std::setprecision(3) << (*value);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void FloatSlider::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -393,7 +383,7 @@ void FloatSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, g
     text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void IntEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -442,7 +432,7 @@ void IntEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm:
     text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void IntSlider::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -496,7 +486,7 @@ void IntSlider::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void Toggle::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void Toggle::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -524,7 +514,7 @@ void Toggle::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::v
 
 }
 
-void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void TextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -556,7 +546,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm
     text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void Dropdown::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void Dropdown::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -593,7 +583,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm:
         for (int i = 0; i < options.size(); i++)
         {
             float optionYPos = ypos - (ySize * (i + 1));
-            
+
             // Highlighting the option if it is currently selected
             glm::vec3 optionColor = (i == *value ? colors::blunderGreen.rgb() : colors::darkerGrey.rgb());
 
@@ -612,7 +602,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm:
     renderer->addText(options[*value], glm::vec3((width * 0.52f), ypos, 0), textSize, glm::vec3(1.0f), LEFT);
 }
 
-void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void HierarchyTextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     float width = (xPos.y - xPos.x);
 
@@ -647,21 +637,21 @@ void ViewNav::CreateMesh()
 {
     // Create Mesh
     // Mesh vertices & indices
-    std::vector<Vertex> vertices = 
+    std::vector<Vertex> vertices =
     {
         // Position                     Color                     TexCoord (not used)
-        Vertex( {glm::vec3(0, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),
-        Vertex( {glm::vec3(1, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),  //  X : 1
-        Vertex( {glm::vec3(0, 0, 0),    colors::darkRed.rgb(),   glm::vec2(0) }),
-        Vertex( {glm::vec3(-1, 0, 0),   colors::darkRed.rgb(),   glm::vec2(0) }),  // -X : 3
-        Vertex( {glm::vec3(0, 0, 0),    colors::green.rgb(),     glm::vec2(0) }),
-        Vertex( {glm::vec3(0, 1, 0),    colors::green.rgb(),     glm::vec2(0) }),  //  Y : 5
-        Vertex( {glm::vec3(0, 0, 0),    colors::darkGreen.rgb(), glm::vec2(0) }),
-        Vertex( {glm::vec3(0, -1, 0),   colors::darkGreen.rgb(), glm::vec2(0) }),  // -Y : 7
-        Vertex( {glm::vec3(0, 0, 0),    colors::blue.rgb(),      glm::vec2(0) }),
-        Vertex( {glm::vec3(0, 0, 1),    colors::blue.rgb(),      glm::vec2(0) }),  //  Z : 9
-        Vertex( {glm::vec3(0, 0, 0),    colors::darkBlue.rgb(),  glm::vec2(0) }),
-        Vertex( {glm::vec3(0, 0, -1),   colors::darkBlue.rgb(),  glm::vec2(0) }),  // -Z : 11
+        Vertex({glm::vec3(0, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),
+        Vertex({glm::vec3(1, 0, 0),    colors::red.rgb(),       glm::vec2(0) }),  //  X : 1
+        Vertex({glm::vec3(0, 0, 0),    colors::darkRed.rgb(),   glm::vec2(0) }),
+        Vertex({glm::vec3(-1, 0, 0),   colors::darkRed.rgb(),   glm::vec2(0) }),  // -X : 3
+        Vertex({glm::vec3(0, 0, 0),    colors::green.rgb(),     glm::vec2(0) }),
+        Vertex({glm::vec3(0, 1, 0),    colors::green.rgb(),     glm::vec2(0) }),  //  Y : 5
+        Vertex({glm::vec3(0, 0, 0),    colors::darkGreen.rgb(), glm::vec2(0) }),
+        Vertex({glm::vec3(0, -1, 0),   colors::darkGreen.rgb(), glm::vec2(0) }),  // -Y : 7
+        Vertex({glm::vec3(0, 0, 0),    colors::blue.rgb(),      glm::vec2(0) }),
+        Vertex({glm::vec3(0, 0, 1),    colors::blue.rgb(),      glm::vec2(0) }),  //  Z : 9
+        Vertex({glm::vec3(0, 0, 0),    colors::darkBlue.rgb(),  glm::vec2(0) }),
+        Vertex({glm::vec3(0, 0, -1),   colors::darkBlue.rgb(),  glm::vec2(0) }),  // -Z : 11
     };
     std::vector<unsigned int> indices =
     {
@@ -672,7 +662,7 @@ void ViewNav::CreateMesh()
         8, 9, 8,
         10, 11, 10,
     };
-    
+
     // Creating mesh object
     navMesh = new Mesh(vertices, indices);
 
@@ -706,7 +696,7 @@ void ViewNav::CreateMesh()
             fragColor = vec4(Color, 1.0);
         }  
         )";
-    
+
     // Creating shader object
     navShader = new shdr::Shader(navVertexShader, navFragmentShader, 1);
 
@@ -720,7 +710,7 @@ ViewNav::~ViewNav()
 }
 
 // Functions
-void ViewNav::RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
+void ViewNav::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
 {
     // Updating screen position
     screenPos = glm::vec3(xPos.y - ySize * 0.5f, ySize * 0.5f, ySize);

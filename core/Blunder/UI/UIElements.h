@@ -25,14 +25,14 @@ namespace ui
     struct ElementPosition
     {
         /*
-               THE STRUCTURE
-            (x,w)----|----(z,w)
-             |       |       |
-             |       |       |
-             |       |       |
-            (x,y)----|----(z,y)
-                     ^
-                   split
+                 THE STRUCTURE
+            (lx,ty)----|----(rx,ty)      (x,w)----|----(z,w)
+               |       |       |           |      |      |
+               |       |       |     OR    |      |      |   
+               |       |       |           |      |      |
+            (lx,by)----|----(rx,by)      (x,y)----|----(z,y)
+                       ^
+                     split
         */
 
         ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
@@ -43,6 +43,9 @@ namespace ui
         }
         ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
             : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {
+        }
+        ElementPosition()
+            : left_x(0), right_x(0), bottom_y(0), top_y(0), split(0), parentWindow(nullptr) {
         }
 
         // Multi-Getters
@@ -80,32 +83,19 @@ namespace ui
     class AttributeElement
     {
     public:
-        AttributeElement(std::string label, ElementPosition position, ElementType type, WindowPosition* parentWindow) : label(label), type(type) {}
+        AttributeElement(std::string label, ElementType type) : label(label), type(type) {}
 
         // Getters
         std::string getLabel() { return label; }
         ElementType getType() { return type; }
 
         // Setters
-        void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
-        void setCorners(glm::vec4 corners) 
-        {
-            position.setCorners(corners);
-        }
-        void setCorners(float left_x, float right_x, float bottom_y, float top_y) {
-            position.setCorners(left_x, right_x, bottom_y, top_y);
-        }
-        void setPositions(glm::vec4 corners, float split)
-        {
-            position.setPositions(corners, split);
-        }
-        void setPositions(float left_x, float right_x, float bottom_y, float top_y, float split)
-        {
-            position.setPositions(left_x, right_x, bottom_y, top_y, split);
-        }
+        //void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
+        //void setClicked(bool clicked) { this->clicked = clicked; }
+
 
         // Override Functions
-        virtual void RenderElement(UIRenderer* renderer, float textSize) = 0;
+        virtual void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) = 0;
         virtual void OnClick(StateMachine* state) = 0;
         virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
@@ -113,7 +103,6 @@ namespace ui
         bool clicked = false;
         bool highlighted = false;
     protected:
-        ElementPosition position;
         ElementType type;
         std::string label;
     };
@@ -137,7 +126,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = value; }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -168,7 +157,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -198,7 +187,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = value; }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -229,7 +218,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -256,7 +245,7 @@ namespace ui
         // Element Functions
         void setToggle(bool value) { *(this->value) = value; }
         void toggleValue() { *value = !(*value); }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -274,7 +263,7 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -285,6 +274,7 @@ namespace ui
         TextInput text;
     };
 
+    // Dropdown
     class Dropdown : public AttributeElement
     {
     public:
@@ -294,7 +284,7 @@ namespace ui
         void addOption(std::string option) { options.push_back(option); }
         void addOptions(std::vector<std::string> options) { this->options.insert(this->options.end(), options.begin(), options.end()); }
         void removeOption(int index) { options.erase(options.begin() + index); }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -365,7 +355,7 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -392,7 +382,7 @@ namespace ui
 
         // Functions
         void CreateMesh();
-        void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize) override;
+        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
