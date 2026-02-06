@@ -274,7 +274,7 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
 
 
 // Element Render Functions
-void FloatEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void FloatEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.bottom_y - position.top_y);
@@ -318,8 +318,8 @@ void FloatEntry::RenderElement(UIRenderer* renderer, ElementPosition position, f
     else if (highlighted)
         colorMod = glm::vec3(1.25f);
 
-    // Drawing Text Box
-    renderer->addQuad(glm::vec4(position.left_x, position.bottom_y, position.right_x, position.top_y), 0.2f, colors::darkerGrey.rgb() * colorMod);
+    // Drawing Text 
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Rounding value to 3 decimals places and converting to string
     //std::stringstream stream;
@@ -329,9 +329,11 @@ void FloatEntry::RenderElement(UIRenderer* renderer, ElementPosition position, f
     text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void FloatSlider::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -362,7 +364,7 @@ void FloatSlider::RenderElement(UIRenderer* renderer, ElementPosition position, 
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -372,20 +374,22 @@ void FloatSlider::RenderElement(UIRenderer* renderer, ElementPosition position, 
         colorMod = glm::vec3(1.25f);
 
     // Drawing Base Box
-    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Draw Slider Box
     float sliderWidth = width * 0.5f * getPercentage();
     float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
-    renderer->addQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, width * 0.1f), colors::blunderGreen.rgb() * colorMod);
+    renderer->addQuad(glm::vec3(sliderPosX, yPos, 0.225f), glm::vec2(sliderWidth, width * 0.1f), colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void IntEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -416,7 +420,7 @@ void IntEntry::RenderElement(UIRenderer* renderer, ElementPosition position, flo
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -426,15 +430,17 @@ void IntEntry::RenderElement(UIRenderer* renderer, ElementPosition position, flo
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void IntSlider::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -465,7 +471,7 @@ void IntSlider::RenderElement(UIRenderer* renderer, ElementPosition position, fl
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -475,23 +481,25 @@ void IntSlider::RenderElement(UIRenderer* renderer, ElementPosition position, fl
         colorMod = glm::vec3(1.25f);
 
     // Drawing Base Box
-    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Draw Slider Box
     float sliderWidth = width * 0.5f * getPercentage();
     float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
-    renderer->addQuad(glm::vec3(sliderPosX, ypos, 0.225f), glm::vec2(sliderWidth, ySize), colors::blunderGreen.rgb() * colorMod);
+    renderer->addQuad(glm::vec3(sliderPosX, yPos, 0.225f), glm::vec2(sliderWidth, ySize), colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void Toggle::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void Toggle::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3((width * 0.42f), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Calculating Color
     glm::vec3 color;
@@ -508,15 +516,17 @@ void Toggle::RenderElement(UIRenderer* renderer, ElementPosition position, float
         colorMod = glm::vec3(1.25f);
 
     // Drawing Toggle Box
-    renderer->addQuad(glm::vec3(width * 0.49f, ypos, 0.25f), glm::vec2(ySize, ySize), color * colorMod);
+    renderer->addQuad(position.getRightCorners(ySize), 0.2f, color * colorMod);
 
     // Draw Check (eventually)
 
 }
 
-void TextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -530,7 +540,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, fl
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -540,18 +550,20 @@ void TextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, fl
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->addQuad(glm::vec3(width * 0.69f, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(glm::vec3(width * 0.69f, yPos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3((width * 0.69f), ypos, 0), textSize, glm::vec3(1.0f), CENTER);
+    text.addText(renderer, glm::vec3((width * 0.69f), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
 }
 
-void Dropdown::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3((width * 0.42f), ypos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split, yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -561,28 +573,28 @@ void Dropdown::RenderElement(UIRenderer* renderer, ElementPosition position, flo
         colorMod = glm::vec3(1.25f);
 
     // Drawing Dropdown Box
-    renderer->addQuad(glm::vec3(width * 0.69, ypos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod);
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Dropdown Icon
     ui::UITexture dropdownIcon = (droppedDown ? UI_DROPDOWN_T : UI_DROPDOWN_F);
-    renderer->addQuad(glm::vec3(width * 0.48, ypos, 0.21f), glm::vec2(width * 0.08f), colors::lightestgrey.rgb(), dropdownIcon);
+    renderer->addQuad(position.getRightCorners(ySize), 0.2f, colors::lightestgrey.rgb(), dropdownIcon);
 
     // Drawing each option if dropped down
     if (droppedDown)
     {
         // Setting optionYSize for UI interaction
         optionSize = glm::vec2(0.5f * width, ySize);
-        firstOptionYPos = (4 * width) - ypos - (ySize / 2); // TODO: Make it so a magic number (4) doesn't have to be used to find ui height
+        firstOptionYPos = (4 * width) - yPos - (ySize / 2); // TODO: Make it so a magic number (4) doesn't have to be used to find ui height
 
         // Drawing a quad that outlines the options
         float outlineYSize = ySize * options.size() + (width * 0.005f) + (options.size() / 2);
-        float outlineYPos = ypos - (ySize / 2) - (outlineYSize / 2);
+        float outlineYPos = yPos - (ySize / 2) - (outlineYSize / 2);
         renderer->addQuad(glm::vec3(width * 0.69, outlineYPos, 0.89f), glm::vec2(width * 0.52f, outlineYSize), glm::vec3(0.35f));
 
         // Drawing each option
         for (int i = 0; i < options.size(); i++)
         {
-            float optionYPos = ypos - (ySize * (i + 1));
+            float optionYPos = yPos - (ySize * (i + 1));
 
             // Highlighting the option if it is currently selected
             glm::vec3 optionColor = (i == *value ? colors::blunderGreen.rgb() : colors::darkerGrey.rgb());
@@ -599,12 +611,14 @@ void Dropdown::RenderElement(UIRenderer* renderer, ElementPosition position, flo
     }
 
     // Drawing Value
-    renderer->addText(options[*value], glm::vec3((width * 0.52f), ypos, 0), textSize, glm::vec3(1.0f), LEFT);
+    renderer->addText(options[*value], glm::vec3((width * 0.52f), yPos, 0), textSize, glm::vec3(1.0f), LEFT);
 }
 
-void HierarchyTextEntry::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void HierarchyTextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (xPos.y - xPos.x);
+    float width = (position.right_x - position.left_x);
+    float ySize = (position.bottom_y - position.top_y);
+    float yPos = position.bottom_y + (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -626,10 +640,10 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, ElementPosition pos
 
     // Drawing Text Box
     if (text.getTyping())
-        renderer->addQuad(glm::vec3(width * 0.5f + xPos.x, ypos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
+        renderer->addQuad(glm::vec3(width * 0.5f + xPos.x, yPos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3(xPos.x, ypos, 0), textSize, glm::vec3(1.0f));
+    text.addText(renderer, glm::vec3(xPos.x, yPos, 0), textSize, glm::vec3(1.0f));
 }
 
 // ViewNav Element
@@ -710,7 +724,7 @@ ViewNav::~ViewNav()
 }
 
 // Functions
-void ViewNav::RenderElement(UIRenderer* renderer, ElementPosition position, float textSize)
+void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     // Updating screen position
     screenPos = glm::vec3(xPos.y - ySize * 0.5f, ySize * 0.5f, ySize);

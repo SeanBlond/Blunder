@@ -35,21 +35,22 @@ namespace ui
                      split
         */
 
+        // Constructors
         ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
-            : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {
-        }
+            : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {}
         ElementPosition(glm::vec2 bottomCorner, glm::vec2 topCorner, float split, WindowPosition* parentWindow)
-            : left_x(bottomCorner.x), right_x(topCorner.x), bottom_y(bottomCorner.y), top_y(topCorner.y), split(split), parentWindow(parentWindow) {
-        }
+            : left_x(bottomCorner.x), right_x(topCorner.x), bottom_y(bottomCorner.y), top_y(topCorner.y), split(split), parentWindow(parentWindow) {}
         ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
-            : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {
-        }
+            : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {}
         ElementPosition()
-            : left_x(0), right_x(0), bottom_y(0), top_y(0), split(0), parentWindow(nullptr) {
-        }
+            : left_x(0), right_x(0), bottom_y(0), top_y(0), split(0), parentWindow(nullptr) {}
 
         // Multi-Getters
-        glm::vec4 getCorners() { return glm::vec4(left_x, right_x, bottom_y, top_y); }
+        glm::vec4 getCorners() const { return glm::vec4(left_x, right_x, bottom_y, top_y); }
+        glm::vec4 getLeftCorners() const { return glm::vec4(left_x, split, bottom_y, top_y); }
+        glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, split, bottom_y, top_y); }
+        glm::vec4 getRightCorners() const { return glm::vec4(split, right_x, bottom_y, top_y); }
+        glm::vec4 getRightCorners(float width) const { return glm::vec4(split, split + width, bottom_y, top_y); }
 
         // Multi-Setters
         void setCorners(glm::vec4 corners) {
@@ -95,7 +96,7 @@ namespace ui
 
 
         // Override Functions
-        virtual void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) = 0;
+        virtual void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) = 0;
         virtual void OnClick(StateMachine* state) = 0;
         virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
@@ -126,7 +127,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = value; }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -157,7 +158,7 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -187,7 +188,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = value; }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -218,7 +219,7 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -245,7 +246,7 @@ namespace ui
         // Element Functions
         void setToggle(bool value) { *(this->value) = value; }
         void toggleValue() { *value = !(*value); }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -263,7 +264,7 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -284,7 +285,7 @@ namespace ui
         void addOption(std::string option) { options.push_back(option); }
         void addOptions(std::vector<std::string> options) { this->options.insert(this->options.end(), options.begin(), options.end()); }
         void removeOption(int index) { options.erase(options.begin() + index); }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -355,7 +356,7 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -382,7 +383,7 @@ namespace ui
 
         // Functions
         void CreateMesh();
-        void RenderElement(UIRenderer* renderer, ElementPosition position, float textSize) override;
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;

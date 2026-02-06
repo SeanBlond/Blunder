@@ -181,7 +181,7 @@ void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UI
 
     addQuad(corners, depth, color, texture, style);
 }
-void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT)
+void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UITexture texture, QuadStyle style)
 {
     // Getting the TexCoord location of the texture
     glm::vec4 uvCoords;
