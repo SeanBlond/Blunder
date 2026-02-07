@@ -91,7 +91,7 @@ namespace ui
         ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
             : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {}
         ElementPosition(glm::vec2 center, glm::vec2 size, float split, WindowPosition* parentWindow)
-            : left_x(center.x - size.x * 0.5f), right_x(center.x + size.x * 0.5f), bottom_y(center.y + size.y * 0.5f), top_y(center.y - size.y * 0.5f), split(split), parentWindow(parentWindow) {}
+            : left_x(center.x - size.x * 0.5f), right_x(center.x + size.x * 0.5f), bottom_y(center.y - size.y * 0.5f), top_y(center.y + size.y * 0.5f), split(split), parentWindow(parentWindow) {}
         ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
             : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {}
         ElementPosition()
@@ -99,10 +99,10 @@ namespace ui
 
         // Multi-Getters
         glm::vec4 getCorners() const { return glm::vec4(left_x, top_y, right_x, bottom_y); }
-        glm::vec4 getLeftCorners() const { return glm::vec4(left_x, top_y, split, bottom_y); }
-        glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, top_y, split, bottom_y); }
-        glm::vec4 getRightCorners() const { return glm::vec4(split, top_y, right_x, bottom_y); }
-        glm::vec4 getRightCorners(float width) const { return glm::vec4(split, top_y, split + width, bottom_y); }
+        glm::vec4 getLeftCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(left_x + offset.x, bottom_y + offset.y, split + offset.x, top_y + offset.y); }
+        glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, bottom_y, split, top_y); }
+        glm::vec4 getRightCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(split + offset.x, bottom_y + offset.y, right_x + offset.x, top_y + offset.y); }
+        glm::vec4 getRightCorners(float width) const { return glm::vec4(split, bottom_y, split + width, top_y); }
         float getMiddleAfterSplit() const { return split + (right_x - split) * 0.5f; }
         float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
         float getBufferSize() const { return (parentWindow != nullptr ? parentWindow->bufferSize : 0); }

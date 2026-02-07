@@ -277,8 +277,8 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
 void FloatEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -332,8 +332,8 @@ void FloatEntry::RenderElement(UIRenderer* renderer, const ElementPosition& posi
 void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -388,8 +388,8 @@ void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& pos
 void IntEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -439,8 +439,8 @@ void IntEntry::RenderElement(UIRenderer* renderer, const ElementPosition& positi
 void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -495,8 +495,8 @@ void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& posit
 void Toggle::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Drawing Label Text
     renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
@@ -525,8 +525,8 @@ void Toggle::RenderElement(UIRenderer* renderer, const ElementPosition& position
 void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -559,8 +559,8 @@ void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& posit
 void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Drawing Label Text
     renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
@@ -582,31 +582,48 @@ void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& positi
     // Drawing each option if dropped down
     if (droppedDown)
     {
+
         // Setting optionYSize for UI interaction
-        optionSize = glm::vec2(0.5f * width, ySize);
-        firstOptionYPos = (4 * width) - yPos - (ySize / 2); // TODO: Make it so a magic number (4) doesn't have to be used to find ui height
+        float optionWidth = position.getRightCorners().z - position.getRightCorners().x;
+        optionSize = glm::vec2(optionWidth, ySize);
+
+        // Checking if there is enough space for the dropdown to drop downwards
+        bool directionDown = true;
+        float lowestPoint = position.bottom_y - ySize * options.size();
+        if (position.parentWindow->getHeight() - lowestPoint < ySize)
+        {
+            // Dropdown needs to drop upwards
+            directionDown = false;
+            optionSize *= glm::vec2(1, -1);
+        }
+
+        firstOptionYPos = position.parentWindow->getHeight() - yPos - (ySize / 2);
 
         // Drawing a quad that outlines the options
-        float outlineYSize = ySize * options.size() + (width * 0.005f) + (options.size() / 2.0f);
-        float outlineYPos = yPos - (ySize / 2) - (outlineYSize / 2);
-        renderer->addQuad(glm::vec3(width * 0.69, outlineYPos, 0.89f), glm::vec2(width * 0.52f, outlineYSize), glm::vec3(0.35f));
+        glm::vec4 outlineCorner = glm::vec4(
+            position.split - position.getBufferSize(),
+            position.top_y,
+            position.right_x,
+            lowestPoint - position.getBufferSize()
+        );
+        renderer->addQuad(outlineCorner, 0.89f, glm::vec3(0.35f));
 
         // Drawing each option
         for (int i = 0; i < options.size(); i++)
         {
-            float optionYPos = yPos - (ySize * (i + 1));
+            float optionYOffset = -(ySize * (i + 1));
 
             // Highlighting the option if it is currently selected
             glm::vec3 optionColor = (i == *value ? colors::blunderGreen.rgb() : colors::darkerGrey.rgb());
 
             // Drawing Dropdown Box
-            renderer->addQuad(glm::vec3(width * 0.69, optionYPos, 0.9f), glm::vec2(width * 0.5f, ySize), optionColor);
+            renderer->addQuad(position.getRightCorners(glm::vec2(0, optionYOffset)), 0.9f, optionColor);
 
             // Drawing Option Circle
-            renderer->addQuad(glm::vec3(width * 0.48, optionYPos, 0.91f), glm::vec2(width * 0.02f), colors::lightestgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
+            renderer->addQuad(glm::vec3(position.split + ySize * 0.5f, yPos + optionYOffset, 0.91f), glm::vec2(width * 0.02f), colors::lightestgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
 
             // Drawing Value
-            renderer->addText(options[i], glm::vec3(position.split + ySize, optionYPos, 1), textSize, glm::vec3(1.0f), LEFT);
+            renderer->addText(options[i], glm::vec3(position.split + ySize, yPos + optionYOffset, 1), textSize, glm::vec3(1.0f), LEFT);
         }
     }
 
@@ -617,8 +634,8 @@ void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& positi
 void HierarchyTextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating Text
     if (text.getStored())
@@ -727,8 +744,8 @@ ViewNav::~ViewNav()
 void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     float width = (position.right_x - position.left_x);
-    float ySize = (position.bottom_y - position.top_y);
-    float yPos = position.bottom_y - (ySize / 2);
+    float ySize = (position.top_y - position.bottom_y);
+    float yPos = position.top_y - (ySize / 2);
 
     // Updating screen position
     screenPos = glm::vec3(position.left_x - ySize * 0.5f, ySize * 0.5f, ySize);
