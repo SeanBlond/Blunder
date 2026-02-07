@@ -309,7 +309,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, const ElementPosition& posi
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -364,7 +364,7 @@ void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& pos
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -377,9 +377,8 @@ void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& pos
     renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Draw Slider Box
-    float sliderWidth = width * 0.5f * getPercentage();
-    float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
-    renderer->addQuad(glm::vec3(sliderPosX, yPos, 0.225f), glm::vec2(sliderWidth, width * 0.1f), colors::blunderGreen.rgb() * colorMod);
+    float sliderWidth = position.getWidthAfterSplit() * getPercentage();
+    renderer->addQuad(position.getRightCorners(sliderWidth), 0.225f, colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
     text.addText(renderer, glm::vec3(position.getMiddleAfterSplit(), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
@@ -420,7 +419,7 @@ void IntEntry::RenderElement(UIRenderer* renderer, const ElementPosition& positi
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -471,7 +470,7 @@ void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& posit
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -484,9 +483,8 @@ void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& posit
     renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Draw Slider Box
-    float sliderWidth = width * 0.5f * getPercentage();
-    float sliderPosX = (width * 0.69f) - (width * (1.0f - getPercentage()) * 0.25f);
-    renderer->addQuad(glm::vec3(sliderPosX, yPos, 0.225f), glm::vec2(sliderWidth, ySize), colors::blunderGreen.rgb() * colorMod);
+    float sliderWidth = position.getWidthAfterSplit() * getPercentage();
+    renderer->addQuad(position.getRightCorners(sliderWidth), 0.225f, colors::blunderGreen.rgb() * colorMod);
 
     // Drawing Value
     text.addText(renderer, glm::vec3(position.getMiddleAfterSplit(), yPos, 0), textSize, glm::vec3(1.0f), CENTER);
@@ -499,7 +497,7 @@ void Toggle::RenderElement(UIRenderer* renderer, const ElementPosition& position
     float yPos = position.top_y - (ySize / 2);
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Calculating Color
     glm::vec3 color;
@@ -540,7 +538,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& posit
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -563,7 +561,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& positi
     float yPos = position.top_y - (ySize / 2);
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBufferSize(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -590,7 +588,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& positi
         // Checking if there is enough space for the dropdown to drop downwards
         bool directionDown = true;
         float lowestPoint = position.bottom_y - ySize * options.size();
-        if (position.parentWindow->getHeight() - lowestPoint < ySize)
+        if (lowestPoint < ySize)
         {
             // Dropdown needs to drop upwards
             directionDown = false;
@@ -601,10 +599,10 @@ void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& positi
 
         // Drawing a quad that outlines the options
         glm::vec4 outlineCorner = glm::vec4(
-            position.split - position.getBufferSize(),
-            position.top_y,
-            position.right_x,
-            lowestPoint - position.getBufferSize()
+            position.split - position.getBuffer(),
+            lowestPoint - position.getBuffer(),
+            position.right_x + position.getBuffer(),
+            position.bottom_y
         );
         renderer->addQuad(outlineCorner, 0.89f, glm::vec3(0.35f));
 

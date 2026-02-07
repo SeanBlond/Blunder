@@ -11,65 +11,92 @@ bool checkUICollision(float xpos, float ypos, ui::AttributeInteractable interact
 // Attribute Window Functions
 void AttributeWindow::GenerateInteractables()
 {
+    // Clearing previously generated interactables
     interactables.clear();
 
-    // Going through UI Positions and creating interactables out of the elements
-    float attributeYPos = 0.1f;
+    // Setting up initial positioning values
+    float attributeTitleHeight = 0.12f;
+    float attributeYPos = attributeTitleHeight * 0.5f + position.bufferSize;
 
+    // Going through UI Positions and creating interactables out of the elements
     for (int i = 0; i < attributes.size(); i++)
     {
         // Attribute Dropdown Button
         glm::vec4 dropdownCorners = glm::vec4(
-            0.04f,
-            attributeYPos - 0.06f,
-            0.96f,
-            attributeYPos + 0.06f
+            position.bufferSize,
+            attributeYPos - attributeTitleHeight * 0.5f,
+            1.0f - position.bufferSize,
+            attributeYPos + attributeTitleHeight * 0.5f
         );
         ui::AttributeInteractable dropDownInteractable(dropdownCorners, attributes[i]->getDropDownButton());
         interactables.push_back(dropDownInteractable);
 
-        // Other Elements
-        attributeYPos += 0.1f;
-        if (!attributes[i]->getCollapsed())
+        // Checking if elements should be added
+        if (attributes[i]->getCollapsed())
         {
-            attributeYPos += 0.02f;
+            attributeYPos += 0.1f + position.bufferSize;
+        }
+        else
+        {
+            attributeYPos += attributeTitleHeight * 0.5f;
+
+            // Setting up useful UI sizes
+            float elementHeight = 0.08f;
+
+            attributeYPos += elementHeight * 0.5f + position.bufferSize;
+
+            // Adding Each Element to interactables
             for (int j = 0; j < attributes[i]->getElementCount(); j++)
             {
-                // Adding Each Element to interactables
+                // Positioning for the element
+                float attributeElementWidth = position.getWidth() - 4.0f * position.getBuffer();
+                float attributeElementYPos = attributeYPos * position.getWidth();
+                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeElementYPos), glm::vec2(attributeElementWidth, position.getWidth() * elementHeight), position.getWidth() * 0.44f, &position);
 
-                // Current Corners only works for Float Entries & Sliders
-                glm::vec4 corners = glm::vec4(
-                    0.69f - 0.25,
-                    attributeYPos - 0.04f,
-                    0.69f + 0.25,
-                    attributeYPos + 0.04f
-                );
+                // Corners for input
+                glm::vec4 corners = glm::vec4(0);
+                if (attributes[i]->getElement(j)->getType() == ui::UI_TOGGLE) // Toggle has smaller corners
+                {
+                    corners = elementPos.getRightCorners(elementHeight * position.getWidth()) / position.getWidth();
+                }
+                else // Everything else is the same
+                {
+                    corners = elementPos.getRightCorners() / position.getWidth();
+                }
 
+                // Adding the interactable
                 ui::AttributeInteractable tempInteractable(corners, attributes[i]->getElement(j));
                 interactables.push_back(tempInteractable);
 
                 //std::cout << "Interactable Generated at (" << corners.x << ", " << corners.y << ", " << corners.z << ", " << corners.w << ")\n";
 
                 // Updating YPos
-                attributeYPos += 0.1f;
+                attributeYPos += elementHeight + position.bufferSize;
             }
+
+            // Adding space after containter
+            attributeYPos += position.bufferSize;
         }
 
-        // Making space for other attributes
-        attributeYPos += 0.04f;
+        // Creating Space for Next Attribute
+        attributeYPos += position.bufferSize;
     }
 }
 void AttributeWindow::DrawWindow()
 {
     // Adding Base Quad
-    renderer.addQuad(glm::vec3(position.getWidth() / 2.0f, position.getHeight() / 2.0f, 0.0f), glm::vec2(position.getWidth(), position.getHeight()), colors::grey.rgb());
+    renderer.addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+
+    // Setting initial yPos to Start rendering at
+    float attributeTitleHeight = position.getWidth() * 0.12f;
+    float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
 
     // Adding Each Attribute
-    float attributeYPos = position.getHeight() - (position.getWidth() * 0.1f);
     for (int i = 0; i < attributes.size(); i++)
     {
         // Adding Label Box
-        renderer.addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(0.92f * position.getWidth(), 0.12f * position.getWidth()), glm::vec3(0.51f));
+        float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
+        renderer.addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
 
         // Adding Attribute Label
         renderer.addText(attributes[i]->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
@@ -78,35 +105,45 @@ void AttributeWindow::DrawWindow()
         // Checking if elements should be rendered
         if (attributes[i]->getCollapsed())
         {
-            attributeYPos -= (position.getWidth() * 0.1f);
+            attributeYPos -= (position.getWidth() * 0.1f + position.getBuffer());
         }
         else
         {
-            attributeYPos -= (position.getWidth() * 0.05f);
+            attributeYPos -= attributeTitleHeight * 0.5f;
 
-            // RendAdder Elements Container Quad
-            float containerHeight = position.getWidth() * ((attributes[i]->getElementCount() * 0.08f) + ((attributes[i]->getElementCount() + 1) * 0.02f));
-            float containerPosY = attributeYPos - (containerHeight * 0.5f);
-            renderer.addQuad(glm::vec3((position.getWidth() / 2.0f), containerPosY, 0.15f), glm::vec2(0.92f * position.getWidth(), containerHeight), glm::vec3(0.35f));
+            // Setting up useful UI sizes
+            float elementHeight = position.getWidth() * 0.08f;
+            float containerStartHeight = attributeYPos;
 
-            attributeYPos -= (position.getWidth() * 0.07f);
+            attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
 
             for (int j = 0; j < attributes[i]->getElementCount(); j++)
             {
                 // Add Each Element
                 ui::AttributeElement* element = attributes[i]->getElement(j);
-                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(0.9f * position.getWidth(), position.getWidth() * 0.08f), position.getWidth() * 0.44f, &position);
+                float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
                 element->RenderElement(&renderer, elementPos, mediumText());
-                //element->RenderElement(&renderer, attributeYPos, (position.getWidth() * 0.08f), glm::vec2(0.0f, position.getWidth()), mediumText());
-                //  void RenderElement(UIRenderer* renderer, float ypos, float ySize, glm::vec2 xPos, float textSize)
 
                 // Updating YPos
-                attributeYPos -= (position.getWidth() * 0.1f);
+                attributeYPos -= (elementHeight + position.getBuffer());
             }
+
+            // Rendering the element container
+            glm::vec4 containerCorners = glm::vec4(
+                (position.getWidth() - attributeBoxWidth) * 0.5f,
+                attributeYPos + elementHeight * 0.5f,
+                position.getWidth() - (position.getWidth() - attributeBoxWidth) * 0.5f,
+                containerStartHeight
+            );
+            renderer.addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
+
+            // Adding space after containter
+            attributeYPos -= position.getBuffer();
         }
 
         // Creating Space for Next Attribute
-        attributeYPos -= (position.getWidth() * 0.04f);
+        attributeYPos -= position.getBuffer();
     }
 
     // Rendering the Quads
@@ -171,7 +208,7 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
             clickedElement->clicked = false;
 
             // Checking if Dropdown Button was clicked
-            if (clickedElement->getType() == ui::UI_DROPDOWN)
+            if (clickedElement->getType() == ui::UI_ATTRIBUTE_COLLAPSE)
             {
                 GenerateInteractables();
             }

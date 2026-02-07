@@ -17,7 +17,7 @@ class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(width, height, xoffset, yoffset, 0.02f * width), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(width, height, xoffset, yoffset, 0.02f), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
     UIWindow(ui::WindowPosition position, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(position), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
 
     // Getters

@@ -19,7 +19,7 @@
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_VIEW_NAV };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV };
 
     struct WindowPosition
     {
@@ -48,6 +48,7 @@ namespace ui
         }
 
         // Getters
+        float getBuffer() const { return bufferSize * getWidth(); }
         float getWidth() const { return dimensions.x; }
         float getHeight() const { return dimensions.y; }
         float getXOffset() const { return offset.x; }
@@ -104,8 +105,10 @@ namespace ui
         glm::vec4 getRightCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(split + offset.x, bottom_y + offset.y, right_x + offset.x, top_y + offset.y); }
         glm::vec4 getRightCorners(float width) const { return glm::vec4(split, bottom_y, split + width, top_y); }
         float getMiddleAfterSplit() const { return split + (right_x - split) * 0.5f; }
+        float getWidthAfterSplit() const { return right_x - split; }
         float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
-        float getBufferSize() const { return (parentWindow != nullptr ? parentWindow->bufferSize : 0); }
+        float getWidthBeforeSplit() const { return split - left_x; }
+        float getBuffer() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
 
         // Multi-Setters
         void setCorners(glm::vec4 corners) {
@@ -358,7 +361,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_TOGGLE); }
+        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_ATTRIBUTE_COLLAPSE); }
         ~Attribute()
         {
             for (int i = 0; i < elements.size(); i++)
