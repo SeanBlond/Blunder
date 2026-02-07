@@ -199,7 +199,7 @@ void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UIText
         (x,y)------(z,y)
     */
     UIVertex tempVertices[4] = {
-        //           Positions                                                                           TexCoord                            Color   UV Coords       Style
+        //         Positions                                TexCoord                            Color   UV Coords         Style
         UIVertex({ glm::vec3(corners.x, corners.y, depth),  glm::vec2(uvCoords.x, uvCoords.w),  color,  glm::vec2(0, 0),  style }),  // Bottom Left
         UIVertex({ glm::vec3(corners.z, corners.y, depth),  glm::vec2(uvCoords.z, uvCoords.w),  color,  glm::vec2(1, 0),  style }),  // Bottom Right
         UIVertex({ glm::vec3(corners.z, corners.w, depth),  glm::vec2(uvCoords.z, uvCoords.y),  color,  glm::vec2(1, 1),  style }),  // Top Right

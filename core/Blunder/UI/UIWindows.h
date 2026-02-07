@@ -12,53 +12,28 @@
 #include "../ObjectSystem/ObjectSystem.h"
 #include "UIElements.h"
 
-struct WindowPosition
-{
-    /*
-        THE STRUCTURE
-         *---------*
-         |         |
-         |         | < (height)
-         |         |
-         *---------*
-         ^    ^
-         | (width)
-         |
-        (offset.x, offset.y)
-    */
-
-    WindowPosition(float width, float height, float xoffset, float yoffset)
-        : dimensions(glm::vec2(width, height)), offset(glm::vec2(xoffset, yoffset)) {}
-    WindowPosition(float width, float height, glm::vec2 offset)
-        : dimensions(glm::vec2(width, height)), offset(offset) {}
-    WindowPosition(glm::vec2 dimensions, glm::vec2 offset)
-        : dimensions(dimensions), offset(offset) {}
-
-    float getWidth() { return dimensions.x; }
-    float getHeight() { return dimensions.y; }
-
-    glm::vec2 dimensions;
-    glm::vec2 offset;
-};
-
 // Window Parent Class
 class UIWindow
 {
 public:
     // Constructor
-    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(width, height, xoffset, yoffset), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
-    UIWindow(WindowPosition position, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(position), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
+    UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(width, height, xoffset, yoffset, 0.02f * width), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
+    UIWindow(ui::WindowPosition position, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(position), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
 
     // Getters
-    float getWidth() { return position.getWidth(); }
-    float getHeight() { return position.getHeight(); }
+    float getWidth() const { return position.getWidth(); }
+    float getHeight() const { return position.getHeight(); }
+    ui::WindowPosition getPosition() const { return position; }
+    ui::WindowPosition* getPositionAddress() { return &position; }
     glm::mat4 getProjection() { return smath::orthographic(0.0f, position.getWidth(), 0.0f, position.getHeight()); }
 
     // Setters
     void setWidth(float width) { this->position.dimensions.x = width; }
     void setHeight(float height) { this->position.dimensions.y = height; }
-    void setDimensions(float width, float height, float xoffset, float yoffset) { position = WindowPosition(width, height, xoffset, yoffset); }
-    void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { position = WindowPosition(dimensions, offset); }
+    void setDimensions(float width, float height, float xoffset, float yoffset, float bufferSize) { position.setPosition(width, height, xoffset, yoffset, bufferSize); }
+    void setDimensions(glm::vec2 dimensions, glm::vec2 offset, float bufferSize) { position.setPosition(dimensions, offset, bufferSize); }
+    void setDimensions(float width, float height, float xoffset, float yoffset) { position.setPosition(width, height, xoffset, yoffset); }
+    void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { position.setPosition(dimensions, offset); }
 
     // Functions
     virtual void GenerateInteractables() = 0;
@@ -72,7 +47,7 @@ public:
     float largText() const { return (position.dimensions.y * 4e-4); }
 
 protected:
-    WindowPosition position;
+    ui::WindowPosition position;
     ui::UIRenderer renderer;
 };
 

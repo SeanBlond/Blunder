@@ -21,7 +21,57 @@ namespace ui
 {
     enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_VIEW_NAV };
 
-    struct WindowPosition;
+    struct WindowPosition
+    {
+        /*
+            THE STRUCTURE
+             *---------*
+             |         |
+             |         | < (height)
+             |         |
+             *---------*
+             ^    ^
+             | (width)
+             |
+            (offset.x, offset.y)
+        */
+
+        // Constructors
+        WindowPosition(float width, float height, float xoffset, float yoffset, float bufferSize)
+            : dimensions(glm::vec2(width, height)), offset(glm::vec2(xoffset, yoffset)), bufferSize(bufferSize) {
+        }
+        WindowPosition(float width, float height, glm::vec2 offset, float bufferSize)
+            : dimensions(glm::vec2(width, height)), offset(offset), bufferSize(bufferSize) {
+        }
+        WindowPosition(glm::vec2 dimensions, glm::vec2 offset, float bufferSize)
+            : dimensions(dimensions), offset(offset), bufferSize(bufferSize) {
+        }
+
+        // Getters
+        float getWidth() const { return dimensions.x; }
+        float getHeight() const { return dimensions.y; }
+        float getXOffset() const { return offset.x; }
+        float getYOffset() const { return offset.y; }
+        float getAspectRatio() const { return (dimensions.x / dimensions.y); }
+        glm::vec4 getCorners() const { return glm::vec4(offset.x, offset.y, offset.x + dimensions.x, offset.y + dimensions.y); }
+        glm::vec4 getBufferedCorners() const { return glm::vec4(offset.x + bufferSize, offset.y + bufferSize, offset.x + dimensions.x - bufferSize, offset.y + dimensions.y - bufferSize); }
+
+        // Setters
+        void setDimensions(glm::vec2 dimensions) { this->dimensions = dimensions; }
+        void setDimensions(float width, float height) { this->dimensions = glm::vec2(width, height); }
+        void setOffset(glm::vec2 offset) { this->offset = offset; }
+        void setOffset(float xOffset, float yOffset) { this->offset = glm::vec2(xOffset, yOffset); }
+        void setBufferSize(float bufferSize) { this->bufferSize = bufferSize; }
+        void setPosition(float width, float height, float xOffset, float yOffset, float bufferSize) { setDimensions(width, height); setOffset(xOffset, yOffset); setBufferSize(bufferSize); }
+        void setPosition(glm::vec2 dimensions, glm::vec2 offset, float bufferSize) { setDimensions(dimensions); setOffset(offset); setBufferSize(bufferSize); }
+        void setPosition(float width, float height, float xOffset, float yOffset) { setDimensions(width, height); setOffset(xOffset, yOffset); }
+        void setPosition(glm::vec2 dimensions, glm::vec2 offset) { setDimensions(dimensions); setOffset(offset); }
+
+        // Member Variables
+        glm::vec2 dimensions;
+        glm::vec2 offset;
+        float bufferSize;
+    };
     struct ElementPosition
     {
         /*
@@ -33,24 +83,29 @@ namespace ui
             (lx,by)----|----(rx,by)      (x,y)----|----(z,y)
                        ^
                      split
+
+            Coordinates are expected to be relative to parentWindow origin
         */
 
         // Constructors
         ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
             : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {}
-        ElementPosition(glm::vec2 bottomCorner, glm::vec2 topCorner, float split, WindowPosition* parentWindow)
-            : left_x(bottomCorner.x), right_x(topCorner.x), bottom_y(bottomCorner.y), top_y(topCorner.y), split(split), parentWindow(parentWindow) {}
+        ElementPosition(glm::vec2 center, glm::vec2 size, float split, WindowPosition* parentWindow)
+            : left_x(center.x - size.x * 0.5f), right_x(center.x + size.x * 0.5f), bottom_y(center.y + size.y * 0.5f), top_y(center.y - size.y * 0.5f), split(split), parentWindow(parentWindow) {}
         ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
             : left_x(left_x), right_x(right_x), bottom_y(bottom_y), top_y(top_y), split(split), parentWindow(parentWindow) {}
         ElementPosition()
             : left_x(0), right_x(0), bottom_y(0), top_y(0), split(0), parentWindow(nullptr) {}
 
         // Multi-Getters
-        glm::vec4 getCorners() const { return glm::vec4(left_x, right_x, bottom_y, top_y); }
-        glm::vec4 getLeftCorners() const { return glm::vec4(left_x, split, bottom_y, top_y); }
-        glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, split, bottom_y, top_y); }
-        glm::vec4 getRightCorners() const { return glm::vec4(split, right_x, bottom_y, top_y); }
-        glm::vec4 getRightCorners(float width) const { return glm::vec4(split, split + width, bottom_y, top_y); }
+        glm::vec4 getCorners() const { return glm::vec4(left_x, top_y, right_x, bottom_y); }
+        glm::vec4 getLeftCorners() const { return glm::vec4(left_x, top_y, split, bottom_y); }
+        glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, top_y, split, bottom_y); }
+        glm::vec4 getRightCorners() const { return glm::vec4(split, top_y, right_x, bottom_y); }
+        glm::vec4 getRightCorners(float width) const { return glm::vec4(split, top_y, split + width, bottom_y); }
+        float getMiddleAfterSplit() const { return split + (right_x - split) * 0.5f; }
+        float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
+        float getBufferSize() const { return (parentWindow != nullptr ? parentWindow->bufferSize : 0); }
 
         // Multi-Setters
         void setCorners(glm::vec4 corners) {
@@ -87,8 +142,8 @@ namespace ui
         AttributeElement(std::string label, ElementType type) : label(label), type(type) {}
 
         // Getters
-        std::string getLabel() { return label; }
-        ElementType getType() { return type; }
+        std::string getLabel() const { return label; }
+        ElementType getType() const { return type; }
 
         // Setters
         //void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
@@ -319,9 +374,9 @@ namespace ui
 
         // Getters
         AttributeElement* getElement(int index) { return elements[index]; }
-        std::string getName() { return attributeName; }
-        bool getCollapsed() { return collapsed; }
-        int getElementCount() { return elements.size(); }
+        std::string getName() const { return attributeName; }
+        bool getCollapsed() const { return collapsed; }
+        int getElementCount() const { return elements.size(); }
         AttributeElement* getDropDownButton() { return dropdown; }
 
         // Setters
@@ -395,7 +450,7 @@ namespace ui
         bool slideStarted;
         float speed;
         enum ViewAxis { VIEW_NONE = -1, VIEW_POSITIVE_X, VIEW_NEGATIVE_X, VIEW_POSITIVE_Y, VIEW_NEGATIVE_Y, VIEW_POSITIVE_Z, VIEW_NEGATIVE_Z };
-        ViewAxis getClosestAxis(glm::vec2 position, float distanceClamp);
+        ViewAxis getClosestAxis(glm::vec2 position, float distanceClamp) const;
 
         // Rendering Stuff
         Mesh* navMesh;
