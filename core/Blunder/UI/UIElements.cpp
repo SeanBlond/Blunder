@@ -655,10 +655,10 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, const ElementPositi
 
     // Drawing Text Box
     if (text.getTyping())
-        renderer->addQuad(glm::vec3(width * 0.5f + position.right_x, yPos, 0.2f), glm::vec2(width, ySize), colors::darkerGrey.rgb() * colorMod);
+        renderer->addQuad(position.getCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3(position.right_x, yPos, 0), textSize, glm::vec3(1.0f));
+    text.addText(renderer, glm::vec3(position.left_x, yPos, 0), textSize, glm::vec3(1.0f));
 }
 
 // ViewNav Element

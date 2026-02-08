@@ -309,42 +309,46 @@ void HierarchyWindow::generateFolderInteractable(Folder* folder, int indent, flo
 {
     // Dropdown Button
     glm::vec4 tempCorners = glm::vec4(
-        (0.08f * indent) + 0.04f,
+        (0.08f * indent) + 0.02f,
         yPos - 0.04f,
-        (0.08f * indent) + 0.08f,
+        (0.08f * indent) + 0.06f,
         yPos + 0.04f
     );
     ui::AttributeInteractable folderDropdown(tempCorners, new ui::Toggle("folder-dropdown", folder->getDropdownAddress(), ui::UI_DROPDOWN));
+    std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
     interactables.push_back(folderDropdown);
 
     // Hierarchy Text Entry
     tempCorners = glm::vec4(
-        (0.08f * indent) + 0.16f,
+        (0.08f * indent) + 0.14f,
         yPos - 0.04f,
         0.8f,
         yPos + 0.04f
     );
     ui::AttributeInteractable folderName(tempCorners, folder->getHierarchyTextUI());
+    std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
     interactables.push_back(folderName);
 
     // Visibility Button
     tempCorners = glm::vec4(
-        0.8f,
+        0.82f,
         yPos - 0.04f,
-        0.88f,
+        0.9f,
         yPos + 0.04f
     );
     ui::AttributeInteractable folderVisibility(tempCorners, new ui::Toggle("folder-dropdown", folder->getDisplayedAddress()));
+    std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
     interactables.push_back(folderVisibility);
 
     // Render Button
     tempCorners = glm::vec4(
-        0.88f,
+        0.9f,
         yPos - 0.04f,
-        0.96f,
+        0.98f,
         yPos + 0.04f
     );
     ui::AttributeInteractable folderRender(tempCorners, new ui::Toggle("folder-dropdown", folder->getRenderedAddress()));
+    std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
     interactables.push_back(folderRender);
 
     // Changing yPos
@@ -424,27 +428,32 @@ void HierarchyWindow::GenerateInteractables()
     float yPos = 0.2f;
     generateFolderInteractable(objectSystem->getRootFolder(), 0, yPos);
 }
-void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
+void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos) 
 {
     // Rendering the base folder UI
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.92f * position.getWidth(), 0.08f * position.getWidth()), colors::lightgrey.rgb());
+    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), colors::lightgrey.rgb());
 
     // Dropdown Symbol
     if (folder->hasChildren())
-        renderer.addQuad(glm::vec3((position.getWidth() * 0.08f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer.addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Folder Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.16f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_FOLDER_SYMBOL);
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_FOLDER_SYMBOL);
 
     // Folder Text
-    glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
-    //folder->getHierarchyTextUI()->RenderElement(&renderer, yPos, (position.getWidth() * 0.08f), textPosX * position.getWidth(), mediumText());
+    ui::ElementPosition textPos(glm::vec4(
+        position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
+        yPos - (0.04f * position.getWidth()),
+        position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
+        yPos + (0.04f * position.getWidth())
+        ), 0.0f, &position);
+    folder->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
 
     // Visibility Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.84f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
 
     // Render Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.92f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (position.getWidth() * 0.08f);
@@ -469,24 +478,29 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
 {
     // Rendering the base element UI
     Color baseColor = (objectSystem->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.92f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
+    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
     
     // Dropdown Symbol
     if (element->hasChildren())
-        renderer.addQuad(glm::vec3((position.getWidth() * 0.08f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer.addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
     
     // Object Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.16f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
     
     // Object Text
-    glm::vec2 textPosX = glm::vec2((0.2f + 0.08f * indent), 0.8f);
-    //element->getHierarchyTextUI()->RenderElement(&renderer, yPos, (position.getWidth() * 0.08f), textPosX * position.getWidth(), mediumText());
+    ui::ElementPosition textPos(glm::vec4(
+        position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
+        yPos - (0.04f * position.getWidth()),
+        position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
+        yPos + (0.04f * position.getWidth())
+    ), 0.0f, &position);
+    element->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
     
     // Visibility Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.84f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
     
     // Render Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.92f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer.addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (position.getWidth() * 0.08f);
@@ -507,13 +521,15 @@ void HierarchyWindow::DrawWindow()
     renderer.addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
     renderer.addQuad(position.getBufferedCorners(), 0.01f, colors::darkerGrey.rgb());
 
-    float yPos = position.getHeight() - (position.getWidth() * 0.1f);
+    float hierarchyTitleHeight = 0.12f * position.getWidth();
+    float yPos = position.getHeight() - (hierarchyTitleHeight * 0.5f) - position.getBuffer();
 
     // Adding Hierarchy Label
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.92f * position.getWidth(), 0.12f * position.getWidth()), glm::vec3(0.51f));
+    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f));
+    renderer.addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largText(), colors::white.rgb(), CENTER);
 
     // Updating yPos
-    yPos -= (position.getWidth() * 0.1f);
+    yPos -= (hierarchyTitleHeight * 0.5f) + position.getWidth() * 0.04f;
 
     // Starting the UI Draw from the root folder
     DrawUIFolder(objectSystem->getRootFolder(), 0, yPos);
@@ -530,11 +546,11 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
     glfwGetCursorPos(window, &xpos, &ypos); 
 
     // Converting cursor position to be relative to window size
-    xpos = (xpos - position.getXOffset()) / position.getHeight();
-    ypos = (ypos - position.getYOffset()) / position.getHeight();
+    xpos = (xpos - position.getXOffset()) / position.getWidth();
+    ypos = (ypos - position.getYOffset()) / position.getWidth();
 
     // Checking if Mouse Position is within the UI bounds
-    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < position.getAspectRatio())
+    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))
     {
         //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
         for (int i = 0; i < interactables.size(); i++)

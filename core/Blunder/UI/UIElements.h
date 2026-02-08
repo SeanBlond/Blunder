@@ -54,8 +54,8 @@ namespace ui
         float getXOffset() const { return offset.x; }
         float getYOffset() const { return offset.y; }
         float getAspectRatio() const { return (dimensions.x / dimensions.y); }
-        glm::vec4 getCorners() const { return glm::vec4(offset.x, offset.y, offset.x + dimensions.x, offset.y + dimensions.y); }
-        glm::vec4 getBufferedCorners() const { return glm::vec4(offset.x + bufferSize, offset.y + bufferSize, offset.x + dimensions.x - bufferSize, offset.y + dimensions.y - bufferSize); }
+        glm::vec4 getCorners() const { return glm::vec4(0, 0, dimensions.x, dimensions.y); }
+        glm::vec4 getBufferedCorners() const { return glm::vec4(getBuffer(), getBuffer(), dimensions.x - getBuffer(), dimensions.y - getBuffer()); }
 
         // Setters
         void setDimensions(glm::vec2 dimensions) { this->dimensions = dimensions; }
