@@ -90,7 +90,7 @@ namespace ui
 
         // Constructors
         ElementPosition(glm::vec4 corners, float split, WindowPosition* parentWindow)
-            : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.z), split(split), parentWindow(parentWindow) {}
+            : left_x(corners.x), right_x(corners.z), bottom_y(corners.y), top_y(corners.w), split(split), parentWindow(parentWindow) {}
         ElementPosition(glm::vec2 center, glm::vec2 size, float split, WindowPosition* parentWindow)
             : left_x(center.x - size.x * 0.5f), right_x(center.x + size.x * 0.5f), bottom_y(center.y - size.y * 0.5f), top_y(center.y + size.y * 0.5f), split(split), parentWindow(parentWindow) {}
         ElementPosition(float left_x, float right_x, float bottom_y, float top_y, float split, WindowPosition* parentWindow)
@@ -99,7 +99,7 @@ namespace ui
             : left_x(0), right_x(0), bottom_y(0), top_y(0), split(0), parentWindow(nullptr) {}
 
         // Multi-Getters
-        glm::vec4 getCorners() const { return glm::vec4(left_x, top_y, right_x, bottom_y); }
+        glm::vec4 getCorners() const { return glm::vec4(left_x, bottom_y, right_x, top_y); }
         glm::vec4 getLeftCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(left_x + offset.x, bottom_y + offset.y, split + offset.x, top_y + offset.y); }
         glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, bottom_y, split, top_y); }
         glm::vec4 getRightCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(split + offset.x, bottom_y + offset.y, right_x + offset.x, top_y + offset.y); }
@@ -433,11 +433,15 @@ namespace ui
     class ViewNav : public AttributeElement
     {
     public:
-        ViewNav(std::string label, float speed = 1.0f) : AttributeElement(label, UI_VIEW_NAV), speed(speed) { CreateMesh(); }
+        ViewNav(std::string label, float navSize = 150, float speed = 1.0f) : AttributeElement(label, UI_VIEW_NAV), navSize(navSize), speed(speed) { CreateMesh(); }
         ~ViewNav();
+
+        // Getters
+        float getNavSize() { return navSize; }
 
         // Setters
         void setTransform(glm::mat4 transform) { this->transform = transform; }
+        void setNavSize(float size) { this->navSize = size; }
 
         // Functions
         void CreateMesh();
@@ -452,6 +456,7 @@ namespace ui
         glm::vec2 storedCameraOrbit;
         bool slideStarted;
         float speed;
+        float navSize;
         enum ViewAxis { VIEW_NONE = -1, VIEW_POSITIVE_X, VIEW_NEGATIVE_X, VIEW_POSITIVE_Y, VIEW_NEGATIVE_Y, VIEW_POSITIVE_Z, VIEW_NEGATIVE_Z };
         ViewAxis getClosestAxis(glm::vec2 position, float distanceClamp) const;
 

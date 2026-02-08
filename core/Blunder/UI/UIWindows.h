@@ -126,7 +126,7 @@ class ViewportWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav", 0.01f), clickedElement(nullptr) {}
+    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
     ~ViewportWindow() 
     {
         interactables.clear();

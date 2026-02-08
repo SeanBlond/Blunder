@@ -741,16 +741,17 @@ ViewNav::~ViewNav()
 // Functions
 void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float ySize = (position.top_y - position.bottom_y);
-    float yPos = position.top_y - (ySize / 2);
+    float xCenter = position.left_x + navSize * 0.5f - position.split;
+    float yCenter = position.bottom_y + navSize * 0.5f;
 
     // Updating screen position
-    screenPos = glm::vec3(position.left_x - ySize * 0.5f, ySize * 0.5f, ySize);
+    screenPos = glm::vec3(xCenter, navSize * 0.5f, navSize) + glm::vec3(position.parentWindow->offset, 0.0f);
 
     // Adding background when highlighted
     if (highlighted || clicked)
-        renderer->addQuad(position.getCorners(), -0.99999f, colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
+    {
+        renderer->addQuad(glm::vec3(xCenter, yCenter, -0.99999f), glm::vec2(navSize), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
+    }
 
     // Unique data for each axis
     glm::vec3 axisColors[] = { colors::white.rgb(), colors::red.rgb(), colors::darkRed.rgb(), colors::green.rgb(), colors::darkGreen.rgb(), colors::blue.rgb(), colors::darkBlue.rgb() };
@@ -770,21 +771,21 @@ void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& positio
     for (int i = 0; i < 7; i++)
     {
         // Getting the coordinate of the axis point
-        glm::vec3 axisPos = glm::vec3(position.right_x - (0.5f * ySize), yPos - (0.5f * ySize), 0) + glm::vec3(ySize * 0.5f, ySize * 0.5f, -1) * glm::vec3(transform * axises[i]);
+        glm::vec3 axisPos = glm::vec3(xCenter, yCenter, 0) + glm::vec3(navSize * 0.5f, navSize * 0.5f, -1) * glm::vec3(transform * axises[i]);
 
         // Adding the quad for each axis
-        renderer->addQuad(axisPos, glm::vec2(ySize * 0.13f), axisColors[i], UI_NO_TEXTURE, QUAD_CIRCLE);
+        renderer->addQuad(axisPos, glm::vec2(navSize * 0.15f), axisColors[i], UI_NO_TEXTURE, QUAD_CIRCLE);
 
         // (Conditionally) Adding the text 
         if (highlighted || clicked)
         {
             glm::vec3 textColor = (i % 2 == 0 ? glm::vec3(1) : glm::vec3(0));
-            renderer->addText(axisTitles[i], axisPos + glm::vec3(0, 0, 0.01f), ySize * 0.00125f, textColor, CENTER);
+            renderer->addText(axisTitles[i], axisPos + glm::vec3(0, 0, 0.01f), navSize * 0.0015f, textColor, CENTER);
         }
     }
 
     // Setting up viewport to be drawn to
-    glViewport(position.left_x - ySize, yPos - ySize, ySize, ySize);
+    glViewport(position.left_x, position.bottom_y, navSize, navSize);
 
     // Shader settings
     navShader->useShader();
@@ -824,7 +825,7 @@ void ViewNav::OnRelease(StateMachine* state)
         glm::vec2 relativeMousePos = (state->getMouse()->mousePos - glm::vec2(screenPos)) / (0.5f * screenPos.z) * glm::vec2(1, -1);
 
         // Checking which point the mouse is closest to (if at all)
-        ViewAxis closestAxis = getClosestAxis(relativeMousePos, 0.1f);
+        ViewAxis closestAxis = getClosestAxis(relativeMousePos, 0.2f);
         
         // Setting the View Axis (if a axis button was clicked)
         if (closestAxis != VIEW_NONE)

@@ -511,7 +511,6 @@ void HierarchyWindow::DrawWindow()
 
     // Adding Hierarchy Label
     renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.92f * position.getWidth(), 0.12f * position.getWidth()), glm::vec3(0.51f));
-    renderer.addText("Hierarchy", glm::vec3((position.getWidth() / 2), yPos, 0), largText(), glm::vec3(1.0f), CENTER);
 
     // Updating yPos
     yPos -= (position.getWidth() * 0.1f);
@@ -589,11 +588,12 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
 void ViewportWindow::GenerateInteractables()
 {
     // ViewNav interactable 
+    float viewNavBuffer = 0.005;
     glm::vec4 tempCorners = glm::vec4(
-        0.8575,
-        0.0075f,
-        0.9925f,
-        0.1425
+        1 - (viewNavElement.getNavSize() / position.getWidth()) - viewNavBuffer,
+        viewNavBuffer,
+        1 - viewNavBuffer,
+        viewNavElement.getNavSize() / position.getHeight() - viewNavBuffer
     );
     ui::AttributeInteractable viewNavInteract(tempCorners, &viewNavElement);
     interactables.push_back(viewNavInteract);
@@ -601,16 +601,27 @@ void ViewportWindow::GenerateInteractables()
 void ViewportWindow::DrawWindow()
 {
     // Setting ViewNav draw values
-    int navSize = (int)(position.getWidth() * 0.15f);
     glm::mat4 transform = smath::orthographic(-2, 2, -2, 2, 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(1.5f));
 
     // Drawing the ViewNav
     viewNavElement.setTransform(transform);
-    //ui::ElementPosition elementPos();
-    //viewNavElement.RenderElement(&renderer, position.getHeight(), navSize, glm::vec2(position.getWidth(), position.getWidth() + position.getXOffset()), smallText());
+    glm::vec4 navCorners = glm::vec4(
+        position.getWidth() - viewNavElement.getNavSize() + position.getXOffset(),
+        position.getHeight() - viewNavElement.getNavSize() + position.getYOffset(),
+        position.getWidth() + position.getXOffset(),
+        position.getHeight() + position.getYOffset()
+    );
+    ui::ElementPosition elementPos(navCorners, position.getXOffset(), &position);
+    viewNavElement.RenderElement(&renderer, elementPos, smallText());
 
     // Setting viewport size
-    glViewport(position.getCorners().x, position.getCorners().y, position.getCorners().z, position.getCorners().w);
+    glm::vec4 viewportSize = glm::vec4(
+        position.getXOffset(),
+        position.getYOffset(),
+        position.getWidth(),
+        position.getHeight()
+    );
+    glViewport(viewportSize.x, viewportSize.y, viewportSize.z, viewportSize.w);
 
     // Rendering Quads
     renderer.renderQuads(getProjection());

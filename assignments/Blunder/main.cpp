@@ -122,7 +122,7 @@ int main()
     hierarchyUI.GenerateInteractables();
 
     // Viewport UI Creation
-    ViewportWindow viewportUI(0.5f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem, &camera);
+    ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem, &camera);
     viewportUI.GenerateInteractables();
 
     // Creating Axis Line
@@ -145,7 +145,6 @@ int main()
         glfwSetWindowSizeLimits(window, (SCREEN_HEIGHT / 2), 400, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
         //Clear framebuffer
-        //glm::vec3 viewportColor = glm::vec3(0.3f);
         glm::vec3 viewportColor = colors::murkyGrey.rgb();
         glClearColor(viewportColor.x, viewportColor.y, viewportColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
