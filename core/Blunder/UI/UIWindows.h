@@ -51,7 +51,6 @@ protected:
     ui::UIRenderer renderer;
 };
 
-
 // Attribute Window
 class AttributeWindow : public UIWindow
 {
@@ -152,4 +151,31 @@ private:
     ui::AttributeElement* clickedElement;
 };
 
+// Color Attribute Window
+class ColorWindow : public UIWindow
+{
+public:
+    // Constructor & Deconstructor
+    ColorWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), selectedColor(selectedColor) { CreateUIFromSelected(); }
+    ~ColorWindow()
+    {
+        ClearAttributes();
+    }
+
+    // Functions
+    void CreateUIFromSelected();
+    void ClearAttributes();
+    void GenerateInteractables() override;
+    void DrawWindow() override;
+    void ManageUIInteraction(GLFWwindow* window, StateMachine* state) override;
+
+private:
+    Color* selectedColor;
+    std::vector<std::string> colorMode = { "RGB", "HXV" };
+    std::string hexCode;
+    int currentColorMode = 0;
+    glm::vec4 colorData;
+    ui::Attribute* colorAttribute;
+    std::vector<ui::AttributeInteractable> interactables;
+};
 #endif // !UIWINDOWS

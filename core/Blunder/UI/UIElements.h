@@ -149,8 +149,7 @@ namespace ui
         ElementType getType() const { return type; }
 
         // Setters
-        //void setHighlighted(bool highlighted) { this->highlighted = highlighted; }
-        //void setClicked(bool clicked) { this->clicked = clicked; }
+        void setLabel(std::string label) { this->label = label; }
 
 
         // Override Functions
@@ -466,11 +465,7 @@ namespace ui
         glm::mat4 transform;
         shdr::Shader* navShader;
     };
-    // Tools Window
-    // Select Tool
-    // Move Tool
-    // Rotate Tool
-    // Scale Tool
+
     // Add Item Tool
 }
 #endif // !UI Elements
