@@ -404,7 +404,7 @@ extern Mesh* mesh::createSphere(float radius, int segments)
     tempMesh->addFloatAttribute("Radius", radius);
     return tempMesh;
 }
-extern Mesh* mesh::createCylinder(float radius, float height, int segments)
+extern Mesh* mesh::createCylinder(float height, float radius, int segments)
 {
     // Mesh Data
     std::vector<Vertex> vertices;

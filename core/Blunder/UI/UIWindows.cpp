@@ -426,7 +426,7 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
 void HierarchyWindow::GenerateInteractables()
 {
     float yPos = 0.2f;
-    generateFolderInteractable(objectSystem->getRootFolder(), 0, yPos);
+    generateFolderInteractable(activeScene->getRootFolder(), 0, yPos);
 }
 void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos) 
 {
@@ -477,7 +477,7 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos)
 {
     // Rendering the base element UI
-    Color baseColor = (objectSystem->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
+    Color baseColor = (activeScene->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
     renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
     
     // Dropdown Symbol
@@ -532,7 +532,7 @@ void HierarchyWindow::DrawWindow()
     yPos -= (hierarchyTitleHeight * 0.5f) + position.getWidth() * 0.04f;
 
     // Starting the UI Draw from the root folder
-    DrawUIFolder(objectSystem->getRootFolder(), 0, yPos);
+    DrawUIFolder(activeScene->getRootFolder(), 0, yPos);
 
     // Rendering the quads
     renderer.renderQuads(getProjection());

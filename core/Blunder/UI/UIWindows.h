@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "../StateMachine/StateMachine.h"
-#include "../ObjectSystem/ObjectSystem.h"
+#include "../Scene/Scene.h"
 #include "UIElements.h"
 
 // Window Parent Class
@@ -93,17 +93,17 @@ class HierarchyWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), clickedElement(nullptr) {}
+    HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, scn::Scene* activeScene) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), activeScene(activeScene), clickedElement(nullptr) {}
     ~HierarchyWindow()
     {
         interactables.clear();
     }
 
     // Getters
-    obs::ObjectSystem* getObjectSystem() { return objectSystem; }
+    scn::Scene* getScene() { return activeScene; }
 
     // Setters
-    void setObjectSystem(obs::ObjectSystem* objectSystem) { this->objectSystem = objectSystem; }
+    void setScene(scn::Scene* activeScene) { this->activeScene = activeScene; }
 
     // Functions
     void generateFolderInteractable(Folder* folder, int indent, float& yPos);
@@ -116,7 +116,7 @@ public:
 
 private:
     std::vector<ui::AttributeInteractable> interactables;
-    obs::ObjectSystem* objectSystem;
+    scn::Scene* activeScene;
     ui::AttributeElement* clickedElement;
 };
 
@@ -125,7 +125,7 @@ class ViewportWindow : public UIWindow
 {
 public:
     // Constructor & Deconstructor
-    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obs::ObjectSystem* objectSystem, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), objectSystem(objectSystem), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
+    ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, scn::Scene* activeScene, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), activeScene(activeScene), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
     ~ViewportWindow() 
     {
         interactables.clear();
@@ -144,7 +144,7 @@ public:
 
 private:
     OrbitCamera* activeCamera;
-    obs::ObjectSystem* objectSystem;
+    scn::Scene* activeScene;
     ui::ViewNav viewNavElement;
     std::vector<ui::Attribute*> attributes;
     std::vector<ui::AttributeInteractable> interactables;
@@ -171,11 +171,12 @@ public:
 
 private:
     Color* selectedColor;
-    std::vector<std::string> colorMode = { "RGB", "HXV" };
+    std::vector<std::string> colorMode = { "RGB", "HSV" };
     std::string hexCode;
     int currentColorMode = 0;
     glm::vec4 colorData;
     ui::Attribute* colorAttribute;
     std::vector<ui::AttributeInteractable> interactables;
 };
+
 #endif // !UIWINDOWS

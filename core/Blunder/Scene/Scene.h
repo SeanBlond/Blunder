@@ -1,4 +1,4 @@
-#ifndef OBJECTSYSTEM
+#ifndef SCENE
 #pragma once
 
 #include <string>
@@ -15,7 +15,7 @@
 #include "../../object/object.h"
 #include "HierarchyElement.h"
 
-namespace obs
+namespace scn
 {
 
     enum RenderMode { OR_SIMPLE, OR_XRAY, OR_SHADED, OR_RENDER };
@@ -26,12 +26,12 @@ namespace obs
         bool backfaceCull;
     };
 
-    class ObjectSystem
+    class Scene
     {
     public:
         // Constructor & Deocnstructor
-        ObjectSystem(StateMachine* state);
-        ~ObjectSystem();
+        Scene(StateMachine* state);
+        ~Scene();
 
         // Getters
         Folder* getSelectedFolder() { return selectedFolder; }
@@ -61,4 +61,4 @@ namespace obs
         RenderSettings renderSettings;
     };
 }
-#endif // !OBJECTSYSTEM
+#endif // !SCENE

@@ -1,8 +1,8 @@
-#include "ObjectSystem.h"
-using namespace obs;
+#include "Scene.h"
+using namespace scn;
 
 // Constructor & Deocnstructor
-ObjectSystem::ObjectSystem(StateMachine* state)
+Scene::Scene(StateMachine* state)
 {
     this->state = state;
     rootFolder = new Folder("Scene");
@@ -12,7 +12,7 @@ ObjectSystem::ObjectSystem(StateMachine* state)
     renderSettings.mode = OR_SIMPLE;
     //selectedElement = nullptr;
 }
-ObjectSystem::~ObjectSystem()
+Scene::~Scene()
 {
     delete rootFolder;
     rootFolder = nullptr;
@@ -20,7 +20,7 @@ ObjectSystem::~ObjectSystem()
 }
 
 // Functions
-void ObjectSystem::addObject(obj::Object* object)
+void Scene::addObject(obj::Object* object)
 {
     if (selectedFolder != nullptr)
     {
@@ -31,14 +31,14 @@ void ObjectSystem::addObject(obj::Object* object)
         rootFolder->addElement(new HierarchyElement(object, OBS_OBJECT, nullptr));
     }
 }
-void ObjectSystem::addHierarchyElement(HierarchyElement* element)
+void Scene::addHierarchyElement(HierarchyElement* element)
 {
     if (selectedFolder != nullptr)
         selectedFolder->addElement(element);
     else
         rootFolder->addElement(element);
 }
-void ObjectSystem::addFolder(std::string name)
+void Scene::addFolder(std::string name)
 {
     if (selectedFolder != nullptr)
     {
@@ -51,7 +51,7 @@ void ObjectSystem::addFolder(std::string name)
 }
 
 // Render Function :)
-void ObjectSystem::RenderHierarchyElement(HierarchyElement* element, glm::mat4 projection, glm::mat4 view)
+void Scene::RenderHierarchyElement(HierarchyElement* element, glm::mat4 projection, glm::mat4 view)
 {
     // Checking if main element should be rendered
     if (element->getDisplayed())
@@ -68,7 +68,7 @@ void ObjectSystem::RenderHierarchyElement(HierarchyElement* element, glm::mat4 p
         RenderHierarchyElement(element->getChild(i), projection, view);
     }
 }
-void ObjectSystem::RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view)
+void Scene::RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view)
 {
     // Checking if folder is set to be displayed
     if (folder->getDisplayed())
@@ -86,7 +86,7 @@ void ObjectSystem::RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 
         }
     }
 }
-void ObjectSystem::Render(glm::mat4 projection, glm::mat4 view)
+void Scene::Render(glm::mat4 projection, glm::mat4 view)
 {
     // Implement a lot of different stuff (in the future of course)
 

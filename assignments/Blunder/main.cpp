@@ -8,7 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <Blunder/ObjectSystem/ObjectSystem.h>
+#include <Blunder/Scene/Scene.h>
 #include <Blunder/StateMachine/StateMachine.h>
 #include <Blunder/UI/UIElements.h>
 #include <Blunder/UI/UIWindows.h>
@@ -45,7 +45,7 @@ OrbitCamera camera(1.25f, 2.0f, 7.5f);
 StateMachine state(&mouse, &camera);
 
 // Setting up Object System
-obs::ObjectSystem objectSystem(&state);
+scn::Scene activeScene(&state);
 int obj::Object::nextID = 0;
 
 // Initialize static members
@@ -101,28 +101,28 @@ int main()
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
     // Creating Default Objects
-    objectSystem.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 1), &testShader));
-    //objectSystem.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
-    //objectSystem.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
+    activeScene.addObject(new obj::Object("cylinder", mesh::createCylinder(1.0f, 0.5f, 10), &testShader));
+    //activeScene.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
+    //activeScene.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, -2.5f)));
 
     // Testing hierarchy stuff
-    objectSystem.addFolder("Test 1");
-    objectSystem.addFolder("Test 2");
+    activeScene.addFolder("Test 1");
+    activeScene.addFolder("Test 2");
 
     // Selecting the default cube
-    //objectSystem.setSelectedElement(objectSystem.getSelectedFolder()->getHierarchyElement(0));
-    state.selectObject(objectSystem.getSelectedFolder()->getHierarchyElement(0)->getObject());
+    //activeScene.setSelectedElement(activeScene.getSelectedFolder()->getHierarchyElement(0));
+    state.selectObject(activeScene.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
     // Attribute UI Creation
     AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png");
     attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
-    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem);
+    HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &activeScene);
     hierarchyUI.GenerateInteractables();
 
     // Viewport UI Creation
-    ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &objectSystem, &camera);
+    ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &activeScene, &camera);
     viewportUI.GenerateInteractables();
 
     // Creating Axis Line
@@ -168,7 +168,7 @@ int main()
         glEnable(GL_DEPTH);
 
         // Drawing the Meshes
-        objectSystem.Render(projection, view);
+        activeScene.Render(projection, view);
         
         // Drawing Axis Lines
         xAxisLine.setTransformation(projection * view);
