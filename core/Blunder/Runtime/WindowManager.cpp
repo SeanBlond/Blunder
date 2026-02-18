@@ -122,26 +122,26 @@ ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 	// No Collision Detected
 	return nullptr;
 }
-void LockedWindow::DrawWindows()
+void LockedWindow::DrawWindows(ui::UIRenderer* renderer)
 {
 	// Drawing the main window
-	window->DrawWindow();
+	window->DrawWindow(renderer);
 
 	// Drawing connected windows
 	if (leftWindow)
-		leftWindow->DrawWindows();
+		leftWindow->DrawWindows(renderer);
 	if (rightWindow)
-		rightWindow->DrawWindows();
+		rightWindow->DrawWindows(renderer);
 	if (topWindow)
-		topWindow->DrawWindows();
+		topWindow->DrawWindows(renderer);
 	if (bottomWindow)
-		bottomWindow->DrawWindows();
+		bottomWindow->DrawWindows(renderer);
 }
 
 
 // Window Manager Class Functions
 // Constructor & Deocnstructor
-WindowManager::WindowManager(StateMachine* state)
+WindowManager::WindowManager(StateMachine* state, glm::vec2 screenSize)
 {
 	this->state = state;
 	selectedWindow = nullptr;
@@ -156,7 +156,7 @@ WindowManager::~WindowManager()
 }
 
 // Functions
-void WindowManager::UpdateWindows()
+void WindowManager::UpdateWindows(glm::vec2 screenSize)
 {
 	// Getting mouse position
 	glm::vec2 mousePos = state->getMouse()->mousePos;
@@ -186,22 +186,22 @@ void WindowManager::UpdateWindows()
 	// TODO:
 	// Create UpdateWindow functions in the UIWindow class that get called when the window is running, but not being interacted with
 }
-void WindowManager::DrawWindows()
+void WindowManager::DrawWindows(ui::UIRenderer* renderer)
 {
 	// Drawing the Locked Windows
-	rootLockedWindow->DrawWindows();
+	rootLockedWindow->DrawWindows(renderer);
 
 	// Drawing the free windows
 	for (int i = 0; i < freeWindows.size(); i++)
 	{
-		freeWindows[i]->DrawWindow();
+		freeWindows[i]->DrawWindow(renderer);
 	}
 
 	// Drawing the pop-up window (if it exists)
 	if (popUpWindow)
-		popUpWindow->DrawWindow();
+		popUpWindow->DrawWindow(renderer);
 }
-void WindowManager::CreateDefaultWindows()
+void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 {
-	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(), nullptr, glm::vec2(0));
+	//rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, ), nullptr, glm::vec2(0));
 }

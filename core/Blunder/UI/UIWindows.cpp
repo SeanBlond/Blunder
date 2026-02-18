@@ -84,10 +84,10 @@ void AttributeWindow::GenerateInteractables()
         attributeYPos += position.bufferSize;
     }
 }
-void AttributeWindow::DrawWindow()
+void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
-    renderer.addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
 
     // Setting initial yPos to Start rendering at
     float attributeTitleHeight = position.getWidth() * 0.12f;
@@ -98,10 +98,10 @@ void AttributeWindow::DrawWindow()
     {
         // Adding Label Box
         float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
-        renderer.addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
+        renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
 
         // Adding Attribute Label
-        renderer.addText(attributes[i]->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
+        renderer->addText(attributes[i]->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
 
 
         // Checking if elements should be rendered
@@ -125,7 +125,7 @@ void AttributeWindow::DrawWindow()
                 ui::AttributeElement* element = attributes[i]->getElement(j);
                 float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
                 ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
-                element->RenderElement(&renderer, elementPos, mediumText());
+                element->RenderElement(renderer, elementPos, mediumText());
 
                 // Updating YPos
                 attributeYPos -= (elementHeight + position.getBuffer());
@@ -138,7 +138,7 @@ void AttributeWindow::DrawWindow()
                 position.getWidth() - (position.getWidth() - attributeBoxWidth) * 0.5f,
                 containerStartHeight
             );
-            renderer.addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
+            renderer->addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
 
             // Adding space after containter
             attributeYPos -= position.getBuffer();
@@ -149,10 +149,10 @@ void AttributeWindow::DrawWindow()
     }
 
     // Rendering the Quads
-    renderer.renderQuads(getProjection());
+    renderer->renderQuads(getProjection());
 
     // Rendering the text
-    renderer.renderText(getProjection());
+    renderer->renderText(getProjection());
 }
 void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -441,17 +441,17 @@ void HierarchyWindow::GenerateInteractables()
     float yPos = 0.2f;
     generateFolderInteractable(activeScene->getRootFolder(), 0, yPos);
 }
-void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
+void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos)
 {
     // Rendering the base folder UI
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), colors::lightgrey.rgb());
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), colors::lightgrey.rgb());
 
     // Dropdown Symbol
     if (folder->hasChildren())
-        renderer.addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer->addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Folder Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_FOLDER_SYMBOL);
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_FOLDER_SYMBOL);
 
     // Folder Text
     ui::ElementPosition textPos(glm::vec4(
@@ -460,13 +460,13 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
         position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
         yPos + (0.04f * position.getWidth())
     ), 0.0f, &position);
-    folder->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
+    folder->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
 
     // Visibility Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
 
     // Render Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (position.getWidth() * 0.08f);
@@ -477,28 +477,28 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
         // Rendering each folder UI
         for (int i = 0; i < folder->getChildFoldersSize(); i++)
         {
-            DrawUIFolder(folder->getChildFolder(i), indent + 1, yPos);
+            DrawUIFolder(renderer, folder->getChildFolder(i), indent + 1, yPos);
         }
 
         // Rendering each element UI
         for (int i = 0; i < folder->getHierarchyElementSize(); i++)
         {
-            DrawUIHierarchyElement(folder->getHierarchyElement(i), indent + 1, yPos);
+            DrawUIHierarchyElement(renderer, folder->getHierarchyElement(i), indent + 1, yPos);
         }
     }
 }
-void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos)
+void HierarchyWindow::DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos)
 {
     // Rendering the base element UI
     Color baseColor = (activeScene->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
 
     // Dropdown Symbol
     if (element->hasChildren())
-        renderer.addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+        renderer->addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
 
     // Object Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
 
     // Object Text
     ui::ElementPosition textPos(glm::vec4(
@@ -507,13 +507,13 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
         position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
         yPos + (0.04f * position.getWidth())
     ), 0.0f, &position);
-    element->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
+    element->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
 
     // Visibility Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
 
     // Render Symbol
-    renderer.addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    renderer->addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
     // Changing yPos
     yPos -= (position.getWidth() * 0.08f);
@@ -524,34 +524,34 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
         // Rendering each child of the element
         for (int i = 0; i < element->getChildrenSize(); i++)
         {
-            DrawUIHierarchyElement(element->getChild(i), indent + 1, yPos);
+            DrawUIHierarchyElement(renderer, element->getChild(i), indent + 1, yPos);
         }
     }
 }
-void HierarchyWindow::DrawWindow()
+void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quads
-    renderer.addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
-    renderer.addQuad(position.getBufferedCorners(), 0.01f, colors::darkerGrey.rgb());
+    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+    renderer->addQuad(position.getBufferedCorners(), 0.01f, colors::darkerGrey.rgb());
 
     float hierarchyTitleHeight = 0.12f * position.getWidth();
     float yPos = position.getHeight() - (hierarchyTitleHeight * 0.5f) - position.getBuffer();
 
     // Adding Hierarchy Label
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f));
-    renderer.addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largText(), colors::white.rgb(), CENTER);
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f));
+    renderer->addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largText(), colors::white.rgb(), CENTER);
 
     // Updating yPos
     yPos -= (hierarchyTitleHeight * 0.5f) + position.getWidth() * 0.04f;
 
     // Starting the UI Draw from the root folder
-    DrawUIFolder(activeScene->getRootFolder(), 0, yPos);
+    DrawUIFolder(renderer, activeScene->getRootFolder(), 0, yPos);
 
     // Rendering the quads
-    renderer.renderQuads(getProjection());
+    renderer->renderQuads(getProjection());
 
     // Rendering the text
-    renderer.renderText(getProjection());
+    renderer->renderText(getProjection());
 }
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -638,7 +638,7 @@ void ViewportWindow::GenerateInteractables()
     ui::AttributeInteractable viewNavInteract(tempCorners, &viewNavElement);
     interactables.push_back(viewNavInteract);
 }
-void ViewportWindow::DrawWindow()
+void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Setting ViewNav draw values
     glm::mat4 transform = smath::orthographic(-2, 2, -2, 2, 0.1f, 100.0f) * activeCamera->getViewMatrix() * smath::scale(glm::vec3(1.5f));
@@ -652,7 +652,7 @@ void ViewportWindow::DrawWindow()
         position.getHeight() + position.getYOffset()
     );
     ui::ElementPosition elementPos(navCorners, position.getXOffset(), &position);
-    viewNavElement.RenderElement(&renderer, elementPos, smallText());
+    viewNavElement.RenderElement(renderer, elementPos, smallText());
 
     // Setting viewport size
     glm::vec4 viewportSize = glm::vec4(
@@ -664,8 +664,8 @@ void ViewportWindow::DrawWindow()
     glViewport(viewportSize.x, viewportSize.y, viewportSize.z, viewportSize.w);
 
     // Rendering Quads
-    renderer.renderQuads(getProjection());
-    renderer.renderText(getProjection());
+    renderer->renderQuads(getProjection());
+    renderer->renderText(getProjection());
 }
 void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
@@ -781,10 +781,10 @@ void ColorWindow::GenerateInteractables()
     // Clearing interactables
     interactables.clear();
 }
-void ColorWindow::DrawWindow()
+void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
-    renderer.addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
 
     // Setting initial yPos to Start rendering at
     float attributeTitleHeight = position.getWidth() * 0.12f;
@@ -793,10 +793,10 @@ void ColorWindow::DrawWindow()
     // Adding the Color  Attribute
     // Adding Label Box
     float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
-    renderer.addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
 
     // Adding Attribute Label
-    renderer.addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
+    renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
 
     // Rendering the Attributes
     attributeYPos -= attributeTitleHeight * 0.5f;
@@ -813,7 +813,7 @@ void ColorWindow::DrawWindow()
         ui::AttributeElement* element = colorAttribute->getElement(j);
         float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
         ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
-        element->RenderElement(&renderer, elementPos, mediumText());
+        element->RenderElement(renderer, elementPos, mediumText());
 
         // Updating YPos
         attributeYPos -= (elementHeight + position.getBuffer());
@@ -826,7 +826,7 @@ void ColorWindow::DrawWindow()
         position.getWidth() - (position.getWidth() - attributeBoxWidth) * 0.5f,
         containerStartHeight
     );
-    renderer.addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
+    renderer->addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
 
     // Adding space after containter
     attributeYPos -= position.getBuffer();
@@ -835,10 +835,10 @@ void ColorWindow::DrawWindow()
     attributeYPos -= position.getBuffer();
 
     // Rendering the Quads
-    renderer.renderQuads(getProjection());
+    renderer->renderQuads(getProjection());
 
     // Rendering the text
-    renderer.renderText(getProjection());
+    renderer->renderText(getProjection());
 }
 void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {

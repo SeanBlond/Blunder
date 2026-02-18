@@ -113,16 +113,19 @@ int main()
     //activeScene.setSelectedElement(activeScene.getSelectedFolder()->getHierarchyElement(0));
     state.selectObject(activeScene.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
+    // Creating the Blunder UI Renderer
+    ui::UIRenderer renderer("assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png");
+
     // Attribute UI Creation
-    ui::AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png");
+    ui::AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0);
     attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
-    ui::HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &activeScene);
+    ui::HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, &activeScene);
     hierarchyUI.GenerateInteractables();
 
     // Viewport UI Creation
-    ui::ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, "assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png", &activeScene, &camera);
+    ui::ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, &activeScene, &camera);
     viewportUI.GenerateInteractables();
 
     // Creating Axis Line
@@ -181,20 +184,20 @@ int main()
         // Drawing Viewport UI
         viewportUI.setDimensions(SCREEN_WIDTH - (2 * uiwidth), SCREEN_HEIGHT, uiwidth, 0);
         viewportUI.ManageInteraction(window, &state);
-        viewportUI.DrawWindow();
+        viewportUI.DrawWindow(&renderer);
 
         // Managing Attribute UI
         glViewport(0, 0, uiwidth, SCREEN_HEIGHT);
         attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
         attributeUI.ManageInteraction(window, &state);
-        attributeUI.DrawWindow();
+        attributeUI.DrawWindow(&renderer);
 
 
         // Managing Hierarchy UI
         glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
         hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageInteraction(window, &state);
-        hierarchyUI.DrawWindow();
+        hierarchyUI.DrawWindow(&renderer);
 
 
         // Swapping buffer

@@ -19,8 +19,8 @@ namespace ui
     {
     public:
         // Constructor
-        UIWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(width, height, xoffset, yoffset, 0.02f), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
-        UIWindow(ui::WindowPosition position, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath) : position(position), renderer(fntFilePath, fontBitmapFilePath, uiBitmapFilePath) {}
+        UIWindow(float width, float height, float xoffset, float yoffset) : position(width, height, xoffset, yoffset, 0.02f) {}
+        UIWindow(ui::WindowPosition position) : position(position) {}
 
         // Getters
         float getWidth() const { return position.getWidth(); }
@@ -39,7 +39,7 @@ namespace ui
 
         // Functions
         virtual void GenerateInteractables() = 0;
-        virtual void DrawWindow() = 0;
+        virtual void DrawWindow(ui::UIRenderer* renderer) = 0;
         virtual void ManageInteraction(GLFWwindow* window, StateMachine* state) = 0;
         virtual void UnselectWindow() = 0;
 
@@ -51,7 +51,6 @@ namespace ui
 
     protected:
         ui::WindowPosition position;
-        ui::UIRenderer renderer;
     };
 
     // Attribute Window
@@ -59,7 +58,7 @@ namespace ui
     {
     public:
         // Constructor & Desconstructor
-        AttributeWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
+        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
         ~AttributeWindow()
         {
             ClearAttributes();
@@ -75,7 +74,7 @@ namespace ui
         // Functions
         // Once UI Quads are better optimized, GenerateInteractables should be reworked
         void GenerateInteractables() override;
-        void DrawWindow() override;
+        void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
         void ClearAttributes();
@@ -97,7 +96,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, scn::Scene* activeScene) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), activeScene(activeScene), clickedElement(nullptr) {}
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, scn::Scene* activeScene) : UIWindow(width, height, xoffset, yoffset), activeScene(activeScene), clickedElement(nullptr) {}
         ~HierarchyWindow()
         {
             interactables.clear();
@@ -113,9 +112,9 @@ namespace ui
         void generateFolderInteractable(Folder* folder, int indent, float& yPos);
         void generateElementInteractable(HierarchyElement* element, int indent, float& yPos);
         void GenerateInteractables() override;
-        void DrawUIFolder(Folder* folder, int indent, float& yPos);
-        void DrawUIHierarchyElement(HierarchyElement* element, int indent, float& yPos);
-        void DrawWindow() override;
+        void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
+        void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
+        void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
 
@@ -130,7 +129,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ViewportWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, scn::Scene* activeScene, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), activeScene(activeScene), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
+        ViewportWindow(float width, float height, float xoffset, float yoffset, scn::Scene* activeScene, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset), activeScene(activeScene), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
         ~ViewportWindow()
         {
             interactables.clear();
@@ -144,7 +143,7 @@ namespace ui
 
         // Functions
         void GenerateInteractables() override;
-        void DrawWindow() override;
+        void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
 
@@ -162,7 +161,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, std::string fntFilePath, std::string fontBitmapFilePath, std::string uiBitmapFilePath, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, fntFilePath, fontBitmapFilePath, uiBitmapFilePath), selectedColor(selectedColor) { CreateUIFromSelected(); }
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), selectedColor(selectedColor) { CreateUIFromSelected(); }
         ~ColorWindow()
         {
             ClearAttributes();
@@ -172,7 +171,7 @@ namespace ui
         void CreateUIFromSelected();
         void ClearAttributes();
         void GenerateInteractables() override;
-        void DrawWindow() override;
+        void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
 

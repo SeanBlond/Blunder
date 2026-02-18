@@ -44,7 +44,7 @@ public:
 	// Functions
 	void UpdateDimensions();
 	ui::UIWindow* checkForCollisions(glm::vec2 position);
-	void DrawWindows();
+	void DrawWindows(ui::UIRenderer* renderer);
 
 private:
 	// Window data
@@ -70,7 +70,7 @@ class WindowManager
 {
 public:
 	// Constructor & Deocnstructor
-	WindowManager(StateMachine* state);
+	WindowManager(StateMachine* state, glm::vec2 screenSize);
 	~WindowManager();
 
 	// Getters
@@ -81,17 +81,17 @@ public:
 	// Functions
 	void closePopUp() { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; }
 	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); }
-	void UpdateWindows();
-	void DrawWindows();
-	void CreateDefaultWindows();
+	void UpdateWindows(glm::vec2 screenSize);
+	void DrawWindows(ui::UIRenderer* renderer);
+	void CreateDefaultWindows(glm::vec2 screenSize);
 
 private:
 	// Window Layers
 	LockedWindow* rootLockedWindow;
 	std::vector<ui::UIWindow*> freeWindows;
 	ui::UIWindow* popUpWindow;
-	ui::UIWindow* selectedWindow;
 
+	ui::UIWindow* selectedWindow;
 	StateMachine* state;
 };
 
