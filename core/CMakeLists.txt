@@ -15,7 +15,16 @@ set(CORE_INC_DIR
  CACHE PATH "CORE INCLUDE SOURCE PATH"
 )
 
-add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/shader.cpp" "object/object.h" "object/object.cpp" "object/mesh.h" "object/mesh.cpp" "math/smath.h"  "Blunder/StateMachine/StateMachine.h" "Blunder/StateMachine/StateMachine.cpp" "line/line.h" "line/line.cpp" "Camera/camera.h" "Camera/camera.cpp" "Blunder/UI/UIElements.h" "Blunder/Keystroke.h" "Font/font.h" "Font/font.cpp" "Blunder/UI/UIElements.cpp" "Blunder/UI/UIWindows.h" "Blunder/UI/UIRenderer.h" "Blunder/UI/UIRenderer.cpp" "Blunder/UI/TextInput.h" "Blunder/UI/TextInput.cpp" "Blunder/Time.h" "Blunder/Color.h" "object/transform.h" "shader/material.h" "shader/material.cpp" "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp" )
+add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/shader.cpp"
+												   "object/object.h" "object/object.cpp" "object/mesh.h" "object/mesh.cpp" 
+												   "math/smath.h"  
+												   "Blunder/Runtime/StateMachine.h" "Blunder/Runtime/StateMachine.cpp" "Blunder/Runtime/WindowManager.h" "Blunder/Runtime/WindowManager.cpp"
+												   "line/line.h" "line/line.cpp" 
+												   "Camera/camera.h" "Camera/camera.cpp" 
+												   "Blunder/UI/UIElements.h" "Blunder/UI/UIElements.cpp" "Blunder/UI/UIWindows.h" "Blunder/UI/UIRenderer.h" "Blunder/UI/UIRenderer.cpp" "Blunder/UI/TextInput.h" "Blunder/UI/TextInput.cpp" "Blunder/Time.h" "Blunder/Color.h" "object/transform.h" "shader/material.h" "shader/material.cpp" 
+												   "Blunder/Keystroke.h" 
+												   "Font/font.h" "Font/font.cpp" 
+												   "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp")
 
 find_package(OpenGL REQUIRED)
 

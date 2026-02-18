@@ -1,5 +1,7 @@
 #include "UIWindows.h"
 
+using namespace ui;
+
 // Extra Functions
 bool checkUICollision(float xpos, float ypos, ui::AttributeInteractable interactable)
 {
@@ -152,7 +154,7 @@ void AttributeWindow::DrawWindow()
     // Rendering the text
     renderer.renderText(getProjection());
 }
-void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
+void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
     // Checking if StateMachine selected object differs from attribute object, and if it does, changes it
     if (attributeObject != state->getSelectedObject())
@@ -164,7 +166,7 @@ void AttributeWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
     glfwGetCursorPos(window, &xpos, &ypos);
     xpos /= position.getWidth();
     ypos /= position.getWidth();
-    
+
     // Checking if Mouse Position is within the UI bounds
     if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))
     {
@@ -235,7 +237,7 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     // Checking if object exists
     if (object == nullptr)
         return;
-    
+
     // Updating Attribute Object
     attributeObject = object;
 
@@ -302,6 +304,17 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
 
     // Generating the Interactables
     GenerateInteractables();
+}
+void AttributeWindow::UnselectWindow()
+{
+    // Unclicking element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->clicked = false;
+        clickedElement->highlighted = false;
+        clickedElement = nullptr;
+
+    }
 }
 
 // Hierarchy Window Functions
@@ -428,7 +441,7 @@ void HierarchyWindow::GenerateInteractables()
     float yPos = 0.2f;
     generateFolderInteractable(activeScene->getRootFolder(), 0, yPos);
 }
-void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos) 
+void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
 {
     // Rendering the base folder UI
     renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), colors::lightgrey.rgb());
@@ -446,7 +459,7 @@ void HierarchyWindow::DrawUIFolder(Folder* folder, int indent, float& yPos)
         yPos - (0.04f * position.getWidth()),
         position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
         yPos + (0.04f * position.getWidth())
-        ), 0.0f, &position);
+    ), 0.0f, &position);
     folder->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
 
     // Visibility Symbol
@@ -479,14 +492,14 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
     // Rendering the base element UI
     Color baseColor = (activeScene->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
     renderer.addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
-    
+
     // Dropdown Symbol
     if (element->hasChildren())
         renderer.addQuad(glm::vec3((position.getWidth() * 0.06f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
-    
+
     // Object Symbol
     renderer.addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
-    
+
     // Object Text
     ui::ElementPosition textPos(glm::vec4(
         position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
@@ -495,10 +508,10 @@ void HierarchyWindow::DrawUIHierarchyElement(HierarchyElement* element, int inde
         yPos + (0.04f * position.getWidth())
     ), 0.0f, &position);
     element->getHierarchyTextUI()->RenderElement(&renderer, textPos, mediumText());
-    
+
     // Visibility Symbol
     renderer.addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
-    
+
     // Render Symbol
     renderer.addQuad(glm::vec3((position.getWidth() * 0.94f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
 
@@ -540,10 +553,10 @@ void HierarchyWindow::DrawWindow()
     // Rendering the text
     renderer.renderText(getProjection());
 }
-void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
+void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
     double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos); 
+    glfwGetCursorPos(window, &xpos, &ypos);
 
     // Converting cursor position to be relative to window size
     xpos = (xpos - position.getXOffset()) / position.getWidth();
@@ -599,6 +612,17 @@ void HierarchyWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* stat
         }
     }
 }
+void HierarchyWindow::UnselectWindow()
+{
+    // Unclicking element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->clicked = false;
+        clickedElement->highlighted = false;
+        clickedElement = nullptr;
+
+    }
+}
 
 // Viewport Window Functions
 void ViewportWindow::GenerateInteractables()
@@ -643,7 +667,7 @@ void ViewportWindow::DrawWindow()
     renderer.renderQuads(getProjection());
     renderer.renderText(getProjection());
 }
-void ViewportWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
+void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
@@ -700,6 +724,17 @@ void ViewportWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state
 
             clickedElement = nullptr;
         }
+    }
+}
+void ViewportWindow::UnselectWindow()
+{
+    // Unclicking element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->clicked = false;
+        clickedElement->highlighted = false;
+        clickedElement = nullptr;
+
     }
 }
 
@@ -805,7 +840,18 @@ void ColorWindow::DrawWindow()
     // Rendering the text
     renderer.renderText(getProjection());
 }
-void ColorWindow::ManageUIInteraction(GLFWwindow* window, StateMachine* state)
+void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
 
+}
+void ColorWindow::UnselectWindow()
+{
+    // Unclicking element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->clicked = false;
+        clickedElement->highlighted = false;
+        clickedElement = nullptr;
+
+    }
 }

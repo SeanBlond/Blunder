@@ -1,5 +1,7 @@
 #ifndef STATE_MACHINE
-#define STATE_MACHINE
+#pragma once
+
+#include <vector>
 
 #include "../../object/object.h"
 #include "../../Camera/camera.h"
@@ -33,10 +35,10 @@ public:
     ~StateMachine();
 
     // Getters
-    EditingState getState() { return currentState; }
+    EditingState getState() const { return currentState; }
     obj::Object* getSelectedObject() { return selectedObject; }
-    bool getTransforming() { return transforming; }
-    bool getUIInteraction() { return UIInteracting; }
+    bool getTransforming() const { return transforming; }
+    bool getUIInteraction() const { return UIInteracting; }
     ui::TextInput* getTextInput() { return textInput; }
     Mouse* getMouse() { return mouse; }
     OrbitCamera* getCamera() { return activeCamera; }

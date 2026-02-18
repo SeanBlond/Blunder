@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "../StateMachine/StateMachine.h"
+#include "../Runtime/StateMachine.h"
 #include "../Color.h"
 #include "UIRenderer.h"
 #include "TextInput.h"
@@ -436,7 +436,7 @@ namespace ui
         ~ViewNav();
 
         // Getters
-        float getNavSize() { return navSize; }
+        float getNavSize() const { return navSize; }
 
         // Setters
         void setTransform(glm::mat4 transform) { this->transform = transform; }
