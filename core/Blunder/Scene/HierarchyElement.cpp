@@ -11,10 +11,6 @@ HierarchyElement::HierarchyElement(obj::Object* object, HierarchyType type, Hier
     this->rendered = rendered;
     this->parent = parent;
     this->dropdown = true;
-
-    // Creating the UI Name Asset
-    std::string entryLabel = (object->getName() + "-Entry");
-    nameEntry = new ui::HierarchyTextEntry(entryLabel, object->getNameAddress(), object);
 }
 
 void HierarchyElement::changeParent(HierarchyElement* parent)
@@ -70,10 +66,6 @@ void HierarchyElement::EraseObject(bool deleteChildren)
         children.clear();
     }
 }
-void HierarchyElement::DrawElementUI()
-{
-    std::cout << "TODO: DRAW UI ELEMENT" << std::endl;
-}
 
 Folder::Folder(std::string name, Folder* parentFolder, bool displayed, bool rendered)
 {
@@ -81,10 +73,6 @@ Folder::Folder(std::string name, Folder* parentFolder, bool displayed, bool rend
     this->parentFolder = parentFolder;
     this->displayed = displayed;
     this->rendered = rendered;
-
-    // Creating the UI Name Asset
-    std::string entryLabel = (name + "-Entry");
-    nameEntry = new ui::HierarchyTextEntry(entryLabel, &(this->name));
 }
 void Folder::addElement(HierarchyElement* element)
 {

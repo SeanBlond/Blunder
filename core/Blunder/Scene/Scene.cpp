@@ -2,15 +2,13 @@
 using namespace scn;
 
 // Constructor & Deocnstructor
-Scene::Scene(StateMachine* state)
+Scene::Scene()
 {
-    this->state = state;
     rootFolder = new Folder("Scene");
     selectedFolder = rootFolder;
     renderSettings.backfaceCull = true;
     renderSettings.renderTriangles = true;
     renderSettings.mode = OR_SIMPLE;
-    //selectedElement = nullptr;
 }
 Scene::~Scene()
 {

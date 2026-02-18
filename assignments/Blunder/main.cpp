@@ -41,12 +41,12 @@ void character_callback(GLFWwindow* window, unsigned int codepoint);
 // Camera Data
 OrbitCamera camera(1.25f, 2.0f, 7.5f);
 
-// State Machine Info
-StateMachine state(&mouse, &camera);
-
 // Setting up Object System
-scn::Scene activeScene(&state);
+scn::Scene activeScene;
 int obj::Object::nextID = 0;
+
+// State Machine Info
+StateMachine state(&activeScene, &mouse, &camera);
 
 // Initialize static members
 TimeManager* TimeManager::instancePtr = nullptr;
@@ -121,7 +121,7 @@ int main()
     attributeUI.CreateUIfromObject(state.getSelectedObject());
 
     // Hierarchy UI Creation
-    ui::HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, &activeScene);
+    ui::HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, &state);
     hierarchyUI.GenerateInteractables();
 
     // Viewport UI Creation

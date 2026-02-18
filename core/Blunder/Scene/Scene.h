@@ -9,7 +9,6 @@
 #include "../../ew/external/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "../UI/UIRenderer.h"
 #include "../../math/smath.h"
 #include "../../shader/shader.h"
 #include "../../object/object.h"
@@ -17,7 +16,6 @@
 
 namespace scn
 {
-
     enum RenderMode { OR_SIMPLE, OR_XRAY, OR_SHADED, OR_RENDER };
     struct RenderSettings
     {
@@ -30,19 +28,16 @@ namespace scn
     {
     public:
         // Constructor & Deocnstructor
-        Scene(StateMachine* state);
+        Scene();
         ~Scene();
 
         // Getters
         Folder* getSelectedFolder() { return selectedFolder; }
         Folder* getRootFolder() { return rootFolder; }
         RenderSettings getRenderSettings() { return renderSettings; }
-        //HierarchyElement* getS() { return selectedElement; }
-        obj::Object* getSelectedObject() { return state->getSelectedObject(); }
 
         // Setters
         void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
-        //void setSelectedElement(HierarchyElement* element) { state->selectObject(element->getObject()); selectedElement = selectedElement; }
         void setRenderSettings(RenderSettings renderSettings) { this->renderSettings = renderSettings; }
 
         //Functions
@@ -54,10 +49,8 @@ namespace scn
         void Render(glm::mat4 projection, glm::mat4 view);
 
     private:
-        StateMachine* state;
         Folder* selectedFolder;
         Folder* rootFolder;
-        //HierarchyElement* selectedElement;
         RenderSettings renderSettings;
     };
 }

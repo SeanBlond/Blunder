@@ -332,15 +332,15 @@ void HierarchyWindow::generateFolderInteractable(Folder* folder, int indent, flo
     interactables.push_back(folderDropdown);
 
     // Hierarchy Text Entry
-    tempCorners = glm::vec4(
-        (0.08f * indent) + 0.14f,
-        yPos - 0.04f,
-        0.8f,
-        yPos + 0.04f
-    );
-    ui::AttributeInteractable folderName(tempCorners, folder->getHierarchyTextUI());
-    std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
-    interactables.push_back(folderName);
+    //tempCorners = glm::vec4(
+    //    (0.08f * indent) + 0.14f,
+    //    yPos - 0.04f,
+    //    0.8f,
+    //    yPos + 0.04f
+    //);
+    //ui::AttributeInteractable folderName(tempCorners, folder->getHierarchyTextUI());
+    //std::cout << "Interactable generated at " << smath::outputVec4(tempCorners) << std::endl;
+    //interactables.push_back(folderName);
 
     // Visibility Button
     tempCorners = glm::vec4(
@@ -395,14 +395,14 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
     interactables.push_back(elementDropdown);
 
     // Hierarchy Text Entry
-    tempCorners = glm::vec4(
-        (0.08f * indent) + 0.16f,
-        yPos - 0.04f,
-        0.8f,
-        yPos + 0.04f
-    );
-    ui::AttributeInteractable elementName(tempCorners, element->getHierarchyTextUI());
-    interactables.push_back(elementName);
+    //tempCorners = glm::vec4(
+    //    (0.08f * indent) + 0.16f,
+    //    yPos - 0.04f,
+    //    0.8f,
+    //    yPos + 0.04f
+    //);
+    //ui::AttributeInteractable elementName(tempCorners, element->getHierarchyTextUI());
+    //interactables.push_back(elementName);
 
     // Visibility Button
     tempCorners = glm::vec4(
@@ -438,8 +438,10 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
 }
 void HierarchyWindow::GenerateInteractables()
 {
+    // TODO: Clear old interactables
+
     float yPos = 0.2f;
-    generateFolderInteractable(activeScene->getRootFolder(), 0, yPos);
+    generateFolderInteractable(state->getScene()->getRootFolder(), 0, yPos);
 }
 void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos)
 {
@@ -454,13 +456,13 @@ void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int
     renderer->addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_FOLDER_SYMBOL);
 
     // Folder Text
-    ui::ElementPosition textPos(glm::vec4(
-        position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
-        yPos - (0.04f * position.getWidth()),
-        position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
-        yPos + (0.04f * position.getWidth())
-    ), 0.0f, &position);
-    folder->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
+    //ui::ElementPosition textPos(glm::vec4(
+    //    position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
+    //    yPos - (0.04f * position.getWidth()),
+    //    position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
+    //    yPos + (0.04f * position.getWidth())
+    //), 0.0f, &position);
+    //folder->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
 
     // Visibility Symbol
     renderer->addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
@@ -490,7 +492,7 @@ void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int
 void HierarchyWindow::DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos)
 {
     // Rendering the base element UI
-    Color baseColor = (activeScene->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
+    Color baseColor = (state->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
     renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(0.96f * position.getWidth(), 0.08f * position.getWidth()), baseColor.rgb());
 
     // Dropdown Symbol
@@ -501,13 +503,13 @@ void HierarchyWindow::DrawUIHierarchyElement(ui::UIRenderer* renderer, Hierarchy
     renderer->addQuad(glm::vec3((position.getWidth() * 0.14f) + (position.getWidth() * 0.08f * indent), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), ui::UI_OBJECT_SYMBOL);
 
     // Object Text
-    ui::ElementPosition textPos(glm::vec4(
-        position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
-        yPos - (0.04f * position.getWidth()),
-        position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
-        yPos + (0.04f * position.getWidth())
-    ), 0.0f, &position);
-    element->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
+    //ui::ElementPosition textPos(glm::vec4(
+    //    position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
+    //    yPos - (0.04f * position.getWidth()),
+    //    position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
+    //    yPos + (0.04f * position.getWidth())
+    //), 0.0f, &position);
+    //element->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
 
     // Visibility Symbol
     renderer->addQuad(glm::vec3((position.getWidth() * 0.86f), yPos, 0.15f), glm::vec2(0.08f * position.getWidth()), colors::white.rgb(), (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
@@ -545,7 +547,7 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
     yPos -= (hierarchyTitleHeight * 0.5f) + position.getWidth() * 0.04f;
 
     // Starting the UI Draw from the root folder
-    DrawUIFolder(renderer, activeScene->getRootFolder(), 0, yPos);
+    DrawUIFolder(renderer, state->getScene()->getRootFolder(), 0, yPos);
 
     // Rendering the quads
     renderer->renderQuads(getProjection());

@@ -6,7 +6,7 @@
 #include "../../object/object.h"
 #include "../../Camera/camera.h"
 #include "../UI/TextInput.h"
-
+#include "../Scene/Scene.h"
 
 enum EditingState { SM_NONE, SM_SELECT, SM_TRANSLATE, SM_ROTATE, SM_SCALE, SM_UI_INTERACT, SM_UI_TYPING };
 
@@ -31,7 +31,7 @@ class StateMachine
 {
 public:
     // Cosntructor & Destructor
-    StateMachine(Mouse* mouse, OrbitCamera* activeCamera);
+    StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeCamera);
     ~StateMachine();
 
     // Getters
@@ -42,6 +42,7 @@ public:
     ui::TextInput* getTextInput() { return textInput; }
     Mouse* getMouse() { return mouse; }
     OrbitCamera* getCamera() { return activeCamera; }
+    scn::Scene* getScene() { return scene; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }
@@ -57,6 +58,7 @@ public:
 
 private:
     EditingState currentState;
+    scn::Scene* scene;
     obj::Object* selectedObject;
     Mouse* mouse;
     OrbitCamera* activeCamera;

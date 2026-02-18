@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include "../../object/object.h"
-#include "../UI/UIElements.h"
 
 enum HierarchyType { OBS_OBJECT, OBS_LIGHT, OBS_CAMERA, OBS_EMPTY };
 
@@ -31,7 +30,6 @@ public:
     // Overload Functions
     virtual std::string getName() = 0;
     virtual void setName(std::string name) = 0;
-    virtual ui::HierarchyTextEntry* getHierarchyTextUI() = 0;
 
 protected:
     // UI Interaction Elements
@@ -56,7 +54,6 @@ public:
     std::string getName() override { return object->getName(); }
     bool hasChildren() { return children.size() > 0; }
     std::string* getNameAddress() override { return object->getNameAddress(); }
-    ui::HierarchyTextEntry* getHierarchyTextUI() override { return nameEntry; }
 
     // Setters
     void setName(std::string name) override { this->object->setName(name); }
@@ -66,10 +63,8 @@ public:
     void addChild(HierarchyElement* child);
     void removeChild(HierarchyElement* element);
     void EraseObject(bool deleteChildren = false);
-    void DrawElementUI();
 
 private:
-    ui::HierarchyTextEntry* nameEntry;
     obj::Object* object;
     HierarchyType type;
     HierarchyElement* parent;
@@ -92,7 +87,6 @@ public:
     bool hasChildren() { return (elements.size() > 0 || childrenFolders.size() > 0); }
     std::string getName() override { return name; }
     std::string* getNameAddress() override { return &name; }
-    ui::HierarchyTextEntry* getHierarchyTextUI() override { return nameEntry; }
 
     // Setters
     void setName(std::string name) override { this->name = name; }
@@ -109,7 +103,6 @@ public:
 
 private:
     std::string name;
-    ui::HierarchyTextEntry* nameEntry;
     Folder* parentFolder;
     std::vector<Folder*> childrenFolders;
     std::vector<HierarchyElement*> elements;

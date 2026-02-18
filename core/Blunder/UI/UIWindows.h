@@ -96,17 +96,11 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, scn::Scene* activeScene) : UIWindow(width, height, xoffset, yoffset), activeScene(activeScene), clickedElement(nullptr) {}
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset), state(state), clickedElement(nullptr) {}
         ~HierarchyWindow()
         {
             interactables.clear();
         }
-
-        // Getters
-        scn::Scene* getScene() { return activeScene; }
-
-        // Setters
-        void setScene(scn::Scene* activeScene) { this->activeScene = activeScene; }
 
         // Functions
         void generateFolderInteractable(Folder* folder, int indent, float& yPos);
@@ -120,7 +114,7 @@ namespace ui
 
     private:
         std::vector<ui::AttributeInteractable> interactables;
-        scn::Scene* activeScene;
+        StateMachine* state;
         ui::AttributeElement* clickedElement;
     };
 

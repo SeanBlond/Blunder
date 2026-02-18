@@ -203,5 +203,5 @@ void WindowManager::DrawWindows(ui::UIRenderer* renderer)
 }
 void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 {
-	//rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, ), nullptr, glm::vec2(0));
+	//rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getScene(), state->getCamera()), nullptr, glm::vec2(0));
 }
