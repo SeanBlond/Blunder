@@ -750,7 +750,7 @@ void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& positio
     // Adding background when highlighted
     if (highlighted || clicked)
     {
-        renderer->addQuad(glm::vec3(xCenter, yCenter, -0.99999f), glm::vec2(navSize), colors::lightgrey.rgb(), UI_NO_TEXTURE, QUAD_CIRCLE);
+        renderer->addQuad(glm::vec3(xCenter, yCenter, -0.99999f), glm::vec2(navSize), colors::lightgrey.rgb(), position.parentWindow->offset, UI_NO_TEXTURE, QUAD_CIRCLE);
     }
 
     // Unique data for each axis
@@ -774,7 +774,7 @@ void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& positio
         glm::vec3 axisPos = glm::vec3(xCenter, yCenter, 0) + glm::vec3(navSize * 0.5f, navSize * 0.5f, -1) * glm::vec3(transform * axises[i]);
 
         // Adding the quad for each axis
-        renderer->addQuad(axisPos, glm::vec2(navSize * 0.15f), axisColors[i], UI_NO_TEXTURE, QUAD_CIRCLE);
+        renderer->addQuad(axisPos, glm::vec2(navSize * 0.15f), axisColors[i], position.parentWindow->offset, UI_NO_TEXTURE, QUAD_CIRCLE);
 
         // (Conditionally) Adding the text 
         if (highlighted || clicked)

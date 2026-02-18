@@ -12,6 +12,7 @@
 #include <Blunder/Runtime/StateMachine.h>
 #include <Blunder/UI/UIElements.h>
 #include <Blunder/UI/UIWindows.h>
+#include <Blunder/Runtime/WindowManager.h>
 #include <Camera/camera.h>
 #include <shader/shader.h>
 #include <object/object.h>
@@ -116,6 +117,11 @@ int main()
     // Creating the Blunder UI Renderer
     ui::UIRenderer renderer("assets/Bitmap/Lato-Regular-Bitmap.fnt", "assets/Bitmap/Lato-Regular-Bitmap.png", "assets/Bitmap/UIBitmap.png");
 
+    // Creating the UI (this could be bad)
+    WindowManager windows(&state);
+    windows.CreateDefaultWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+
+    /* OLD UI STUFF
     // Attribute UI Creation
     ui::AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0);
     attributeUI.CreateUIfromObject(state.getSelectedObject());
@@ -127,6 +133,7 @@ int main()
     // Viewport UI Creation
     ui::ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, &activeScene, &camera);
     viewportUI.GenerateInteractables();
+    */
 
     // Creating Axis Line
     Line xAxisLine(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f);
@@ -181,6 +188,15 @@ int main()
         zAxisLine.setTransformation(projection * view);
         zAxisLine.drawLine();
 
+        // Drawing UI Windows
+        windows.UpdateWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+        windows.DrawWindows(&renderer);
+
+        // Calling UI Render Draw Function
+        renderer.renderQuads(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+
+
+        /* Old UI Stuff
         // Drawing Viewport UI
         viewportUI.setDimensions(SCREEN_WIDTH - (2 * uiwidth), SCREEN_HEIGHT, uiwidth, 0);
         viewportUI.ManageInteraction(window, &state);
@@ -198,7 +214,7 @@ int main()
         hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
         hierarchyUI.ManageInteraction(window, &state);
         hierarchyUI.DrawWindow(&renderer);
-
+        */
 
         // Swapping buffer
         glfwSwapBuffers(window);

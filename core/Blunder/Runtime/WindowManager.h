@@ -1,4 +1,4 @@
-#ifndef WIsNDOW_MANAGER
+#ifndef WINDOW_MANAGER
 #pragma once
 
 #include "../../math/smath.h"
@@ -8,8 +8,11 @@
 class LockedWindow
 {
 public:
+	// Data necessary for getting offset
+	enum ChildWindowPosition { POS_NONE, POS_LEFT, POS_RIGHT, POS_BOTTOM, POS_TOP };
+
 	// Constructor & Deconstructor
-	LockedWindow(ui::UIWindow* window, LockedWindow* parent, glm::vec2 dimensions);
+	LockedWindow(ui::UIWindow* window, LockedWindow* parent, glm::vec2 dimensions, ChildWindowPosition position);
 	~LockedWindow();
 
 	// Getters
@@ -31,10 +34,10 @@ public:
 
 	// Setters
 	void setDimensions(glm::vec2 dimensions) { this->dimensions = dimensions; UpdateDimensions(); }
-	void setLeftWindow(LockedWindow* leftWindow);
-	void setRightWindow(LockedWindow* rightWindow);
-	void setTopWindow(LockedWindow* topWindow);
-	void setBottomWindow(LockedWindow* bottomWindow);
+	void setLeftWindow(ui::UIWindow* window, float width = 0.25f);
+	void setRightWindow(ui::UIWindow* window, float width = 0.25f);
+	void setTopWindow(ui::UIWindow* window, float height = 0.25f);
+	void setBottomWindow(ui::UIWindow* window, float height = 0.25f);
 	void setLeftWidth(float leftWidth) { this->leftWidth = smath::clamp(leftWidth, 0.0f, 1.0f - percentageUsed.x); UpdateDimensions(); }
 	void setRightWidth (float rightWidth) { this->rightWidth = smath::clamp(rightWidth, 0.0f, 1.0f - percentageUsed.x); UpdateDimensions(); }
 	void setTopHeight (float topHeight) { this->topHeight = smath::clamp(topHeight, 0.0f, 1.0f - percentageUsed.y); UpdateDimensions(); }
@@ -48,6 +51,7 @@ public:
 
 private:
 	// Window data
+	ChildWindowPosition childPosition;
 	LockedWindow* parent;
 	ui::UIWindow* window;
 	glm::vec2 dimensions;
@@ -70,7 +74,7 @@ class WindowManager
 {
 public:
 	// Constructor & Deocnstructor
-	WindowManager(StateMachine* state, glm::vec2 screenSize);
+	WindowManager(StateMachine* state);
 	~WindowManager();
 
 	// Getters
@@ -79,7 +83,7 @@ public:
 	void setPopUpWindow(ui::UIWindow* window) { closePopUp(); this->popUpWindow = window; }
 
 	// Functions
-	void closePopUp() { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; }
+	void closePopUp() { if (popUpWindow) { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; } }
 	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); }
 	void UpdateWindows(glm::vec2 screenSize);
 	void DrawWindows(ui::UIRenderer* renderer);
@@ -91,6 +95,7 @@ private:
 	std::vector<ui::UIWindow*> freeWindows;
 	ui::UIWindow* popUpWindow;
 
+	glm::vec2 storedScreenSize;
 	ui::UIWindow* selectedWindow;
 	StateMachine* state;
 };

@@ -216,6 +216,20 @@ void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UIText
     };
     indices.insert(indices.end(), std::begin(tempIndices), std::end(tempIndices));
 }
+void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, glm::vec2 offset, UITexture texture, QuadStyle style)
+{
+    addQuad(position + glm::vec3(offset, 0.0f), size, color, texture, style);
+}
+void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, glm::vec2 offset, UITexture texture, QuadStyle style)
+{
+    glm::vec4 newCorners = glm::vec4(
+        corners.x + offset.x,
+        corners.y + offset.y,
+        corners.z + offset.x,
+        corners.w + offset.y
+    );
+    addQuad(newCorners, depth, color, texture, style);
+}
 
 void UIRenderer::UpdateMesh()
 {
@@ -231,8 +245,10 @@ void UIRenderer::UpdateMesh()
 
     glBindVertexArray(0);
 }
-void UIRenderer::renderQuads(glm::mat4 projection)
+void UIRenderer::renderQuads(glm::vec2 screenSize)
 {
+    glm::mat4 projection = smath::orthographic(0, screenSize.x, 0, screenSize.y);
+
     // Checking if there are quads to draw before attempting to render it
     if (indices.size() != 0)
     {
@@ -245,6 +261,7 @@ void UIRenderer::renderQuads(glm::mat4 projection)
         uiBitmap->Bind(0);
 
         // Rendeing the meshes
+        glViewport(0, 0, screenSize.x, screenSize.y);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
