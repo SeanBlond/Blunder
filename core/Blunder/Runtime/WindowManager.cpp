@@ -235,13 +235,13 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 	storedScreenSize = screenSize;
 
 	// Viewport UI
-	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getScene(), state->getCamera()), nullptr, screenSize, LockedWindow::POS_NONE);
+	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state, state->getCamera()), nullptr, screenSize, LockedWindow::POS_NONE);
 	
 	// Attribute UI
 	std::cout << "Attribute UI" << std::endl;
-	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f), 0.25f);
+	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.2f);
 	
 	// Hierarchy UI
 	std::cout << "Hierarchy UI" << std::endl;
-	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.25f);
+	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.2f);
 }

@@ -88,7 +88,6 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
     renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
-    renderer->addQuad(position.getBufferedCorners(), 0.01f, colors::black.rgb());
 
     // Setting initial yPos to Start rendering at
     float attributeTitleHeight = position.getWidth() * 0.12f;
@@ -99,10 +98,10 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
     {
         // Adding Label Box
         float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
-        renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
+        renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f), position.offset);
 
         // Adding Attribute Label
-        renderer->addText(attributes[i]->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
+        renderer->addText(attributes[i]->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largeText(), glm::vec3(1.0f), position.offset, CENTER);
 
 
         // Checking if elements should be rendered
@@ -139,7 +138,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
                 position.getWidth() - (position.getWidth() - attributeBoxWidth) * 0.5f,
                 containerStartHeight
             );
-            renderer->addQuad(containerCorners, 0.15f, glm::vec3(0.35f));
+            renderer->addQuad(containerCorners, 0.15f, glm::vec3(0.35f), position.offset);
 
             // Adding space after containter
             attributeYPos -= position.getBuffer();
@@ -536,7 +535,7 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
 
     // Adding Hierarchy Label
     renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f), position.offset);
-    renderer->addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largText(), colors::white.rgb(), CENTER);
+    renderer->addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largeText(), colors::white.rgb(), position.offset, CENTER);
 
     // Updating yPos
     yPos -= (hierarchyTitleHeight * 0.5f) + position.getWidth() * 0.04f;
@@ -783,7 +782,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
     renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f));
 
     // Adding Attribute Label
-    renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largText(), glm::vec3(1.0f), CENTER);
+    renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largeText(), glm::vec3(1.0f), CENTER);
 
     // Rendering the Attributes
     attributeYPos -= attributeTitleHeight * 0.5f;

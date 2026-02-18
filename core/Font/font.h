@@ -44,7 +44,7 @@ public:
     // Functions
     void ReadFNTFile(std::string filePath);
     void AddText(std::string text, glm::vec3 position, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
-    void RenderText(glm::mat4 projection);
+    void RenderText(glm::vec2 screenSize);
     void UpdateMesh();
 
 private:

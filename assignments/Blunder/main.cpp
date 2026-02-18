@@ -121,20 +121,6 @@ int main()
     WindowManager windows(&state);
     windows.CreateDefaultWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
-    /* OLD UI STUFF
-    // Attribute UI Creation
-    ui::AttributeWindow attributeUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0);
-    attributeUI.CreateUIfromObject(state.getSelectedObject());
-
-    // Hierarchy UI Creation
-    ui::HierarchyWindow hierarchyUI(0.25f * SCREEN_HEIGHT, SCREEN_HEIGHT, 0, 0, &state);
-    hierarchyUI.GenerateInteractables();
-
-    // Viewport UI Creation
-    ui::ViewportWindow viewportUI(SCREEN_WIDTH - (0.5f * SCREEN_HEIGHT), SCREEN_HEIGHT, 0.25f * SCREEN_HEIGHT, 0, &activeScene, &camera);
-    viewportUI.GenerateInteractables();
-    */
-
     // Creating Axis Line
     Line xAxisLine(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f);
     Line yAxisLine(glm::vec3(0.0f, -100.0f, 0.0f), glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 3.0f);
@@ -188,12 +174,13 @@ int main()
         zAxisLine.setTransformation(projection * view);
         zAxisLine.drawLine();
 
-        // Drawing UI Windows
+        // Drawing Windows
         windows.UpdateWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
         windows.DrawWindows(&renderer);
 
         // Calling UI Render Draw Function
         renderer.renderQuads(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+        renderer.renderText(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 
         /* Old UI Stuff

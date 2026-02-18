@@ -164,9 +164,9 @@ void UIRenderer::addText(std::string text, glm::vec3 position, float scale, glm:
 
     textRenderer->AddText(text, position, scale, color, alignment);
 }
-void UIRenderer::renderText(glm::mat4 projection)
+void UIRenderer::addText(std::string text, glm::vec3 position, float scale, glm::vec3 color, glm::vec2 offset, TextAlign alignment)
 {
-    textRenderer->RenderText(projection);
+    addText(text, position + glm::vec3(offset, 0), scale, color, alignment);
 }
 void UIRenderer::addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture, QuadStyle style)
 {
@@ -247,13 +247,14 @@ void UIRenderer::UpdateMesh()
 }
 void UIRenderer::renderQuads(glm::vec2 screenSize)
 {
-    glm::mat4 projection = smath::orthographic(0, screenSize.x, 0, screenSize.y);
-
     // Checking if there are quads to draw before attempting to render it
     if (indices.size() != 0)
     {
         // Updating Mesh Data
         UpdateMesh();
+
+        // Creating projection matrix
+        glm::mat4 projection = smath::orthographic(0, screenSize.x, 0, screenSize.y);
 
         // Setting up shader and texture
         quadShader->useShader();
@@ -270,4 +271,8 @@ void UIRenderer::renderQuads(glm::vec2 screenSize)
         vertices.clear();
         indices.clear();
     }
+}
+void UIRenderer::renderText(glm::vec2 screenSize)
+{
+    textRenderer->RenderText(screenSize);
 }

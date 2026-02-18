@@ -128,6 +128,10 @@ void TextInput::addText(ui::UIRenderer* renderer, glm::vec3 position, float scal
     // Rendering Text
     renderer->addText(text, position, scale, color, alignment);
 }
+void TextInput::addText(ui::UIRenderer* renderer, glm::vec3 position, float scale, glm::vec3 color, glm::vec2 offset, TextAlign alignment)
+{
+    addText(renderer, position + glm::vec3(offset, 0.0f), scale, color, alignment);
+}
 glm::vec2 TextInput::getCursorPosition(std::string text, int cursor, float x, float y, float scale, TextAlign alignment, Font* font)
 {
     // Calculating Alignment

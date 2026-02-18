@@ -409,13 +409,16 @@ void Font::AddText(std::string text, glm::vec3 position, float scale, glm::vec3 
         x += ch.Advance * scale;
     }
 }
-void Font::RenderText(glm::mat4 projection)
+void Font::RenderText(glm::vec2 screenSize)
 {
     // Checking if there is text to draw ebefore attempting to render it
     if (vertices.size() != 0)
     {
         // Updating Mesh Data
         UpdateMesh();
+
+        // Creating projection matrix
+        glm::mat4 projection = smath::orthographic(0, screenSize.x, 0, screenSize.y);
 
         // Setting up shader and texture
         textShader->useShader();
@@ -424,6 +427,7 @@ void Font::RenderText(glm::mat4 projection)
         textShader->setInt("text", 0);
 
         // Rendeing the meshes
+        glViewport(0, 0, screenSize.x, screenSize.y);
         glBindVertexArray(textVAO);
         glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);

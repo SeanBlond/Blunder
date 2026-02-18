@@ -51,13 +51,14 @@ namespace ui
 
         // Functions
         void createBitmapUVData();
-        void addText(std::string text, glm::vec3 position, float scale, glm::vec3 color = glm::vec3(1), TextAlign alignment = LEFT);
+        void addText(std::string text, glm::vec3 position, float scale, glm::vec3 color, TextAlign alignment = LEFT);
+        void addText(std::string text, glm::vec3 position, float scale, glm::vec3 color, glm::vec2 offset, TextAlign alignment = LEFT);
         void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT);
         void addQuad(glm::vec4 corners, float depth, glm::vec3 color, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT);
         void addQuad(glm::vec3 position, glm::vec2 size, glm::vec3 color, glm::vec2 offset, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT);
         void addQuad(glm::vec4 corners, float depth, glm::vec3 color, glm::vec2 offset, UITexture texture = UI_NO_TEXTURE, QuadStyle style = QUAD_RECT);
         void UpdateMesh();
-        void renderText(glm::mat4 projection);
+        void renderText(glm::vec2 screenSize);
         void renderQuads(glm::vec2 screenSize);
 
     private:

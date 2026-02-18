@@ -47,7 +47,7 @@ namespace ui
         // Text Sizes
         float smallText() const { return (position.dimensions.y * 2.2e-4); }
         float mediumText() const { return (position.dimensions.y * 2.75e-4); }
-        float largText() const { return (position.dimensions.y * 4e-4); }
+        float largeText() const { return (position.dimensions.y * 4e-4); }
 
     protected:
         ui::WindowPosition position;
@@ -123,7 +123,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ViewportWindow(float width, float height, float xoffset, float yoffset, scn::Scene* activeScene, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset), activeScene(activeScene), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
+        ViewportWindow(float width, float height, float xoffset, float yoffset, StateMachine* state, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset), state(state), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
         ~ViewportWindow()
         {
             interactables.clear();
@@ -143,7 +143,7 @@ namespace ui
 
     private:
         OrbitCamera* activeCamera;
-        scn::Scene* activeScene;
+        StateMachine* state;
         ui::ViewNav viewNavElement;
         std::vector<ui::Attribute*> attributes;
         std::vector<ui::AttributeInteractable> interactables;
