@@ -15,6 +15,7 @@ LockedWindow::LockedWindow(ui::UIWindow* window, LockedWindow* parent, glm::vec2
 	offset = percentageUsed = glm::vec2(0);
 
 	UpdateDimensions();
+	window->GenerateInteractables();
 }
 LockedWindow::~LockedWindow()
 {
@@ -41,11 +42,9 @@ float LockedWindow::getXOffset() const
 		//std::cout << "No parent offset: " << ((leftWindow ? leftWidth : 0.0f) * dimensions.x) << std::endl;
 		return ((leftWindow ? leftWidth : 0.0f) * dimensions.x);
 	}
-	std::cout << "parent detected, child pos: " << childPosition << std::endl;
 
 	if (childPosition == POS_RIGHT)
 	{
-		std::cout << "Right offset: " << ((1.0f - parent->getRightWidth()) * parent->getDimensions().x) << std::endl;
 		return ((1.0f - parent->getRightWidth()) * parent->getDimensions().x);
 	}
 
@@ -115,29 +114,29 @@ void LockedWindow::UpdateDimensions()
 		bottomWindow->setDimensions(glm::vec2(topBottomWindowWidth, bottomHeight * dimensions.y));
 
 	// Updating UI Window dimensions
-	glm::vec2 windowDimensions = (glm::vec2(1) - percentageUsed) * dimensions;
+	glm::vec2 mainWindowDimensions = getMainWindowDimensions();
 	glm::vec2 windowOffset = getOffset();
-	window->setDimensions(windowDimensions, windowOffset);
+	window->setDimensions(mainWindowDimensions, windowOffset);
 
 	//std::cout << std::endl << "Window Dimensions Update" << std::endl;
-	//std::cout << "Set dimensions " << smath::outputVec2(windowDimensions) << " and offset" << smath::outputVec2(windowOffset) << std::endl;
-	std::cout << "Set Window Corners " << smath::outputVec4(window->getPosition().getCorners()) << std::endl;
+	//std::cout << "Set dimensions " << smath::outputVec2(mainWindowDimensions) << " and offset" << smath::outputVec2(windowOffset) << std::endl;
+	//std::cout << "Set Window Corners " << smath::outputVec4(window->getPosition().getCorners()) << std::endl;
 }
 ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 {
 	// Checking the main screen
-	if (smath::checkUICollision(position, getScreenCorners()))
+	if (smath::checkUICollision(position, getMainWindowCorners()))
 		return window;
 
 	// Checking connected windows
-	if (leftWindow)
-		return leftWindow->checkForCollisions(position);
-	if (rightWindow)
-		return rightWindow->checkForCollisions(position);
-	if (topWindow)
-		return topWindow->checkForCollisions(position);
-	if (bottomWindow)
-		return bottomWindow->checkForCollisions(position);
+	if (leftWindow && leftWindow->checkForCollisions(position) != nullptr)
+		return leftWindow->getWindow();
+	if (rightWindow && rightWindow->checkForCollisions(position) != nullptr)
+		return rightWindow->getWindow();
+	if (topWindow && topWindow->checkForCollisions(position) != nullptr)
+		return topWindow->getWindow();
+	if (bottomWindow && bottomWindow->checkForCollisions(position) != nullptr)
+		return bottomWindow->getWindow();
 
 	// No Collision Detected
 	return nullptr;
@@ -179,7 +178,7 @@ WindowManager::~WindowManager()
 }
 
 // Functions
-void WindowManager::UpdateWindows(glm::vec2 screenSize)
+void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 {
 	// Checking if screen size needs to be updated
 	if (storedScreenSize != screenSize)
@@ -208,6 +207,9 @@ void WindowManager::UpdateWindows(glm::vec2 screenSize)
 		// Checking free window collision
 
 		// Checking locked window collision
+		selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
+		if (selectedWindow)
+			selectedWindow->ManageInteraction(window, state);
 
 		// Setting selectedWindow to nullptr if none is selected
 	}
@@ -238,10 +240,8 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state, state->getCamera()), nullptr, screenSize, LockedWindow::POS_NONE);
 	
 	// Attribute UI
-	std::cout << "Attribute UI" << std::endl;
-	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.2f);
+	rootLockedWindow->setRightWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.2f);
 	
 	// Hierarchy UI
-	std::cout << "Hierarchy UI" << std::endl;
-	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.2f);
+	rootLockedWindow->setLeftWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.2f);
 }

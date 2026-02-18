@@ -1,6 +1,10 @@
 #ifndef WINDOW_MANAGER
 #pragma once
 
+#include "../../ew/external/glad.h"
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
 #include "../../math/smath.h"
 #include "../UI/UIWindows.h"
 #include "StateMachine.h"
@@ -26,11 +30,13 @@ public:
 	float getTopHeight() const { return (topWindow ? topHeight : 0 ); }
 	float getBottomHeight() const { return (bottomWindow ? bottomHeight : 0 ); }
 	glm::vec2 getDimensions() const { return dimensions; }
+	glm::vec2 getMainWindowDimensions() const { return (glm::vec2(1) - percentageUsed) * dimensions; }
 	LockedWindow* getParent() { return parent; }
 	float getXOffset() const;
 	float getYOffset() const;
 	glm::vec2 getOffset() const { return glm::vec2(getXOffset(), getYOffset()); }
 	glm::vec4 getScreenCorners() const { return glm::vec4(getOffset(), getOffset() + getDimensions()); }
+	glm::vec4 getMainWindowCorners() const { return glm::vec4(getOffset(), getOffset() + getMainWindowDimensions()); }
 
 	// Setters
 	void setDimensions(glm::vec2 dimensions) { this->dimensions = dimensions; UpdateDimensions(); }
@@ -85,7 +91,7 @@ public:
 	// Functions
 	void closePopUp() { if (popUpWindow) { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; } }
 	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); }
-	void UpdateWindows(glm::vec2 screenSize);
+	void UpdateWindows(GLFWwindow* window, glm::vec2 screenSize);
 	void DrawWindows(ui::UIRenderer* renderer);
 	void CreateDefaultWindows(glm::vec2 screenSize);
 

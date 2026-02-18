@@ -158,8 +158,8 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    xpos /= position.getWidth();
-    ypos /= position.getWidth();
+    xpos = (xpos - position.getXOffset()) / position.getWidth();
+    ypos = (ypos - position.getYOffset()) / position.getWidth();
 
     // Checking if Mouse Position is within the UI bounds
     if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))

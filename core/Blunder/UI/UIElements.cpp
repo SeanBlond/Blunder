@@ -780,7 +780,7 @@ void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& positio
         if (highlighted || clicked)
         {
             glm::vec3 textColor = (i % 2 == 0 ? glm::vec3(1) : glm::vec3(0));
-            renderer->addText(axisTitles[i], axisPos + glm::vec3(0, 0, 0.01f), navSize * 0.0015f, textColor, CENTER);
+            renderer->addText(axisTitles[i], axisPos + glm::vec3(0, 0, 0.01f), navSize * 0.0015f, textColor, position.parentWindow->offset, CENTER);
         }
     }
 

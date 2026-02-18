@@ -175,7 +175,7 @@ int main()
         zAxisLine.drawLine();
 
         // Drawing Windows
-        windows.UpdateWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
+        windows.UpdateWindows(window, glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
         windows.DrawWindows(&renderer);
 
         // Calling UI Render Draw Function

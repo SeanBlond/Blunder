@@ -20,6 +20,7 @@ A quick little backlog of features that will be added to Blunder (this just exis
 * \[ ] Renovate Colors.h to have a good list of what colors are being used in Blunder
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
 * \[ ] Improve structure of State Machine to fit the different states of the software
+* \[ ] Ensure UI Interactables are being properly generated (maybe add a hitbox renderer?)
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)
 * \[ ] Work on shader/material system (different viewport modes, UI material options, etc)
 * \[ ] Add custom shader code into shader programs
