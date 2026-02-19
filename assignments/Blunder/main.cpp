@@ -182,27 +182,6 @@ int main()
         renderer.renderQuads(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
         renderer.renderText(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
-
-        /* Old UI Stuff
-        // Drawing Viewport UI
-        viewportUI.setDimensions(SCREEN_WIDTH - (2 * uiwidth), SCREEN_HEIGHT, uiwidth, 0);
-        viewportUI.ManageInteraction(window, &state);
-        viewportUI.DrawWindow(&renderer);
-
-        // Managing Attribute UI
-        glViewport(0, 0, uiwidth, SCREEN_HEIGHT);
-        attributeUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, 0, 0);
-        attributeUI.ManageInteraction(window, &state);
-        attributeUI.DrawWindow(&renderer);
-
-
-        // Managing Hierarchy UI
-        glViewport(SCREEN_WIDTH - uiwidth, 0, uiwidth, SCREEN_HEIGHT);
-        hierarchyUI.setDimensions(uiwidth, (float)SCREEN_HEIGHT, SCREEN_WIDTH - uiwidth, 0);
-        hierarchyUI.ManageInteraction(window, &state);
-        hierarchyUI.DrawWindow(&renderer);
-        */
-
         // Swapping buffer
         glfwSwapBuffers(window);
     }

@@ -126,17 +126,36 @@ ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 {
 	// Checking the main screen
 	if (smath::checkUICollision(position, getMainWindowCorners()))
-		return window;
+	{
+		//std::cout << childPosition << ": Checking " << smath::outputVec2(position) << " in " << smath::outputVec4(getMainWindowCorners()) << std::endl;
+		return this->window;
+	}
 
 	// Checking connected windows
-	if (leftWindow && leftWindow->checkForCollisions(position) != nullptr)
-		return leftWindow->getWindow();
-	if (rightWindow && rightWindow->checkForCollisions(position) != nullptr)
-		return rightWindow->getWindow();
-	if (topWindow && topWindow->checkForCollisions(position) != nullptr)
-		return topWindow->getWindow();
-	if (bottomWindow && bottomWindow->checkForCollisions(position) != nullptr)
-		return bottomWindow->getWindow();
+	if (leftWindow)
+	{
+		ui::UIWindow* checkedWindow = leftWindow->checkForCollisions(position);
+		if (checkedWindow != nullptr)
+			return checkedWindow;
+	}
+	if (rightWindow)
+	{
+		ui::UIWindow* checkedWindow = rightWindow->checkForCollisions(position);
+		if (checkedWindow != nullptr)
+			return checkedWindow;
+	}
+	if (topWindow)
+	{
+		ui::UIWindow* checkedWindow = topWindow->checkForCollisions(position);
+		if (checkedWindow != nullptr)
+			return checkedWindow;
+	}
+	if (bottomWindow)
+	{
+		ui::UIWindow* checkedWindow = bottomWindow->checkForCollisions(position);
+		if (checkedWindow != nullptr)
+			return checkedWindow;
+	}
 
 	// No Collision Detected
 	return nullptr;
@@ -209,9 +228,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 		// Checking locked window collision
 		selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
 		if (selectedWindow)
-			selectedWindow->ManageInteraction(window, state);
-
-		// Setting selectedWindow to nullptr if none is selected
+			selectedWindow->ManageInteraction(window, state);		
 	}
 
 	// TODO:
@@ -238,10 +255,10 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 
 	// Viewport UI
 	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state, state->getCamera()), nullptr, screenSize, LockedWindow::POS_NONE);
-	
+
 	// Attribute UI
-	rootLockedWindow->setRightWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.2f);
-	
+	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.333f);
+
 	// Hierarchy UI
-	rootLockedWindow->setLeftWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.2f);
+	rootLockedWindow->getLeftWindow()->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.5f);
 }

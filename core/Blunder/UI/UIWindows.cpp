@@ -156,40 +156,38 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
         CreateUIfromObject(state->getSelectedObject());
     }
 
+    // Converting Mouse Pos to Local Coordinates
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     xpos = (xpos - position.getXOffset()) / position.getWidth();
     ypos = (ypos - position.getYOffset()) / position.getWidth();
 
-    // Checking if Mouse Position is within the UI bounds
-    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))
+    // Finding CLicked Element
+    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
+    for (int i = 0; i < interactables.size(); i++)
     {
-        //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-        for (int i = 0; i < interactables.size(); i++)
+        // Highlighting an Element
+        if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
         {
-            // Highlighting an Element
-            if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
+            // Clicking an Element
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
             {
-                // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-                {
-                    state->changeState(SM_UI_INTERACT);
-                    interactables[i].element->clicked = true;
-                    clickedElement = (interactables[i].element);
-                    clickedElement->OnClick(state);
-                }
-
-                // Highilighting an Element
-                else
-                    interactables[i].element->highlighted = true;
+                state->changeState(SM_UI_INTERACT);
+                interactables[i].element->clicked = true;
+                clickedElement = (interactables[i].element);
+                clickedElement->OnClick(state);
             }
 
-            // Unhighlighting an Element
-            else if (interactables[i].element->highlighted)
-                interactables[i].element->highlighted = false;
-
-
+            // Highilighting an Element
+            else
+                interactables[i].element->highlighted = true;
         }
+
+        // Unhighlighting an Element
+        else if (interactables[i].element->highlighted)
+            interactables[i].element->highlighted = false;
+
+
     }
 
     // Managing Clicked Element
@@ -545,40 +543,36 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
+    // Converting Mouse Pos to Local Coordinates
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-
-    // Converting cursor position to be relative to window size
     xpos = (xpos - position.getXOffset()) / position.getWidth();
     ypos = (ypos - position.getYOffset()) / position.getWidth();
 
-    // Checking if Mouse Position is within the UI bounds
-    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))
+    // Finding CLicked Element
+    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
+    for (int i = 0; i < interactables.size(); i++)
     {
-        //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-        for (int i = 0; i < interactables.size(); i++)
+        // Highlighting an Element
+        if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
         {
-            // Highlighting an Element
-            if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
+            // Clicking an Element
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
             {
-                // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-                {
-                    state->changeState(SM_UI_INTERACT);
-                    interactables[i].element->clicked = true;
-                    clickedElement = (interactables[i].element);
-                    clickedElement->OnClick(state);
-                }
-
-                // Highilighting an Element
-                else
-                    interactables[i].element->highlighted = true;
+                state->changeState(SM_UI_INTERACT);
+                interactables[i].element->clicked = true;
+                clickedElement = (interactables[i].element);
+                clickedElement->OnClick(state);
             }
 
-            // Unhighlighting an Element
-            else if (interactables[i].element->highlighted)
-                interactables[i].element->highlighted = false;
+            // Highilighting an Element
+            else
+                interactables[i].element->highlighted = true;
         }
+
+        // Unhighlighting an Element
+        else if (interactables[i].element->highlighted)
+            interactables[i].element->highlighted = false;
     }
 
     // Managing Clicked Element
@@ -655,40 +649,36 @@ void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
+    // Converting Mouse Pos to Local Coordinates
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
     xpos = (xpos - position.getXOffset()) / position.getWidth();
     ypos = (ypos - position.getYOffset()) / position.getWidth();
 
-    // Checking if Mouse Position is within the UI bounds
-    if (xpos > 0 && xpos < 1 && ypos > 0 && ypos < (position.getHeight() / position.getWidth()))
+    // Finding CLicked Element
+    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
+    for (int i = 0; i < interactables.size(); i++)
     {
-        //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-        for (int i = 0; i < interactables.size(); i++)
+        // Highlighting an Element
+        if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
         {
-            // Highlighting an Element
-            if (checkUICollision(xpos, ypos, interactables[i]) && !state->getTransforming())
+            // Clicking an Element
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
             {
-                // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-                {
-                    state->changeState(SM_UI_INTERACT);
-                    interactables[i].element->clicked = true;
-                    clickedElement = (interactables[i].element);
-                    clickedElement->OnClick(state);
-                }
-
-                // Highilighting an Element
-                else
-                    interactables[i].element->highlighted = true;
+                state->changeState(SM_UI_INTERACT);
+                interactables[i].element->clicked = true;
+                clickedElement = (interactables[i].element);
+                clickedElement->OnClick(state);
             }
 
-            // Unhighlighting an Element
-            else if (interactables[i].element->highlighted)
-                interactables[i].element->highlighted = false;
-
-
+            // Highilighting an Element
+            else
+                interactables[i].element->highlighted = true;
         }
+
+        // Unhighlighting an Element
+        else if (interactables[i].element->highlighted)
+            interactables[i].element->highlighted = false;
     }
 
     // Managing Clicked Element

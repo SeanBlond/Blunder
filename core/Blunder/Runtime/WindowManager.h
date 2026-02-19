@@ -20,7 +20,7 @@ public:
 	~LockedWindow();
 
 	// Getters
-	ui::UIWindow* getWindow() const { return window; }
+	ui::UIWindow* getWindow() const { return this->window; }
 	LockedWindow* getLeftWindow() const { return leftWindow; };
 	LockedWindow* getRightWindow() const { return rightWindow; };
 	LockedWindow* getTopWindow() const { return topWindow; };
