@@ -813,9 +813,9 @@ void ViewNav::OnHold(StateMachine* state)
         }
 
         slideStarted = true;
-        glm::vec2 mouseDelta = (state->getMouse()->mousePos - initialMousePos) * glm::vec2(1, -1);
-        glm::vec2 calcAngle = storedCameraOrbit + mouseDelta * speed;
-        state->getCamera()->setAngles(calcAngle);
+        glm::vec2 mouseDelta = state->getMouse()->mouseDelta;
+        storedCameraOrbit += mouseDelta * speed;
+        state->getCamera()->setAngles(storedCameraOrbit);
     }
 }
 void ViewNav::OnRelease(StateMachine* state)

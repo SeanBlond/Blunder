@@ -231,8 +231,11 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 			selectedWindow->ManageInteraction(window, state);		
 	}
 
-	// Passing selected window to state machine
-	state->setSelectedWindowPosition(selectedWindow->getPositionAddress());
+	// Passing selected window position to state machine
+	if (selectedWindow)
+		state->setSelectedWindowPosition(selectedWindow->getPositionAddress());
+	else
+		state->setSelectedWindowPosition(nullptr);
 
 	// TODO:
 	// Create UpdateWindow functions in the UIWindow class that get called when the window is running, but not being interacted with

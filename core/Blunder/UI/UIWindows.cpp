@@ -907,6 +907,5 @@ void ColorWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
-
     }
 }

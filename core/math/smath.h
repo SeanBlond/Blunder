@@ -339,6 +339,19 @@ namespace smath
         return -1;
     }
 
+    inline float fmod(float a, float b)
+    {
+        return (a - b * floor(a / b));
+    }
+
+    inline glm::vec2 wrapPosition(glm::vec2 position, glm::vec4 bounds)
+    {
+        glm::vec2 dimensions = glm::vec2(abs(bounds.z - bounds.x), abs(bounds.w - bounds.y));
+        double wrappedX = smath::fmod((position.x - bounds.x), dimensions.x) + bounds.x;
+        double wrappedY = smath::fmod((position.y - bounds.y), dimensions.y) + bounds.y;
+        return glm::vec2(wrappedX, wrappedY);
+    }
+
     inline bool checkUICollision(glm::vec2 pos, glm::vec4 corners)
     {
         bool xCollision = (pos.x > corners.x && pos.x < corners.z);

@@ -17,20 +17,29 @@ struct Mouse
     glm::vec2 mousePos;
     glm::vec2 mouseDelta;
 
-    void UpdateMouse(float x, float y, float sensitivity) 
+    void UpdateMouse(GLFWwindow* window, float sensitivity) 
     { 
-        previousMouse = mousePos; 
-        mousePos = glm::vec2(x, y); 
-        mouseDelta = (previousMouse - mousePos) * sensitivity * glm::vec2(-1, 1);
-    }
-    void UpdateMouse(float x, float y, float sensitivity, glm::vec4 bounds) 
-    { 
-        glm::vec2 dimensions = glm::vec2(bounds.z - bounds.x, bounds.w - bounds.y);
-        //float wrappedX = 
+        double xposIn, yposIn;
+        glfwGetCursorPos(window, &xposIn, &yposIn);
 
         previousMouse = mousePos; 
-        mousePos = glm::vec2(x, y); 
+        mousePos = glm::vec2(xposIn, yposIn); 
         mouseDelta = (previousMouse - mousePos) * sensitivity * glm::vec2(-1, 1);
+    }
+    void UpdateMouse(GLFWwindow* window, float sensitivity, glm::vec4 bounds) 
+    {
+        double xPos, yPos;
+        glfwGetCursorPos(window, &xPos, &yPos);
+
+        glm::vec2 newMousePos = smath::wrapPosition(glm::vec2(xPos, yPos), bounds);
+        
+        glfwSetCursorPos(window, newMousePos.x, newMousePos.y);
+
+        // Calculating mouseDelta
+        previousMouse = mousePos;
+        mousePos = newMousePos;
+        glm::vec2 dimensions = glm::vec2(abs(bounds.z - bounds.x), abs(bounds.w - bounds.y)) * 0.5f;
+        mouseDelta = smath::wrapPosition(previousMouse - mousePos, glm::vec4(-dimensions, dimensions)) * sensitivity * glm::vec2(-1, 1);
     }
 
 private:
@@ -67,7 +76,7 @@ public:
     void exitState();
     void manageStateMachine();
     void changeAxis(const glm::vec3 axis);
-    void UpdateMouse(float xPos, float yPos);
+    void UpdateMouse(GLFWwindow* window);
 
 private:
     EditingState currentState;

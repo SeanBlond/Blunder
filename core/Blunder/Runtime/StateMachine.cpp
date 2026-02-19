@@ -162,14 +162,14 @@ void StateMachine::changeAxis(const glm::vec3 axis)
     changeState(tempState);
 }
 
-void StateMachine::UpdateMouse(float xPos, float yPos)
+void StateMachine::UpdateMouse(GLFWwindow* window)
 {
     // TODO: Make sensitivty a member variable
     float sensitivity = 0.5f;
 
     // Checking if mouse should be wrapped around the selected window
     if (selectedWindowPosition && currentState == SM_UI_INTERACT)
-        mouse->UpdateMouse(xPos, yPos, sensitivity, selectedWindowPosition->getCorners());
+        mouse->UpdateMouse(window, sensitivity, selectedWindowPosition->getCorners());
     else
-        mouse->UpdateMouse(xPos, yPos, sensitivity);
+        mouse->UpdateMouse(window, sensitivity);
 }

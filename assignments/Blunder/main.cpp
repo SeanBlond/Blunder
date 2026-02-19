@@ -32,7 +32,6 @@ Mouse mouse;
 
 // Function Prototypes
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void mouse_position_management(GLFWwindow* window);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void viewManagement(GLFWwindow* window);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -125,7 +124,6 @@ int main()
     //Render loop
     while (!glfwWindowShouldClose(window)) {
         // Managing Inputs
-        mouse_position_management(window);
         viewManagement(window);
         glfwPollEvents();
 
@@ -144,6 +142,9 @@ int main()
 
         // Time Management
         Time->UpdateTime(glfwGetTime());
+
+        // Updating State Machine input
+        state.UpdateMouse(window);
 
         // State Machine Managment
         state.manageStateMachine();
@@ -301,19 +302,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     // View Management
     else if (key == GLFW_KEY_F && action == GLFW_PRESS)
         camera.setPivot(state.getSelectedObject()->transform.position);
-}
-
-// Process Mouse Position
-void mouse_position_management(GLFWwindow* window)
-{
-    double xposIn, yposIn;
-    glfwGetCursorPos(window, &xposIn, &yposIn);
-
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    float sensitivity = 0.5f;
-    state.UpdateMouse(xpos, ypos);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
