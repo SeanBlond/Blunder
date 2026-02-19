@@ -254,7 +254,7 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 	storedScreenSize = screenSize;
 
 	// Viewport UI
-	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state, state->getCamera()), nullptr, screenSize, LockedWindow::POS_NONE);
+	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), nullptr, screenSize, LockedWindow::POS_NONE);
 
 	// Attribute UI
 	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.333f);

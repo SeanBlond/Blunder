@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "../../line/line.h"
 #include "../Runtime/StateMachine.h"
 #include "../Scene/Scene.h"
 #include "UIElements.h"
@@ -123,31 +124,36 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ViewportWindow(float width, float height, float xoffset, float yoffset, StateMachine* state, OrbitCamera* camera) : UIWindow(width, height, xoffset, yoffset), state(state), activeCamera(camera), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) {}
+        ViewportWindow(float width, float height, float xoffset, float yoffset, StateMachine* state)
+            : UIWindow(width, height, xoffset, yoffset), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) { CreateMesh(); }
         ~ViewportWindow()
         {
             interactables.clear();
+
+            delete viewportMesh;
+            delete viewportShader;
+            viewportMesh = nullptr;
+            viewportShader = nullptr;
         }
-
-        // Getters
-
-
-        // Setters
-
 
         // Functions
         void GenerateInteractables() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
+        void RenderScene();
+        void CreateMesh();
 
     private:
-        OrbitCamera* activeCamera;
         StateMachine* state;
         ui::ViewNav viewNavElement;
         std::vector<ui::Attribute*> attributes;
         std::vector<ui::AttributeInteractable> interactables;
         ui::AttributeElement* clickedElement;
+
+        // Mesh Rendering stuff
+        Mesh* viewportMesh;
+        shdr::Shader* viewportShader;
     };
 
     // Color Attribute Window

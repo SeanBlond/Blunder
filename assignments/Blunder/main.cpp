@@ -17,7 +17,6 @@
 #include <shader/shader.h>
 #include <object/object.h>
 #include <math/smath.h>
-#include <line/line.h>
 #include <Blunder/Keystroke.h>
 #include <Font/font.h>
 #include <Blunder/Time.h>
@@ -111,7 +110,6 @@ int main()
     activeScene.addFolder("Test 2");
 
     // Selecting the default cube
-    //activeScene.setSelectedElement(activeScene.getSelectedFolder()->getHierarchyElement(0));
     state.selectObject(activeScene.getSelectedFolder()->getHierarchyElement(0)->getObject());
 
     // Creating the Blunder UI Renderer
@@ -120,11 +118,6 @@ int main()
     // Creating the UI (this could be bad)
     WindowManager windows(&state);
     windows.CreateDefaultWindows(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
-
-    // Creating Axis Line
-    Line xAxisLine(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(100.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 3.0f);
-    Line yAxisLine(glm::vec3(0.0f, -100.0f, 0.0f), glm::vec3(0.0f, 100.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 3.0f);
-    Line zAxisLine(glm::vec3(0.0f, 0.0f, -100.0f), glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 1.0f), 3.0f);
 
     // Creating Projection Matrix
     glm::mat4 projection = camera.getProjectionMatrix((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
@@ -152,27 +145,8 @@ int main()
         // Time Management
         Time->UpdateTime(glfwGetTime());
 
-        // Rotating Camera View
-        float aspectRatio = (SCREEN_WIDTH - (2.0f * uiwidth)) / SCREEN_HEIGHT;
-        projection = camera.getProjectionMatrix(aspectRatio, 0.1f, 100.0f);
-        glm::mat4 view = camera.getViewMatrix();
-
         // State Machine Managment
         state.manageStateMachine(mouse.mouseDelta, camera);
-
-        // Rendering 3D Stuff
-        glEnable(GL_DEPTH);
-
-        // Drawing the Meshes
-        activeScene.Render(projection, view);
-        
-        // Drawing Axis Lines
-        xAxisLine.setTransformation(projection * view);
-        xAxisLine.drawLine();
-        yAxisLine.setTransformation(projection * view);
-        yAxisLine.drawLine();
-        zAxisLine.setTransformation(projection * view);
-        zAxisLine.drawLine();
 
         // Drawing Windows
         windows.UpdateWindows(window, glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
