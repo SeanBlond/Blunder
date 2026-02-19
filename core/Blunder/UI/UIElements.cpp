@@ -47,8 +47,8 @@ void FloatEntry::OnHold(StateMachine* state)
     if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
-        setValue(newValue);
+        saveValue += state->getMouse()->mouseDelta.x * speed;
+        setValue(saveValue);
     }
 }
 void FloatEntry::OnRelease(StateMachine* state)
@@ -82,8 +82,8 @@ void FloatSlider::OnHold(StateMachine* state)
     if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
-        setValue(newValue);
+        saveValue += state->getMouse()->mouseDelta.x * speed;
+        setValue(saveValue);
     }
 }
 void FloatSlider::OnRelease(StateMachine* state)
@@ -117,8 +117,8 @@ void IntEntry::OnHold(StateMachine* state)
     if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
-        setValue(round(newValue));
+        saveValue += state->getMouse()->mouseDelta.x * speed;
+        setValue(round(saveValue));
     }
 }
 void IntEntry::OnRelease(StateMachine* state)
@@ -152,8 +152,8 @@ void IntSlider::OnHold(StateMachine* state)
     if (abs(state->getMouse()->mousePos.x - initialMousePos.x) > 10.0f || slideStarted)
     {
         slideStarted = true;
-        float newValue = saveValue + ((state->getMouse()->mousePos.x - initialMousePos.x) / 100.0f) * speed;
-        setValue(round(newValue));
+        saveValue += state->getMouse()->mouseDelta.x * speed;
+        setValue(round(saveValue));
     }
 }
 void IntSlider::OnRelease(StateMachine* state)

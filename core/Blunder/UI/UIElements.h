@@ -60,7 +60,7 @@ namespace ui
     class FloatEntry : public AttributeElement
     {
     public:
-        FloatEntry(std::string label, float* value, float speed = 1.0f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_ENTRY)
+        FloatEntry(std::string label, float* value, float speed = 0.1f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_ENTRY)
         {
             initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
         }
@@ -88,7 +88,7 @@ namespace ui
     class FloatSlider : public AttributeElement
     {
     public:
-        FloatSlider(std::string label, float* value, float speed = 1.0f, float min = 0.0f, float max = 1.0f) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_SLIDER)
+        FloatSlider(std::string label, float* value, float speed = 0.1f, float min = 0.0f, float max = 1.0f) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_FLOAT_SLIDER)
         {
             initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
         }
@@ -121,7 +121,7 @@ namespace ui
     class IntEntry : public AttributeElement
     {
     public:
-        IntEntry(std::string label, int* value, float speed = 1.0f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
+        IntEntry(std::string label, int* value, float speed = 0.01f) : value(value), speed(speed), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
         {
             initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
         }
@@ -149,7 +149,7 @@ namespace ui
     class IntSlider : public AttributeElement
     {
     public:
-        IntSlider(std::string label, int* value, float speed = 1.0f, int min = 0, int max = 10) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
+        IntSlider(std::string label, int* value, float speed = 0.01f, int min = 0, int max = 10) : value(value), speed(speed), min(min), max(max), text(std::to_string(*value)), AttributeElement(label, UI_INT_SLIDER)
         {
             initialMousePos = glm::vec3(0); saveValue = 0; slideStarted = false;
         }
@@ -271,10 +271,10 @@ namespace ui
 
         // Functions
         void addElement(AttributeElement* element) { elements.push_back(element); }
-        void addFloatEntry(std::string label, float* value, float speed = 1.0f);
-        void addFloatSlider(std::string label, float* value, float speed = 1.0f, float min = 0.0f, float max = 1.0f);
-        void addIntEntry(std::string label, int* value, float speed = 1.0f);
-        void addIntSlider(std::string label, int* value, float speed = 1.0f, int min = 0, int max = 10);
+        void addFloatEntry(std::string label, float* value, float speed = 0.1f);
+        void addFloatSlider(std::string label, float* value, float speed = 0.1f, float min = 0.0f, float max = 1.0f);
+        void addIntEntry(std::string label, int* value, float speed = 0.1f);
+        void addIntSlider(std::string label, int* value, float speed = 0.1f, int min = 0, int max = 10);
         void addToggle(std::string label, bool* value);
         void addTextEntry(std::string label, std::string* value);
         void addDropdown(std::string label, int* value, std::vector<std::string> options);
@@ -316,7 +316,7 @@ namespace ui
     class ViewNav : public AttributeElement
     {
     public:
-        ViewNav(std::string label, float navSize = 150, float speed = 1.0f) : AttributeElement(label, UI_VIEW_NAV), navSize(navSize), speed(speed) { CreateMesh(); }
+        ViewNav(std::string label, float navSize = 150, float speed = 0.1f) : AttributeElement(label, UI_VIEW_NAV), navSize(navSize), speed(speed) { CreateMesh(); }
         ~ViewNav();
 
         // Getters
