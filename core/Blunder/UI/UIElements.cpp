@@ -806,6 +806,12 @@ void ViewNav::OnHold(StateMachine* state)
     // Checking if value should slide with mouse
     if (glm::length(state->getMouse()->mousePos - initialMousePos) > 1.0f || slideStarted)
     {
+        // Setting state to be UI Transforming
+        if (state->getState() != SM_UI_INTERACT)
+        {
+            state->changeState(SM_UI_INTERACT);
+        }
+
         slideStarted = true;
         glm::vec2 mouseDelta = (state->getMouse()->mousePos - initialMousePos) * glm::vec2(1, -1);
         glm::vec2 calcAngle = storedCameraOrbit + mouseDelta * speed;

@@ -84,8 +84,10 @@ void StateMachine::exitState()
     saveValue = glm::vec3(0.0f);
     stateAxis = glm::vec3(0.0f);
 }
-void StateMachine::manageStateMachine(glm::vec2 mouseDelta, OrbitCamera camera)
+void StateMachine::manageStateMachine()
 {
+    glm::vec2 mouseDelta = (mouse ? mouse->mouseDelta : glm::vec2(0));
+
     // Determining what to do for each state
     switch (currentState)
     {
@@ -111,10 +113,10 @@ void StateMachine::manageStateMachine(glm::vec2 mouseDelta, OrbitCamera camera)
         }
         else
         {
-            glm::vec3 globalUp = glm::cross(camera.getCameraNormal(), glm::vec3(0, 1, 0));
-            glm::vec3 right = glm::cross(camera.getCameraNormal(), globalUp);
-            glm::vec3 up = glm::cross(camera.getCameraNormal(), right);
-            translateVector += (up * -(mouseDelta.x / 100.0f)) + (right * -(mouseDelta.y / 100.0f));
+            glm::vec3 globalUp = glm::cross(activeCamera->getCameraNormal(), glm::vec3(0, 1, 0));
+            glm::vec3 right = glm::cross(activeCamera->getCameraNormal(), globalUp);
+            glm::vec3 up = glm::cross(activeCamera->getCameraNormal(), right);
+            translateVector += (up * -((mouseDelta.x) / 100.0f)) + (right * -(mouseDelta.y / 100.0f));
         }
         selectedObject->transform.position = (translateVector);
         break;
@@ -158,4 +160,16 @@ void StateMachine::changeAxis(const glm::vec3 axis)
     exitState();
     setAxis(axis);
     changeState(tempState);
+}
+
+void StateMachine::UpdateMouse(float xPos, float yPos)
+{
+    // TODO: Make sensitivty a member variable
+    float sensitivity = 0.5f;
+
+    // Checking if mouse should be wrapped around the selected window
+    if (selectedWindowPosition && currentState == SM_UI_INTERACT)
+        mouse->UpdateMouse(xPos, yPos, sensitivity, selectedWindowPosition->getCorners());
+    else
+        mouse->UpdateMouse(xPos, yPos, sensitivity);
 }

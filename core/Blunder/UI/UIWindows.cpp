@@ -430,7 +430,7 @@ void HierarchyWindow::generateElementInteractable(HierarchyElement* element, int
 }
 void HierarchyWindow::GenerateInteractables()
 {
-    // TODO: Clear old interactables
+    interactables.clear();
 
     float yPos = 0.2f;
     generateFolderInteractable(state->getScene()->getRootFolder(), 0, yPos);

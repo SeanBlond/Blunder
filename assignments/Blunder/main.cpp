@@ -146,13 +146,13 @@ int main()
         Time->UpdateTime(glfwGetTime());
 
         // State Machine Managment
-        state.manageStateMachine(mouse.mouseDelta, camera);
+        state.manageStateMachine();
 
         // Drawing Windows
         windows.UpdateWindows(window, glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
         windows.DrawWindows(&renderer);
 
-        // Calling UI Render Draw Function
+        // Drawing UI Renderer
         renderer.renderQuads(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
         renderer.renderText(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
@@ -313,7 +313,7 @@ void mouse_position_management(GLFWwindow* window)
     float ypos = static_cast<float>(yposIn);
 
     float sensitivity = 0.5f;
-    mouse.UpdateMouse(xpos, ypos, sensitivity);
+    state.UpdateMouse(xpos, ypos);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)

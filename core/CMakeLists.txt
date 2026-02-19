@@ -24,7 +24,7 @@ add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/sha
 												   "Blunder/UI/UIElements.h" "Blunder/UI/UIElements.cpp" "Blunder/UI/UIWindows.h" "Blunder/UI/UIRenderer.h" "Blunder/UI/UIRenderer.cpp" "Blunder/UI/TextInput.h" "Blunder/UI/TextInput.cpp" "Blunder/Time.h" "Blunder/Color.h" "object/transform.h" "shader/material.h" "shader/material.cpp" 
 												   "Blunder/Keystroke.h" 
 												   "Font/font.h" "Font/font.cpp" 
-												   "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp")
+												   "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp" "Blunder/UI/UIPositioning.h" )
 
 find_package(OpenGL REQUIRED)
 
