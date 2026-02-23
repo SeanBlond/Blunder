@@ -161,7 +161,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), selectedColor(selectedColor) { CreateUIFromSelected(); }
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba()) { CreateUIFromSelected(); }
         ~ColorWindow()
         {
             ClearAttributes();

@@ -217,15 +217,22 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 		// Check for collision
 		glm::vec4 checkCorners = popUpWindow->getPosition().getCorners();
 		if (smath::checkUICollision(mousePos, checkCorners))
-		{
 			selectedWindow = popUpWindow;
+	}
+	// Checking free window
+	else if (freeWindows.size() > 0)
+	{
+		// Looping through each open window to check for collision
+		for (int i = 0; i < freeWindows.size(); i++)
+		{
+			// Checking for collision
+			if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
+				selectedWindow = freeWindows[i];
 		}
 	}
+	// Checking locked window collision
 	else
 	{
-		// Checking free window collision
-
-		// Checking locked window collision
 		selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
 		if (selectedWindow)
 			selectedWindow->ManageInteraction(window, state);		
@@ -266,5 +273,12 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.333f);
 
 	// Hierarchy UI
-	rootLockedWindow->getLeftWindow()->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.5f);
+	ui::UIWindow* testColorWindow = new ui::ColorWindow(screenSize.x * 0.25f, screenSize.y * 0.5f, screenSize.x * 0.5f, 0, &testColor);
+	rootLockedWindow->getLeftWindow()->setRightWindow(testColorWindow, 0.5f);
+	//rootLockedWindow->getLeftWindow()->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.5f);
+
+
+	// REMOVE AT SOME POINT
+	// Test Color Window
+	//addFreeWindow(testColorWindow);
 }
