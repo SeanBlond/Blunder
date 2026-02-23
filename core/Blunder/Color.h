@@ -30,7 +30,7 @@ public:
 	void setHSVA(const glm::vec4 hsva) { color = HSVAtoRGBA(hsva); }
 	void setAlpha(const float alpha) { color.w = alpha; }
 
-	// Functions (Used Algorithm from Wikipedia Page: https://en.wikipedia.org/wiki/HSL_and_HSV)
+	// RGB <--> HSV Functions (Used Algorithm from Wikipedia Page: https://en.wikipedia.org/wiki/HSL_and_HSV)
 	static glm::vec3 RGBtoHSV(glm::vec3 rgb) 
 	{
 		// Necessary Values for Calculations
@@ -98,6 +98,107 @@ public:
 		return rgb;
 	}
 	static glm::vec4 HSVAtoRGBA(glm::vec3 hsva) { return glm::vec4(HSVtoRGB(hsva), hsva.z); }
+
+	// RGB & HSV <--> Hex Functions
+	static std::string RGBtoHEX(glm::vec3 rgb)
+	{
+		// Converting floats to integer values between 0 and 255
+		int r = static_cast<int>(smath::clamp(rgb.x, 0.0f, 1.0f) * 255);
+		int g = static_cast<int>(smath::clamp(rgb.y, 0.0f, 1.0f) * 255);
+		int b = static_cast<int>(smath::clamp(rgb.z, 0.0f, 1.0f) * 255);
+
+		std::string result = '#' + smath::decToHexa(r) + smath::decToHexa(g) + smath::decToHexa(b);
+		return result;
+	}
+	static std::string RGBAtoHEX(glm::vec4 rgba)
+	{
+		// Converting floats to integer values between 0 and 255
+		int r = static_cast<int>(smath::clamp(rgba.x, 0.0f, 1.0f) * 255);
+		int g = static_cast<int>(smath::clamp(rgba.y, 0.0f, 1.0f) * 255);
+		int b = static_cast<int>(smath::clamp(rgba.z, 0.0f, 1.0f) * 255);
+		int a = static_cast<int>(smath::clamp(rgba.w, 0.0f, 1.0f) * 255);
+
+		std::string result = '#' + smath::decToHexa(r) + smath::decToHexa(g) + smath::decToHexa(b) + smath::decToHexa(a);
+		return result;
+	}
+	static std::string HSVtoHEX(glm::vec3 hsv)
+	{
+		// Converting to RGB then converting to Hex
+		return RGBtoHEX(HSVtoRGB(hsv));
+	}
+	static std::string HSVAtoHEX(glm::vec4 hsva)
+	{
+		// Converting to RGBA then converting to Hex
+		return RGBAtoHEX(HSVAtoRGBA(hsva));
+	}
+	static glm::vec3 HEXtoRGB(std::string hex)
+	{
+		// Checking if first character is a hashtag, then removing it
+		if (hex[0] == '#')
+		{
+			hex.erase(hex.begin());
+		}
+
+		// Checking if there are the correct amount of hexadecimal digits
+		if (hex.size() != 6)
+			return glm::vec3(-1); // -1 used as error value, since RGB is 0-1
+
+		// Value the color will be stored in
+		int decimalValues[3];
+
+		// Looping through each digit pair
+		for (int i = 0; i < 3; i++)
+		{
+			// Getting the individual hex values
+			int hexIndex = i * 2;
+			std::string tempHex = { hex[hexIndex], hex[hexIndex + 1] };
+
+			// Converting the hex values
+			decimalValues[i] = smath::hexaToDec(tempHex);
+		}
+
+		// Returning the output
+		return glm::vec3((float)decimalValues[0], (float)decimalValues[1], (float)decimalValues[2]) * (1.0f / 255.0f);
+	}
+	static glm::vec4 HEXtoRGBA(std::string hex)
+	{
+		// Checking if first character is a hashtag, then removing it
+		if (hex[0] == '#')
+		{
+			hex.erase(hex.begin());
+		}
+
+		// Checking if there are the correct amount of hexadecimal digits
+		if (hex.size() != 8)
+			return glm::vec4(-1); // -1 used as error value, since RGB is 0-1
+
+		// Value the color will be stored in
+		int decimalValues[4];
+
+		// Looping through each digit pair
+		for (int i = 0; i < 4; i++)
+		{
+			// Getting the individual hex values
+			int hexIndex = i * 2;
+			std::string tempHex = { hex[hexIndex], hex[hexIndex + 1] };
+
+			// Converting the hex values
+			decimalValues[i] = smath::hexaToDec(tempHex);
+		}
+
+		// Returning the output
+		return glm::vec4((float)decimalValues[0], (float)decimalValues[1], (float)decimalValues[2], (float)decimalValues[3]) * (1.0f / 255.0f);
+	}
+	static glm::vec3 HEXtoHSV(std::string hex)
+	{
+		// Converting from hex to rgb, then to hsv
+		return RGBtoHSV(HEXtoRGB(hex));
+	}
+	static glm::vec4 HEXtoHSVA(std::string hex)
+	{
+		// Converting from hex to rgba, then to hsva
+		return RGBAtoHSVA(HEXtoRGBA(hex));
+	}
 
 	// Operators
 	Color& operator=(const Color& color) { this->color = color.color; return *this; }

@@ -344,6 +344,8 @@ namespace smath
         return (a - b * floor(a / b));
     }
 
+
+    // UI Stuff
     inline glm::vec2 wrapPosition(glm::vec2 position, glm::vec4 bounds)
     {
         glm::vec2 dimensions = glm::vec2(abs(bounds.z - bounds.x), abs(bounds.w - bounds.y));
@@ -367,5 +369,68 @@ namespace smath
     {
         bool xCollision = (pos.x > corners_x.x && pos.x < corners_x.y);
         return xCollision;
+    }
+
+    // Conversion
+    inline std::string decToHexa(int value)
+    {
+        // String that values will be stored in
+        std::string hexadecimal = "";
+
+        // Converting the value by looping through each decimal
+        int index = 0;
+        while (value != 0)
+        {
+            // Getting the remainder
+            int remainder = value % 16;
+
+            // Converting the remainder to hexadecimal
+            if (remainder < 10)
+                hexadecimal += 48 + remainder;
+            else
+                hexadecimal += 55 + remainder;
+
+            // Moving on to the next decimal place
+            value /= 16;
+        }
+
+        // Reversing the string
+        std::reverse(hexadecimal.begin(), hexadecimal.end());
+
+        // Returning the ouput
+        return hexadecimal;
+    }
+    inline int hexaToDec(std::string value)
+    {
+        // Integer that values will be stored in
+        int decimal = 0;
+        
+        // Looping through each character and converting it to decimal (back to front)
+        for (int i = value.size() - 1; i >= 0; i--)
+        {
+            int tempDecimal = 0;
+
+            // Checking for chars '0' through '9'
+            if (48 <= value[i] && value[i] <= 57)
+                tempDecimal = (value[i] - 48);
+
+            // Checking for chars 'A' through 'F'
+            else if (65 <= value[i] && value[i] <= 70)
+                tempDecimal = (value[i] - (65 - 10));
+
+            // Checking for chars 'a' through 'f'
+            else if (141 <= value[i] && value[i] <= 146)
+                tempDecimal = (value[i] - (141 - 10));
+
+            // Char could not be converted to decimal
+            else
+                tempDecimal = 0;
+
+            // Adding temp decimal to the correct decimal place
+            decimal += tempDecimal * pow(16, (value.size() - i - 1));
+        }
+
+        // Returning result
+        return decimal;
     }
 }

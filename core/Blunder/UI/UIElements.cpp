@@ -548,7 +548,7 @@ void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& posit
         colorMod = glm::vec3(1.25f);
 
     // Drawing Text Box
-    renderer->addQuad(glm::vec3(width * 0.69f, yPos, 0.2f), glm::vec2(width * 0.5f, ySize), colors::darkerGrey.rgb() * colorMod, position.parentWindow->offset);
+    renderer->addQuad(position.getRightCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod, position.parentWindow->offset);
 
     // Drawing Value
     text.addText(renderer, glm::vec3(position.getMiddleAfterSplit(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, CENTER);

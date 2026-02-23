@@ -161,7 +161,8 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba()) { CreateUIFromSelected(); }
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba())
+        { hexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
         ~ColorWindow()
         {
             ClearAttributes();
@@ -177,7 +178,7 @@ namespace ui
 
     private:
         Color* selectedColor;
-        std::vector<std::string> colorMode = { "RGB", "HSV" };
+        std::vector<std::string> colorMode = { "RGBA", "HSVA" };
         std::string hexCode;
         int currentColorMode = 0;
         glm::vec4 colorData;
