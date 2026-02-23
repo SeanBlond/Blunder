@@ -84,15 +84,6 @@ int main()
         stbi_image_free(images[0].pixels); // Free the image data after setting the icon
     }
 
-    // REMOVE AT SOME POINT
-    // Converting colors to hex, then hex to colors
-    Color testColor = Color(0.25f, 0.5f, 0.75f, 1.0f);
-    std::string hexCode = Color::RGBAtoHEX(testColor.rgba());
-    std::cout << smath::outputVec4(testColor.rgba()) << " to " << hexCode << std::endl;
-
-    testColor = Color::HEXtoRGBA(hexCode);
-    std::cout << hexCode << " to " << smath::outputVec4(testColor.rgba()) << std::endl;
-
      
     //Initialization goes here!
     glEnable(GL_DEPTH_TEST);

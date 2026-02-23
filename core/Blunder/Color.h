@@ -97,7 +97,7 @@ public:
 		// Returning the RGB value
 		return rgb;
 	}
-	static glm::vec4 HSVAtoRGBA(glm::vec3 hsva) { return glm::vec4(HSVtoRGB(hsva), hsva.z); }
+	static glm::vec4 HSVAtoRGBA(glm::vec4 hsva) { return glm::vec4(HSVtoRGB(hsva), hsva.w); }
 
 	// RGB & HSV <--> Hex Functions
 	static std::string RGBtoHEX(glm::vec3 rgb)
