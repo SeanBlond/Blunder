@@ -55,7 +55,7 @@ namespace ui
         AttributeElement* element;
         glm::vec4 corners;
     };
-
+    
     // Float Entry
     class FloatEntry : public AttributeElement
     {
@@ -239,54 +239,6 @@ namespace ui
         std::vector<std::string> options; // Index corresponds to value
     };
 
-    // Attribute Group (Parent Object)
-    class Attribute
-    {
-    public:
-        // Constructor & Deconstructor
-        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_ATTRIBUTE_COLLAPSE); }
-        ~Attribute()
-        {
-            for (int i = 0; i < elements.size(); i++)
-            {
-                delete elements[i];
-                elements[i] = nullptr;
-            }
-            elements.clear();
-
-            delete dropdown;
-            dropdown = nullptr;
-        }
-
-        // Getters
-        AttributeElement* getElement(int index) { return elements[index]; }
-        std::string getName() const { return attributeName; }
-        bool getCollapsed() const { return collapsed; }
-        int getElementCount() const { return elements.size(); }
-        AttributeElement* getDropDownButton() { return dropdown; }
-
-        // Setters
-        void setName(std::string name) { this->attributeName = name; }
-        void setCollapsed(bool collapsed) { this->collapsed = collapsed; }
-
-        // Functions
-        void addElement(AttributeElement* element) { elements.push_back(element); }
-        void addFloatEntry(std::string label, float* value, float speed = 0.1f);
-        void addFloatSlider(std::string label, float* value, float speed = 0.1f, float min = 0.0f, float max = 1.0f);
-        void addIntEntry(std::string label, int* value, float speed = 0.1f);
-        void addIntSlider(std::string label, int* value, float speed = 0.1f, int min = 0, int max = 10);
-        void addToggle(std::string label, bool* value);
-        void addTextEntry(std::string label, std::string* value);
-        void addDropdown(std::string label, int* value, std::vector<std::string> options);
-
-    private:
-        std::string attributeName;
-        bool collapsed;
-        AttributeElement* dropdown;
-        std::vector<AttributeElement*> elements;
-    };
-
-
     // Hierarchy UI Elements
     // Hierarchy Text Entry
     class HierarchyTextEntry : public AttributeElement
@@ -351,5 +303,46 @@ namespace ui
     };
 
     // Add Item Tool
+
+
+    // Attribute Group (Parent Object)
+    class Attribute
+    {
+    public:
+        // Constructor & Deconstructor
+        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_ATTRIBUTE_COLLAPSE); }
+        ~Attribute()
+        {
+            for (int i = 0; i < elements.size(); i++)
+            {
+                delete elements[i];
+                elements[i] = nullptr;
+            }
+            elements.clear();
+
+            delete dropdown;
+            dropdown = nullptr;
+        }
+
+        // Getters
+        AttributeElement* getElement(int index) { return elements[index]; }
+        std::string getName() const { return attributeName; }
+        bool getCollapsed() const { return collapsed; }
+        int getElementCount() const { return elements.size(); }
+        AttributeElement* getDropDownButton() { return dropdown; }
+
+        // Setters
+        void setName(std::string name) { this->attributeName = name; }
+        void setCollapsed(bool collapsed) { this->collapsed = collapsed; }
+
+        // Functions
+        void addElement(AttributeElement* element) { elements.push_back(element); }
+
+    private:
+        std::string attributeName;
+        bool collapsed;
+        AttributeElement* dropdown;
+        std::vector<AttributeElement*> elements;
+    };
 }
 #endif // !UI Elements

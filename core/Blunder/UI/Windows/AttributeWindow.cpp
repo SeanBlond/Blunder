@@ -229,25 +229,25 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
 
     // Adding standard transform attributes
     ui::Attribute* positionAttribute = new ui::Attribute("Position");
-    positionAttribute->addFloatEntry("X", &(object->transform.position.x));
-    positionAttribute->addFloatEntry("Y", &(object->transform.position.y));
-    positionAttribute->addFloatEntry("Z", &(object->transform.position.z));
+    positionAttribute->addElement(new FloatEntry("X", &(object->transform.position.x)));
+    positionAttribute->addElement(new FloatEntry("Y", &(object->transform.position.y)));
+    positionAttribute->addElement(new FloatEntry("Z", &(object->transform.position.z)));
     addAttribute(positionAttribute);
 
     ui::Attribute* rotationAtrribute = new ui::Attribute("Rotation");
-    rotationAtrribute->addFloatEntry("X", &(object->transform.rotation.x));
-    rotationAtrribute->addFloatEntry("Y", &(object->transform.rotation.y));
-    rotationAtrribute->addFloatEntry("Z", &(object->transform.rotation.z));
+    rotationAtrribute->addElement(new FloatEntry("X", &(object->transform.rotation.x)));
+    rotationAtrribute->addElement(new FloatEntry("Y", &(object->transform.rotation.y)));
+    rotationAtrribute->addElement(new FloatEntry("Z", &(object->transform.rotation.z)));
     addAttribute(rotationAtrribute);
 
     ui::Attribute* scaleAtrribute = new ui::Attribute("Scale");
-    scaleAtrribute->addFloatEntry("X", &(object->transform.scale.x));
-    scaleAtrribute->addFloatEntry("Y", &(object->transform.scale.y));
-    scaleAtrribute->addFloatEntry("Z", &(object->transform.scale.z));
+    scaleAtrribute->addElement(new FloatEntry("X", &(object->transform.scale.x)));
+    scaleAtrribute->addElement(new FloatEntry("Y", &(object->transform.scale.y)));
+    scaleAtrribute->addElement(new FloatEntry("Z", &(object->transform.scale.z)));
     // Adding Test Dropdown REMOVE AT SOME POINT
     std::vector<std::string> options = { "Option 1", "Option 2", "Option 3", "Option 4" };
     testDropdownValue = 0;
-    scaleAtrribute->addDropdown("Test", &testDropdownValue, options);
+    scaleAtrribute->addElement(new Dropdown("Test", &testDropdownValue, options));
     addAttribute(scaleAtrribute);
 
 
@@ -265,9 +265,9 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
             FloatAttribute* attribute = object->getMesh()->getFloatAttribute(i);
             // Checking if the attribute should be a slider (has limits?)
             if (attribute->hasLimits)
-                meshAttribute->addFloatSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]);
+                meshAttribute->addElement(new FloatSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]));
             else
-                meshAttribute->addFloatEntry(attribute->attributeLabel, &(attribute->attributeValue));
+                meshAttribute->addElement(new FloatEntry(attribute->attributeLabel, &(attribute->attributeValue)));
         }
 
         // Adding the int attributes
@@ -276,9 +276,9 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
             IntAttribute* attribute = object->getMesh()->getIntAttribute(i);
             // Checking if the attribute should be a slider (has limits?)
             if (attribute->hasLimits)
-                meshAttribute->addIntSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]);
+                meshAttribute->addElement(new IntSlider(attribute->attributeLabel, &(attribute->attributeValue), 1.0f, attribute->attributeLimits[0], attribute->attributeLimits[1]));
             else
-                meshAttribute->addIntEntry(attribute->attributeLabel, &(attribute->attributeValue));
+                meshAttribute->addElement(new IntEntry(attribute->attributeLabel, &(attribute->attributeValue)));
         }
 
         // Adding the attributes

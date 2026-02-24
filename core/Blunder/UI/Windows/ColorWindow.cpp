@@ -19,16 +19,16 @@ void ColorWindow::CreateUIFromSelected()
     // Brightness Slider (IMPLEMENT AT SOME POINT)
 
     // Adding Mode Dropdown
-    colorAttribute->addDropdown("Mode", &currentColorMode, colorMode);
+    colorAttribute->addElement(new Dropdown("Mode", &currentColorMode, colorMode));
 
     // Adding Color Values (R, G, B, A)
-    colorAttribute->addFloatSlider("R", &(colorData.x), 1.0f, 0.0f, 1.0f);
-    colorAttribute->addFloatSlider("G", &(colorData.y), 1.0f, 0.0f, 1.0f);
-    colorAttribute->addFloatSlider("B", &(colorData.z), 1.0f, 0.0f, 1.0f);
-    colorAttribute->addFloatSlider("A", &(colorData.w), 1.0f, 0.0f, 1.0f);
+    colorAttribute->addElement(new FloatSlider("R", &(colorData.x), 1.0f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("G", &(colorData.y), 1.0f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("B", &(colorData.z), 1.0f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("A", &(colorData.w), 1.0f, 0.0f, 1.0f));
 
     // Adding Hex Entry
-    colorAttribute->addTextEntry("Hex", &hexCode);
+    colorAttribute->addElement(new TextEntry("Hex", &hexCode));
 }
 void ColorWindow::ClearAttributes()
 {
