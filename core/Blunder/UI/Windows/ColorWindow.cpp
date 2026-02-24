@@ -14,9 +14,8 @@ void ColorWindow::CreateUIFromSelected()
     // Creating the attribute
     colorAttribute = new ui::Attribute("Color");
 
-    // Color Wheel (IMPLEMENT AT SOME POINT)
-
-    // Brightness Slider (IMPLEMENT AT SOME POINT)
+    // Color Selector
+    colorAttribute->addElement(new ColorSelector(selectedColor));
 
     // Adding Mode Dropdown
     colorAttribute->addElement(new Dropdown("Mode", &currentColorMode, colorMode));
@@ -75,12 +74,29 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
     {
         // Add Each Element
         ui::AttributeElement* element = colorAttribute->getElement(i);
-        float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
-        ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
-        element->RenderElement(renderer, elementPos, mediumText());
+        
+        // Doing special sizing for color selector UI
+        if (element->getType() == ui::UI_COLOR_SELECTOR)
+        {
+            // Rendering color selector larger than normal elements
+            float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+            float colorSelectorHeight = position.getWidth() * 0.75f;
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos - (colorSelectorHeight - elementHeight) * 0.5f), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
+            element->RenderElement(renderer, elementPos, mediumText());
 
-        // Updating YPos
-        attributeYPos -= (elementHeight + position.getBuffer());
+            // Updating YPos
+            attributeYPos -= (colorSelectorHeight + position.getBuffer());
+        }
+        else
+        {
+            // Rendering normal elements
+            float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.3f, &position);
+            element->RenderElement(renderer, elementPos, mediumText());
+
+            // Updating YPos
+            attributeYPos -= (elementHeight + position.getBuffer());
+        }
     }
 
     // Rendering the element container

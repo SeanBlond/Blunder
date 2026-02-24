@@ -20,7 +20,7 @@
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV, UI_COLOR_SELECTOR };
 
     // Attribute Element Parent Class
     class AttributeElement
@@ -237,6 +237,29 @@ namespace ui
         glm::vec2 optionSize;
         float firstOptionYPos;
         std::vector<std::string> options; // Index corresponds to value
+    };
+
+    // Hue Saturation Selector
+    class ColorSelector : public AttributeElement
+    {
+    public:
+        // Constructor
+        ColorSelector(Color* color) : AttributeElement("Color-Selector", UI_COLOR_SELECTOR), activeColor(color) { CreateMesh(); }
+        ~ColorSelector();
+
+        // Functions
+        void CreateMesh();
+        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        Color* activeColor;
+
+        // Rendering Stuff
+        Mesh* csMesh;
+        shdr::Shader* csShader;
     };
 
     // Hierarchy UI Elements

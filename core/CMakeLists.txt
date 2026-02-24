@@ -25,7 +25,7 @@ add_library(core STATIC ${CORE_SRC} ${CORE_INC}    "shader/shader.h" "shader/sha
 												   "Blunder/UI/Windows/AttributeWindow.cpp" "Blunder/UI/Windows/HierarchyWindow.cpp" "Blunder/UI/Windows/ViewportWindow.cpp" "Blunder/UI/Windows/ColorWindow.cpp"
 												   "Blunder/Keystroke.h" 
 												   "Font/font.h" "Font/font.cpp" 
-												   "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp" "Blunder/UI/UIPositioning.h" "Blunder/UI/Elements/FloatEntry.cpp" "Blunder/UI/Elements/FloatSlider.cpp" "Blunder/UI/Elements/IntEntry.cpp" "Blunder/UI/Elements/IntSlider.cpp" "Blunder/UI/Elements/Toggle.cpp" "Blunder/UI/Elements/TextEntry.cpp" "Blunder/UI/Elements/Dropdown.cpp" "Blunder/UI/Elements/HierarchyTextEntry.cpp" "Blunder/UI/Elements/ViewNav.cpp")
+												   "Blunder/Scene/Scene.h" "Blunder/Scene/Scene.cpp"  "Blunder/Scene/HierarchyElement.h" "Blunder/Scene/HierarchyElement.cpp" "Blunder/UI/UIPositioning.h" "Blunder/UI/Elements/FloatEntry.cpp" "Blunder/UI/Elements/FloatSlider.cpp" "Blunder/UI/Elements/IntEntry.cpp" "Blunder/UI/Elements/IntSlider.cpp" "Blunder/UI/Elements/Toggle.cpp" "Blunder/UI/Elements/TextEntry.cpp" "Blunder/UI/Elements/Dropdown.cpp" "Blunder/UI/Elements/HierarchyTextEntry.cpp" "Blunder/UI/Elements/ViewNav.cpp" "Blunder/UI/Elements/ColorSelector.cpp")
 
 find_package(OpenGL REQUIRED)
 
