@@ -23,7 +23,8 @@ void ColorSelector::CreateMesh()
     csMesh = new Mesh(vertices, indices);
 
     // Creating Shaders
-    const char* csVertexShader = R"(
+    {
+        const char* csVertexShader = R"(
     #version 330 core
     layout (location = 0) in vec3 vertex;
     layout (location = 1) in vec3 Normal;
@@ -39,7 +40,7 @@ void ColorSelector::CreateMesh()
     }  
     )";
 
-    const char* csFragmentShader = R"(
+        const char* hsFragmentShader = R"(
     #version 330 core
     in vec2 uv;
     out vec4 fragColor;
@@ -47,7 +48,7 @@ void ColorSelector::CreateMesh()
     uniform vec2 mousePos;
 
     const float M_PI = 3.14159265359;
-    const float maskSize = 0.075;
+    const float maskSize = 0.05;
 
     vec3 hsv2rgb(vec3 c)
     {
@@ -63,7 +64,7 @@ void ColorSelector::CreateMesh()
     }
     float getSaturation(vec2 pos)
     {
-        return length((pos * 2.0) - 1.0);
+        return length((pos * (2.0 + 4.0 * maskSize)) - (1.0 + 2.0 * maskSize));
     }
 
     void main()
@@ -85,16 +86,61 @@ void ColorSelector::CreateMesh()
     }
     )";
 
-    // Creating shader object
-    csShader = new shdr::Shader(csVertexShader, csFragmentShader, 1);
+        const char* vFragmentShader = R"(
+    #version 330 core
+    in vec2 uv;
+    out vec4 fragColor;
+
+    uniform float mouseY;
+    const float selectHeight = 0.05f;
+
+    float sdBox( in vec2 p, in vec2 b )
+    {
+        vec2 d = abs(p)-b;
+        return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+    }
+
+    float getValueAtY(float y)
+    {
+        return clamp(y, (selectHeight * 0.5), 1.0 - (selectHeight * 0.5));
+    }
+
+    void main()
+    {
+        // Getting selected value
+        float selectedValue = getValueAtY(mouseY);
+    
+        // Value Slide Background
+        float background = uv.y * (1.0 + selectHeight) - (selectHeight * 0.5);
+        float alphaMask = (background < 0.0 || background > 1.0 ? 0.0 : 1.0);
+    
+        // Box for current selected value
+        vec2 boxUV = (1.0 - uv * 2.0);
+        float box = sdBox(vec2(boxUV) + vec2(0, 2.0 * selectedValue - 1.0), vec2(1.0, selectHeight));
+        float boxMask = step(box, 0.0);
+        float boxOutline = step(box, -0.025);
+    
+        // Output to screen
+        float boxValue = mix(1.0 - selectedValue, selectedValue, boxOutline);
+        float value = mix(background, boxValue, boxMask);
+        fragColor = vec4(vec3(value), max(alphaMask, boxMask));
+    }
+    )";
+
+        // Creating shader object
+        hsShader = new shdr::Shader(csVertexShader, hsFragmentShader, 1);
+        vShader = new shdr::Shader(csVertexShader, vFragmentShader, 1);
+    }
 
 }
 ColorSelector::~ColorSelector()
 {
     delete csMesh;
-    delete csShader;
+    delete hsShader;
+    delete vShader;
     csMesh = nullptr;
-    csShader = nullptr;
+    hsShader = nullptr;
+    vShader = nullptr;
 }
 
 // Mouse Functions
@@ -114,16 +160,32 @@ void ColorSelector::OnRelease(StateMachine* state)
 // Render Function
 void ColorSelector::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
+    // Rendering the Color Circle
     float circleSize = position.getWidthBeforeSplit();
 
-    // Setting up viewport to be drawn to
+    // Setting up color circle viewport
     glViewport(position.left_x + position.parentWindow->getXOffset(), position.bottom_y, circleSize, circleSize);
 
     // Shader settings
-    csShader->useShader();
+    hsShader->useShader();
     glm::mat4 transform = smath::orthographic(0, 1, 0, 1);
-    csShader->setMat4("transform", transform);
-    csShader->setVec2("mousePos", glm::vec2(0.5));
+    hsShader->setMat4("transform", transform);
+    hsShader->setVec2("mousePos", glm::vec2(0.5));
+
+    // Drawing Circle
+    csMesh->DrawMesh();
+
+    // Rendering the Value Slider
+    glm::vec2 sliderSize = glm::vec2(position.getWidthAfterSplit(), position.getWidthBeforeSplit());
+
+    // Setting up color circle viewport
+    glViewport(position.right_x - position.getWidthAfterSplit() + position.parentWindow->getXOffset(), position.bottom_y, sliderSize.x, sliderSize.y);
+
+    // Shader settings
+    vShader->useShader();
+    transform = smath::orthographic(0, 1, 0, 1);
+    vShader->setMat4("transform", transform);
+    vShader->setFloat("mousePos", 0.75f);
 
     // Drawing Circle
     csMesh->DrawMesh();

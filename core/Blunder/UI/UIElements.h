@@ -259,7 +259,8 @@ namespace ui
 
         // Rendering Stuff
         Mesh* csMesh;
-        shdr::Shader* csShader;
+        shdr::Shader* hsShader;
+        shdr::Shader* vShader;
     };
 
     // Hierarchy UI Elements

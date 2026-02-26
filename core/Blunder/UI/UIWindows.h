@@ -20,7 +20,7 @@ namespace ui
     {
     public:
         // Constructor
-        UIWindow(float width, float height, float xoffset, float yoffset) : position(width, height, xoffset, yoffset, 0.02f) {}
+        UIWindow(float width, float height, float xoffset, float yoffset, float unitScale = 275.0f) : position(width, height, xoffset, yoffset, 0.02f, unitScale) {}
         UIWindow(ui::WindowPosition position) : position(position) {}
 
         // Getters
@@ -46,9 +46,9 @@ namespace ui
 
 
         // Text Sizes
-        float smallText() const { return (position.dimensions.y * 2.2e-4); }
-        float mediumText() const { return (position.dimensions.y * 2.75e-4); }
-        float largeText() const { return (position.dimensions.y * 4e-4); }
+        float smallText() const { return (position.unitScale * 7.5e-4); }
+        float mediumText() const { return (position.unitScale * 1.0e-3); }
+        float largeText() const { return (position.unitScale * 1.5e-3); }
 
     protected:
         ui::WindowPosition position;

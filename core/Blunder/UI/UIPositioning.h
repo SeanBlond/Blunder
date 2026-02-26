@@ -21,15 +21,12 @@ namespace ui
         */
 
         // Constructors
-        WindowPosition(float width, float height, float xoffset, float yoffset, float bufferSize)
-            : dimensions(glm::vec2(width, height)), offset(glm::vec2(xoffset, yoffset)), bufferSize(bufferSize) {
-        }
-        WindowPosition(float width, float height, glm::vec2 offset, float bufferSize)
-            : dimensions(glm::vec2(width, height)), offset(offset), bufferSize(bufferSize) {
-        }
-        WindowPosition(glm::vec2 dimensions, glm::vec2 offset, float bufferSize)
-            : dimensions(dimensions), offset(offset), bufferSize(bufferSize) {
-        }
+        WindowPosition(float width, float height, float xoffset, float yoffset, float bufferSize, float unitScale)
+            : dimensions(glm::vec2(width, height)), offset(glm::vec2(xoffset, yoffset)), bufferSize(bufferSize), unitScale(unitScale) {}
+            WindowPosition(float width, float height, glm::vec2 offset, float bufferSize, float unitScale)
+            : dimensions(glm::vec2(width, height)), offset(offset), bufferSize(bufferSize), unitScale(unitScale) {}
+            WindowPosition(glm::vec2 dimensions, glm::vec2 offset, float bufferSize, float unitScale)
+            : dimensions(dimensions), offset(offset), bufferSize(bufferSize), unitScale(unitScale) {}
 
         // Getters
         float getBuffer() const { return bufferSize * getWidth(); }
@@ -56,6 +53,7 @@ namespace ui
         glm::vec2 dimensions;
         glm::vec2 offset;
         float bufferSize;
+        float unitScale;
     };
     struct ElementPosition
     {
@@ -93,6 +91,7 @@ namespace ui
         float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
         float getWidthBeforeSplit() const { return split - left_x; }
         float getBuffer() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
+        float getFixedUnit() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
 
         // Multi-Setters
         void setCorners(glm::vec4 corners) {

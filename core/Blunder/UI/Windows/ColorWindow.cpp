@@ -52,46 +52,54 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
     renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
 
     // Setting initial yPos to Start rendering at
-    float attributeTitleHeight = position.getWidth() * 0.12f;
-    float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
+    float attributeTitleHeight = position.unitScale * 0.1f;
+    float attributeYPos = position.getHeight() - attributeTitleHeight * 0.5f;
 
     // Adding Label Box
-    float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
+    float attributeBoxWidth = position.getWidth();
     renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f), position.offset);
 
     // Adding Attribute Label
-    renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), largeText(), glm::vec3(1.0f), position.offset, CENTER);
+    renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), mediumText(), glm::vec3(1.0f), position.offset, CENTER);
     attributeYPos -= attributeTitleHeight * 0.5f;
 
     // Setting up useful UI sizes
-    float elementHeight = position.getWidth() * 0.08f;
+    float elementHeight = position.unitScale * 0.08f;
     float containerStartHeight = attributeYPos;
 
     attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
+
 
     // Adding each atttribute element
     for (int i = 0; i < colorAttribute->getElementCount(); i++)
     {
         // Add Each Element
         ui::AttributeElement* element = colorAttribute->getElement(i);
+        float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
         
         // Doing special sizing for color selector UI
         if (element->getType() == ui::UI_COLOR_SELECTOR)
         {
             // Rendering color selector larger than normal elements
-            float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
-            float colorSelectorHeight = position.getWidth() * 0.75f;
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos - (colorSelectorHeight - elementHeight) * 0.5f), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
+            float colorSelectorHeight = position.unitScale * 0.4f;
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos - (colorSelectorHeight * 0.5f) + elementHeight - position.getBuffer()), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
             element->RenderElement(renderer, elementPos, mediumText());
 
             // Updating YPos
-            attributeYPos -= (colorSelectorHeight + position.getBuffer());
+            attributeYPos -= (colorSelectorHeight + (2 * position.getBuffer()) - (elementHeight * 0.5f));
         }
         else
         {
             // Rendering normal elements
-            float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.3f, &position);
+            ui::ElementPosition elementPos;
+
+            // Different spacing for dropdown and text entry
+            if (element->getType() == ui::UI_TEXT_ENTRY || element->getType() == ui::UI_DROPDOWN)
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.35f, &position);
+            else
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.2f, &position);
+            
+            
             element->RenderElement(renderer, elementPos, mediumText());
 
             // Updating YPos
