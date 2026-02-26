@@ -90,6 +90,8 @@ namespace ui
         float getWidthAfterSplit() const { return right_x - split; }
         float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
         float getWidthBeforeSplit() const { return split - left_x; }
+        float getWidth() const { return abs(right_x - left_x); }
+        float getHeight() const { return abs(top_y - bottom_y); }
         float getBuffer() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
         float getFixedUnit() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
 

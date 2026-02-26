@@ -40,15 +40,15 @@ void ColorSelector::CreateMesh()
     }  
     )";
 
-        const char* hsFragmentShader = R"(
+        const char* svFragmentShader = R"(
     #version 330 core
     in vec2 uv;
     out vec4 fragColor;
 
     uniform vec2 mousePos;
+    uniform float currentHue;
 
-    const float M_PI = 3.14159265359;
-    const float maskSize = 0.05;
+    const float selectSize = 0.05;
 
     vec3 hsv2rgb(vec3 c)
     {
@@ -57,58 +57,70 @@ void ColorSelector::CreateMesh()
         return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
     }
 
-    float getHue(vec2 pos)
+    vec2 getValueAtPos(vec2 pos)
     {
-        vec2 hueUV = (pos * 2.0) - 1.0;
-        return atan(hueUV.x, hueUV.y) / (2.0 * M_PI) + 0.5;
+        float x = clamp(pos.x, selectSize, 1.0 - selectSize);
+        float y = clamp(pos.y, selectSize, 1.0 - selectSize);
+        return vec2(x, y);
+
     }
-    float getSaturation(vec2 pos)
+    vec3 getColorAtPos(vec2 pos)
     {
-        return length((pos * (2.0 + 4.0 * maskSize)) - (1.0 + 2.0 * maskSize));
+        return hsv2rgb(vec3(currentHue, getValueAtPos(pos)));
     }
 
     void main()
     {
-        // Color Circle
-        float circleMask = step(getSaturation(uv), 1.0);
-        vec3 colorCircle = hsv2rgb(vec3(getHue(uv), getSaturation(uv), circleMask));
-    
-        // Mouse Pos & Mask
-        vec2 mouseUV = uv - mousePos;
-        float mouseMask = step(length(mouseUV), maskSize);
-        float mouseMaskOutline = (length(mouseUV) > 0.75 * maskSize ? 0.75 : 1.0);
+        // Getting mouse data
+        float mouseMask = step(length(uv - getValueAtPos(mousePos)), selectSize);
+        float mouseMaskOutline = step(length(uv - getValueAtPos(mousePos)), selectSize * 0.8);
     
         // Getting Selected Color
-        vec3 currentColor = hsv2rgb(vec3(getHue(mousePos), getSaturation(mousePos), mouseMaskOutline));
+        vec3 mouseCol = (mouseMaskOutline >= 0.75 ? getColorAtPos(mousePos) : vec3(1.0));
+    
+        // Getting background mask
+        vec2 background = uv * vec2(1.0 + selectSize * 2.0) - vec2(selectSize);
+        float alphaMask = (background.x < 0.0 || background.x > 1.0 ? 0.0 : 1.0);
+        alphaMask *= (background.y < 0.0 || background.y > 1.0 ? 0.0 : 1.0);
     
         // Output to screen
-        fragColor = vec4(mix(colorCircle, currentColor, mouseMask), circleMask);
+        vec3 backgroundColor = mix(vec3(0.5), getColorAtPos(uv), alphaMask);
+        fragColor = vec4(mix(backgroundColor, mouseCol, mouseMask), max(alphaMask, mouseMask));
     }
     )";
 
-        const char* vFragmentShader = R"(
+        const char* hFragmentShader = R"(
     #version 330 core
     in vec2 uv;
     out vec4 fragColor;
 
-    uniform float mouseY;
+    uniform vec2 mousePos;
     const float selectHeight = 0.05f;
 
+    vec3 hsv2rgb(vec3 c)
+    {
+        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+        vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+        return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
     float sdBox( in vec2 p, in vec2 b )
     {
         vec2 d = abs(p)-b;
         return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
     }
-
     float getValueAtY(float y)
     {
         return clamp(y, (selectHeight * 0.5), 1.0 - (selectHeight * 0.5));
+    }
+    vec3 getHueAtY(float y)
+    {
+        return hsv2rgb(vec3(getValueAtY(y), 1.0, 1.0));
     }
 
     void main()
     {
         // Getting selected value
-        float selectedValue = getValueAtY(mouseY);
+        float selectedValue = mousePos.y;
     
         // Value Slide Background
         float background = uv.y * (1.0 + selectHeight) - (selectHeight * 0.5);
@@ -121,26 +133,26 @@ void ColorSelector::CreateMesh()
         float boxOutline = step(box, -0.025);
     
         // Output to screen
-        float boxValue = mix(1.0 - selectedValue, selectedValue, boxOutline);
-        float value = mix(background, boxValue, boxMask);
+        vec3 boxValue = mix(vec3(1.0), getHueAtY(selectedValue), boxOutline);
+        vec3 value = mix(getHueAtY(background), boxValue, boxMask);
         fragColor = vec4(vec3(value), max(alphaMask, boxMask));
     }
     )";
 
         // Creating shader object
-        hsShader = new shdr::Shader(csVertexShader, hsFragmentShader, 1);
-        vShader = new shdr::Shader(csVertexShader, vFragmentShader, 1);
+        svShader = new shdr::Shader(csVertexShader, svFragmentShader, 1);
+        hShader = new shdr::Shader(csVertexShader, hFragmentShader, 1);
     }
 
 }
 ColorSelector::~ColorSelector()
 {
     delete csMesh;
-    delete hsShader;
-    delete vShader;
+    delete svShader;
+    delete hShader;
     csMesh = nullptr;
-    hsShader = nullptr;
-    vShader = nullptr;
+    svShader = nullptr;
+    hShader = nullptr;
 }
 
 // Mouse Functions
@@ -161,18 +173,19 @@ void ColorSelector::OnRelease(StateMachine* state)
 void ColorSelector::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     // Rendering the Color Circle
-    float circleSize = position.getWidthBeforeSplit();
+    float svSize = position.getWidth() - position.getBuffer() - position.getFixedUnit();
 
     // Setting up color circle viewport
-    glViewport(position.left_x + position.parentWindow->getXOffset(), position.bottom_y, circleSize, circleSize);
+    glViewport(position.left_x + position.parentWindow->getXOffset(), position.bottom_y, svSize, svSize);
 
     // Shader settings
-    hsShader->useShader();
+    svShader->useShader();
     glm::mat4 transform = smath::orthographic(0, 1, 0, 1);
-    hsShader->setMat4("transform", transform);
-    hsShader->setVec2("mousePos", glm::vec2(0.5));
+    svShader->setMat4("transform", transform);
+    svShader->setVec2("mousePos", glm::vec2(0.0f, 1.0f));
+    svShader->setFloat("currentHue", 0.0f);
 
-    // Drawing Circle
+    // Draw SV Selector
     csMesh->DrawMesh();
 
     // Rendering the Value Slider
@@ -182,11 +195,11 @@ void ColorSelector::RenderElement(UIRenderer* renderer, const ElementPosition& p
     glViewport(position.right_x - position.getWidthAfterSplit() + position.parentWindow->getXOffset(), position.bottom_y, sliderSize.x, sliderSize.y);
 
     // Shader settings
-    vShader->useShader();
+    hShader->useShader();
     transform = smath::orthographic(0, 1, 0, 1);
-    vShader->setMat4("transform", transform);
-    vShader->setFloat("mousePos", 0.75f);
+    hShader->setMat4("transform", transform);
+    hShader->setVec2("mousePos", glm::vec2(0.0f));
 
-    // Drawing Circle
+    // Drawing Hue Selector
     csMesh->DrawMesh();
 }
