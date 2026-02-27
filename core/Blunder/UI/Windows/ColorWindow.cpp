@@ -75,9 +75,9 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
         if (element->getType() == ui::UI_COLOR_SELECTOR)
         {
             // Rendering color selector larger than normal elements
-            float colorSelectorHeight = position.getWidth() * (41.0f / 58.0f);
+            float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
             attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), 0.0f, &position);
             element->RenderElement(renderer, elementPos, mediumText());
 
             // Updating YPos

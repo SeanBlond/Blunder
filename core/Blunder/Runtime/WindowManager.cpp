@@ -270,15 +270,13 @@ void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
 	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), nullptr, screenSize, LockedWindow::POS_NONE);
 
 	// Attribute UI
-	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.1667);
+	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.1667f);
 
 	// Hierarchy UI
-	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &testColor);
-	//rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.1667);
-	rootLockedWindow->setRightWindow(testColorWindow, 0.1667);
-
+	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.1667);
 
 	// REMOVE AT SOME POINT
 	// Test Color Window
+	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &testColor);
 	addFreeWindow(testColorWindow);
 }

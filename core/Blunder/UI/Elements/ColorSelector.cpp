@@ -200,43 +200,37 @@ void ColorSelector::OnRelease(StateMachine* state)
 void ColorSelector::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
 {
     // Rendering the Color Circle
-    float svSize = position.getWidthBeforeSplit();
+    float svWidth = position.getWidth() * (40.0f / 58.0f);
+    float haWidth = position.getWidth() * (8.0f / 58.0f);
 
-    // Setting up SV slider viewport
-    glViewport(position.left_x + position.parentWindow->getXOffset(), position.bottom_y + position.parentWindow->getYOffset(), svSize, svSize);
+    // Setting up Viewport for mesh rendering
+    glViewport(position.left_x + position.parentWindow->getXOffset(), position.bottom_y + position.parentWindow->getYOffset(), position.getWidth(), position.getHeight());
 
-    // Shader settings
+    // Drawing S&V Selector
     svShader->useShader();
-    glm::mat4 transform = smath::orthographic(0, 1, 0, 1);
+    glm::mat4 transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::scale(glm::vec3(svWidth, position.getHeight(), 1.0f));
     svShader->setMat4("transform", transform);
     svShader->setVec2("mousePos", glm::vec2(0.0f, 1.0f));
     svShader->setFloat("currentHue", 0.0f);
-
-    // Draw SV Selector
     csMesh->DrawMesh();
 
     // Rendering the Value Slider
     glm::vec2 sliderSize = glm::vec2(position.getWidthAfterSplit(), position.getWidthBeforeSplit());
 
-    // Setting up H&A slider viewport
-    glViewport(position.right_x - position.getWidthAfterSplit() + position.parentWindow->getXOffset() + position.getBuffer(), position.bottom_y + position.parentWindow->getYOffset(), sliderSize.x - position.getBuffer(), sliderSize.y);
-    float bufferAmount = 0.0f;
-
-    // Shader settings
-    hShader->useShader();
-    transform = smath::orthographic(0, 1, 0, 1) * smath::scale(glm::vec3(0.5f - bufferAmount * 0.5f, 1, 1));
-    hShader->setMat4("transform", transform);
-    hShader->setVec2("mousePos", glm::vec2(0.0f));
 
     // Drawing Hue Selector
+    hShader->useShader();
+    float hOffset = svWidth + position.getBuffer();
+    transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::translate(glm::vec3(hOffset, 0, 0)) * smath::scale(glm::vec3(haWidth, position.getHeight(), 1.0f));
+    hShader->setMat4("transform", transform);
+    hShader->setVec2("mousePos", glm::vec2(0.0f));
     csMesh->DrawMesh();
 
-    // Shader settings
+    // Drawing Alpha Selector
     aShader->useShader();
-    transform = smath::orthographic(0, 1, 0, 1) * smath::translate(glm::vec3(0.5f + bufferAmount, 0, 0)) * smath::scale(glm::vec3(0.5f - bufferAmount * 0.5f, 1, 1));
+    float aOffset = hOffset + haWidth + position.getBuffer();
+    transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::translate(glm::vec3(aOffset, 0, 0)) * smath::scale(glm::vec3(haWidth, position.getHeight(), 1.0f));
     aShader->setMat4("transform", transform);
     aShader->setVec2("mousePos", glm::vec2(0.0f));
-
-    // Drawing Alpha Selector
     csMesh->DrawMesh();
 }
