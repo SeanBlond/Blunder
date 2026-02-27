@@ -244,10 +244,11 @@ namespace ui
     {
     public:
         // Constructor
-        ColorSelector(Color* color) : AttributeElement("Color-Selector", UI_COLOR_SELECTOR), activeColor(color) { CreateMesh(); }
+        ColorSelector(Color* color) : AttributeElement("Color-Selector", UI_COLOR_SELECTOR), activeColor(color) { CreateMesh(); CreateShaders(); }
         ~ColorSelector();
 
         // Functions
+        void CreateShaders();
         void CreateMesh();
         void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
         void OnClick(StateMachine* state) override;
@@ -261,6 +262,7 @@ namespace ui
         Mesh* csMesh;
         shdr::Shader* svShader;
         shdr::Shader* hShader;
+        shdr::Shader* aShader;
     };
 
     // Hierarchy UI Elements

@@ -29,7 +29,7 @@ namespace ui
             : dimensions(dimensions), offset(offset), bufferSize(bufferSize), unitScale(unitScale) {}
 
         // Getters
-        float getBuffer() const { return bufferSize * getWidth(); }
+        float getBuffer() const { return bufferSize * unitScale; }
         float getWidth() const { return dimensions.x; }
         float getHeight() const { return dimensions.y; }
         float getXOffset() const { return offset.x; }

@@ -49,44 +49,39 @@ void ColorWindow::GenerateInteractables()
 void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
-    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+    renderer->addQuad(position.getCorners(), 0.0f, glm::vec3(0.35f));
 
     // Setting initial yPos to Start rendering at
-    float attributeTitleHeight = position.unitScale * 0.1f;
-    float attributeYPos = position.getHeight() - attributeTitleHeight * 0.5f;
+    float elementHeight = position.unitScale;
+    float attributeYPos = position.getHeight() - elementHeight * 0.5f;
 
     // Adding Label Box
-    float attributeBoxWidth = position.getWidth();
-    renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f), position.offset);
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(position.getWidth(), elementHeight), glm::vec3(0.51f), position.offset);
 
     // Adding Attribute Label
     renderer->addText(colorAttribute->getName(), glm::vec3((position.getWidth() / 2), attributeYPos, 0), mediumText(), glm::vec3(1.0f), position.offset, CENTER);
-    attributeYPos -= attributeTitleHeight * 0.5f;
 
     // Setting up useful UI sizes
-    float elementHeight = position.unitScale * 0.08f;
-    float containerStartHeight = attributeYPos;
-
-    attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
-
+    attributeYPos -= elementHeight * 0.5f;
 
     // Adding each atttribute element
     for (int i = 0; i < colorAttribute->getElementCount(); i++)
     {
         // Add Each Element
         ui::AttributeElement* element = colorAttribute->getElement(i);
-        float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+        float attributeElementWidth = position.getWidth() - 2.0f * position.getBuffer();
         
         // Doing special sizing for color selector UI
         if (element->getType() == ui::UI_COLOR_SELECTOR)
         {
             // Rendering color selector larger than normal elements
-            float colorSelectorHeight = position.unitScale * 0.4f;
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos - (colorSelectorHeight * 0.5f) + elementHeight - position.getBuffer()), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
+            float colorSelectorHeight = position.getWidth() * (41.0f / 58.0f);
+            attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorHeight, &position);
             element->RenderElement(renderer, elementPos, mediumText());
 
             // Updating YPos
-            attributeYPos -= (colorSelectorHeight + (2 * position.getBuffer()) - (elementHeight * 0.5f));
+            attributeYPos -= (colorSelectorHeight * 0.5f) + elementHeight * 0.5f + position.getBuffer();
         }
         else
         {
@@ -94,10 +89,10 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             ui::ElementPosition elementPos;
 
             // Different spacing for dropdown and text entry
-            if (element->getType() == ui::UI_TEXT_ENTRY || element->getType() == ui::UI_DROPDOWN)
-                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.35f, &position);
+            if (element->getType() == ui::UI_DROPDOWN)
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (21.0f / 58.0f), &position);
             else
-                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.2f, &position);
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (15.0f/58.0f), &position);
             
             
             element->RenderElement(renderer, elementPos, mediumText());
@@ -106,15 +101,6 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             attributeYPos -= (elementHeight + position.getBuffer());
         }
     }
-
-    // Rendering the element container
-    glm::vec4 containerCorners = glm::vec4(
-        (position.getWidth() - attributeBoxWidth) * 0.5f,
-        attributeYPos + elementHeight * 0.5f,
-        position.getWidth() - (position.getWidth() - attributeBoxWidth) * 0.5f,
-        containerStartHeight
-    );
-    renderer->addQuad(containerCorners, 0.15f, glm::vec3(0.35f), position.offset);
 }
 void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {

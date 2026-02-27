@@ -20,7 +20,7 @@ namespace ui
     {
     public:
         // Constructor
-        UIWindow(float width, float height, float xoffset, float yoffset, float unitScale = 275.0f) : position(width, height, xoffset, yoffset, 0.02f, unitScale) {}
+        UIWindow(float width, float height, float xoffset, float yoffset, float bufferSize = 0.25f, float unitScale = 20.0f) : position(width, height, xoffset, yoffset, bufferSize, unitScale) {}
         UIWindow(ui::WindowPosition position) : position(position) {}
 
         // Getters
@@ -46,9 +46,9 @@ namespace ui
 
 
         // Text Sizes
-        float smallText() const { return (position.unitScale * 7.5e-4); }
-        float mediumText() const { return (position.unitScale * 1.0e-3); }
-        float largeText() const { return (position.unitScale * 1.5e-3); }
+        float smallText() const { return (6.0f / 64.0f) * 2.5f; }
+        float mediumText() const { return (7.0f / 64.0f) * 2.5f; }
+        float largeText() const { return (8.0f / 64.0f) * 2.5f; }
 
     protected:
         ui::WindowPosition position;
@@ -161,7 +161,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba())
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, 0.25), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba())
         { hexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
         ~ColorWindow()
         {
