@@ -81,7 +81,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
     renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
 
     // Setting initial yPos to Start rendering at
-    float attributeTitleHeight = position.getWidth() * 0.12f;
+    float attributeTitleHeight = position.unitScale * 1.5f;
     float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
 
     // Adding Each Attribute
@@ -105,7 +105,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
             attributeYPos -= attributeTitleHeight * 0.5f;
 
             // Setting up useful UI sizes
-            float elementHeight = position.getWidth() * 0.08f;
+            float elementHeight = position.unitScale;
             float containerStartHeight = attributeYPos;
 
             attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
