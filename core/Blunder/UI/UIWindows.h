@@ -20,7 +20,7 @@ namespace ui
     {
     public:
         // Constructor
-        UIWindow(float width, float height, float xoffset, float yoffset, float bufferSize = 0.25f, float unitScale = 20.0f) : position(width, height, xoffset, yoffset, bufferSize, unitScale) {}
+        UIWindow(float width, float height, float xoffset, float yoffset, std::string name, float bufferSize = 0.25f, float unitScale = 20.0f) : position(width, height, xoffset, yoffset, bufferSize, unitScale), windowName(name) {}
         UIWindow(ui::WindowPosition position) : position(position) {}
 
         // Getters
@@ -29,6 +29,7 @@ namespace ui
         ui::WindowPosition getPosition() const { return position; }
         ui::WindowPosition* getPositionAddress() { return &position; }
         glm::mat4 getProjection() { return smath::orthographic(0.0f, position.getWidth(), 0.0f, position.getHeight()); }
+        std::string getWindowName() const { return windowName; }
 
         // Setters
         void setWidth(float width) { this->position.dimensions.x = width; }
@@ -52,6 +53,7 @@ namespace ui
 
     protected:
         ui::WindowPosition position;
+        std::string windowName;
     };
 
     // Attribute Window
@@ -59,7 +61,7 @@ namespace ui
     {
     public:
         // Constructor & Desconstructor
-        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
+        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, "Attribute"), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
         ~AttributeWindow()
         {
             ClearAttributes();
@@ -97,7 +99,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset), state(state), clickedElement(nullptr) {}
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr) {}
         ~HierarchyWindow()
         {
             interactables.clear();
@@ -125,7 +127,7 @@ namespace ui
     public:
         // Constructor & Deconstructor
         ViewportWindow(float width, float height, float xoffset, float yoffset, StateMachine* state)
-            : UIWindow(width, height, xoffset, yoffset), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) { CreateMesh(); }
+            : UIWindow(width, height, xoffset, yoffset, "Viewport"), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) { CreateMesh(); }
         ~ViewportWindow()
         {
             interactables.clear();
@@ -161,7 +163,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, 0.125), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba())
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, "Color", 0.125), colorAttribute(nullptr), selectedColor(selectedColor), colorData(selectedColor->rgba())
         { hexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
         ~ColorWindow()
         {

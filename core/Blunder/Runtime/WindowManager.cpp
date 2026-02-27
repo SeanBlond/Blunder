@@ -219,23 +219,32 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 		if (smath::checkUICollision(mousePos, checkCorners))
 			selectedWindow = popUpWindow;
 	}
-	// Checking free window
-	else if (freeWindows.size() > 0)
-	{
-		// Looping through each open window to check for collision
-		for (int i = 0; i < freeWindows.size(); i++)
-		{
-			// Checking for collision
-			if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
-				selectedWindow = freeWindows[i];
-		}
-	}
-	// Checking locked window collision
+	// Checking non-pop-up windows
 	else
 	{
-		selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
-		if (selectedWindow)
-			selectedWindow->ManageInteraction(window, state);		
+		// Checking free windows
+		bool freeWindowSelected = false;
+		if (freeWindows.size() > 0)
+		{
+			// Looping through each open window to check for collision
+			for (int i = 0; i < freeWindows.size(); i++)
+			{
+				// Checking for collision
+				if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
+				{
+					freeWindowSelected = true;
+					selectedWindow = freeWindows[i];
+				}
+			}
+		}
+
+		// Checking locked window collision (only if no free window was selected)
+		if (!freeWindowSelected)
+		{
+			selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
+			if (selectedWindow)
+				selectedWindow->ManageInteraction(window, state);
+		}
 	}
 
 	// Passing selected window position to state machine
