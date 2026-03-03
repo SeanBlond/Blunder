@@ -15,7 +15,6 @@ LockedWindow::LockedWindow(ui::UIWindow* window, LockedWindow* parent, glm::vec2
 	offset = percentageUsed = glm::vec2(0);
 
 	UpdateDimensions();
-	window->GenerateInteractables();
 }
 LockedWindow::~LockedWindow()
 {
@@ -64,24 +63,28 @@ void LockedWindow::setLeftWindow(ui::UIWindow* window, float width)
 	this->leftWindow = new LockedWindow(window, this, glm::vec2(0), POS_LEFT);
 	leftWindow->setParent(this);
 	setLeftWidth(width);
+	leftWindow->getWindow()->OpenWindow();
 }
 void LockedWindow::setRightWindow(ui::UIWindow* window, float width)
 {
 	this->rightWindow = new LockedWindow(window, this, glm::vec2(0), POS_RIGHT);
 	rightWindow->setParent(this);
 	setRightWidth(width);
+	rightWindow->getWindow()->OpenWindow();
 }
 void LockedWindow::setTopWindow(ui::UIWindow* window, float height)
 {
 	this->topWindow = new LockedWindow(window, this, glm::vec2(0), POS_TOP);
 	topWindow->setParent(this);
 	setTopHeight(height);
+	topWindow->getWindow()->OpenWindow();
 }
 void LockedWindow::setBottomWindow(ui::UIWindow* window, float height)
-{ 
+{
 	this->bottomWindow = new LockedWindow(window, this, glm::vec2(0), POS_BOTTOM);
-	bottomWindow->setParent(this); 
+	bottomWindow->setParent(this);
 	setBottomHeight(height);
+	bottomWindow->getWindow()->OpenWindow();
 }
 
 // Functions
@@ -117,10 +120,6 @@ void LockedWindow::UpdateDimensions()
 	glm::vec2 mainWindowDimensions = getMainWindowDimensions();
 	glm::vec2 windowOffset = getOffset();
 	window->setDimensions(mainWindowDimensions, windowOffset);
-
-	//std::cout << std::endl << "Window Dimensions Update" << std::endl;
-	//std::cout << "Set dimensions " << smath::outputVec2(mainWindowDimensions) << " and offset" << smath::outputVec2(windowOffset) << std::endl;
-	//std::cout << "Set Window Corners " << smath::outputVec4(window->getPosition().getCorners()) << std::endl;
 }
 ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 {

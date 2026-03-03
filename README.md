@@ -19,6 +19,8 @@ A quick little backlog of features that will be added to Blunder (this just exis
 * \[ ] Add Color UI Element
 * \[ ] Renovate Colors.h to have a good list of what colors are being used in Blunder
 * \[ ] Add sliding to Hierarchy UI so parents/folders can be dynamically changed
+* \[x] Create new Window Manager System
+* \[ ] Update UI Elements and Interactable positioning system
 * \[ ] Improve structure of State Machine to fit the different states of the software
 * \[ ] Ensure UI Interactables are being properly generated (maybe add a hitbox renderer?)
 * \[ ] Improve .obj loading to cover all cases (maybe use a library?)

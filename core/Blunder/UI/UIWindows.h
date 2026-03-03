@@ -44,6 +44,7 @@ namespace ui
         virtual void DrawWindow(ui::UIRenderer* renderer) = 0;
         virtual void ManageInteraction(GLFWwindow* window, StateMachine* state) = 0;
         virtual void UnselectWindow() = 0;
+        virtual void OpenWindow() = 0;
 
 
         // Text Sizes
@@ -61,7 +62,7 @@ namespace ui
     {
     public:
         // Constructor & Desconstructor
-        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, "Attribute"), attributeObject(attributeObject), clickedElement(nullptr) { CreateUIfromObject(attributeObject); }
+        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, "Attribute"), attributeObject(attributeObject), clickedElement(nullptr) {}
         ~AttributeWindow()
         {
             ClearAttributes();
@@ -80,6 +81,7 @@ namespace ui
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
+        void OpenWindow() override { CreateUIfromObject(attributeObject); }
         void ClearAttributes();
         void CreateUIfromObject(obj::Object* object);
 
@@ -114,6 +116,7 @@ namespace ui
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
+        void OpenWindow() override { GenerateInteractables(); }
 
     private:
         std::vector<ui::AttributeInteractable> interactables;
@@ -143,6 +146,7 @@ namespace ui
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
+        void OpenWindow() override { GenerateInteractables(); }
         void RenderScene();
         void CreateMesh();
 
@@ -177,6 +181,7 @@ namespace ui
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
+        void OpenWindow() override { GenerateInteractables(); }
 
     private:
         Color* selectedColor;

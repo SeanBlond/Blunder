@@ -4,6 +4,8 @@ using namespace ui;
 // Attribute Window Functions
 void AttributeWindow::GenerateInteractables()
 {
+    std::cout << "Called Attribute Generate" << std::endl;
+
     // Clearing previously generated interactables
     interactables.clear();
 
@@ -61,7 +63,7 @@ void AttributeWindow::GenerateInteractables()
                 ui::AttributeInteractable tempInteractable(corners, attributes[i]->getElement(j));
                 interactables.push_back(tempInteractable);
 
-                //std::cout << "Interactable Generated at (" << corners.x << ", " << corners.y << ", " << corners.z << ", " << corners.w << ")\n";
+                std::cout << "Attribute Interactable Generated at " << smath::outputVec4(corners) << ", with element: " << tempInteractable.element->getLabel() << std::endl;
 
                 // Updating YPos
                 attributeYPos += elementHeight + position.bufferSize;
@@ -157,6 +159,7 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
     for (int i = 0; i < interactables.size(); i++)
     {
+        //std::cout << "Checking interactable with corners: " << smath::outputVec4(interactables[i].corners) << std::endl;
         // Highlighting an Element
         if (smath::checkUICollision(glm::vec2(xpos, ypos), interactables[i].corners) && !state->getTransforming())
         {
@@ -217,6 +220,8 @@ void AttributeWindow::ClearAttributes()
 }
 void AttributeWindow::CreateUIfromObject(obj::Object* object)
 {
+    std::cout << "Create ui from object" << std::endl;
+
     // Checking if object exists
     if (object == nullptr)
         return;
