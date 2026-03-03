@@ -55,6 +55,7 @@ namespace ui
         float bufferSize;
         float unitScale;
     };
+
     struct ElementPosition
     {
         /*
@@ -121,6 +122,81 @@ namespace ui
 
         float left_x, right_x, bottom_y, top_y, split;
         WindowPosition* parentWindow;
+    };
+
+    class Interactable
+    {
+    public:
+        // Constructor
+        Interactable(glm::vec2 position) : position(position) {}
+        Interactable() : position(glm::vec2(0)) {}
+
+        // Getters
+        glm::vec2 getPosition() { return position; }
+
+        // Setters
+        void setPosition(glm::vec2 position) { this->position = position; }
+
+        // Functions
+        virtual bool checkCollision(glm::vec2 position) = 0;
+
+    protected:
+        glm::vec2 position;
+    };
+
+    class QuadInteractable : public Interactable
+    {
+    public:
+        // Constructors
+        QuadInteractable(glm::vec2 position, glm::vec2 size) { setDimensions(position, size); }
+        QuadInteractable(glm::vec4 corners) { setDimensions(corners); }
+
+        // Getters
+        glm::vec2 getPosition() { return Interactable::getPosition(); }
+        glm::vec2 getSize() { return size; }
+        glm::vec4 getCorners() { return glm::vec4(
+            position.x - (size.x * 0.5f), 
+            position.y - (size.y * 0.5f), 
+            position.x + (size.x * 0.5f),
+            position.y + (size.y * 0.5f)
+            ); }
+
+        // Setters
+        void setDimensions(glm::vec2 position, glm::vec2 size) { Interactable::position = position; this->size = size; }
+        void setDimensions(glm::vec4 corners) { setDimensions(
+            glm::vec2((corners.z - corners.x) * 0.5f + corners.x, (corners.w - corners.y) * 0.5f + corners.y),
+            glm::vec2(corners.z - corners.x, corners.w - corners.y)); }
+
+        // Functions
+        bool checkCollision(glm::vec2 position) override { return smath::checkUICollision(position, getCorners()); }
+
+    private:
+        glm::vec2 size;
+    };
+
+    class EllipseInteractable : public Interactable
+    {
+    public:
+        // Constructor
+        EllipseInteractable(glm::vec2 position, glm::vec2 radii) : Interactable(position), radii(radii) {}
+        EllipseInteractable(glm::vec2 position, float radius) : Interactable(position), radii(glm::vec2(radius)) {}
+        EllipseInteractable(glm::vec2 position, float radiusX, float radiusY) : Interactable(position), radii(glm::vec2(radiusX, radiusY)) {}
+
+        // Getters
+        glm::vec2 getPosition() { return Interactable::getPosition(); }
+        glm::vec2 getRadii() { return radii; }
+
+        // Setters
+        void setXRadius(float radius) { this->radii.x = radius; }
+        void setYRadius(float radius) { this->radii.y = radius; }
+        void setRadius(float radius) { this->radii = glm::vec2(radius); }
+        void setRadii(glm::vec2 radii) { this->radii = radii; }
+
+        // Functions
+        bool checkCollision(glm::vec2 position) override { return smath::checkUICollisionEllipse(position, Instance::position, radii); }
+
+    private:
+        glm::vec2 radii;
     };
 }
 #endif // !UI_POSITIONING
