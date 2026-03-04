@@ -81,7 +81,9 @@ ViewNav::~ViewNav()
 // Update Function
 void ViewNav::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Functions

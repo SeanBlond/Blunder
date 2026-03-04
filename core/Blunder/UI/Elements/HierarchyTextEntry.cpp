@@ -40,7 +40,9 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
 // Update Function
 void HierarchyTextEntry::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

@@ -43,7 +43,9 @@ void Dropdown::OnRelease(StateMachine* state)
 // Update Function
 void Dropdown::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

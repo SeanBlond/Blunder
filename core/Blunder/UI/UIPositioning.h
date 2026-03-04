@@ -132,7 +132,7 @@ namespace ui
         Interactable() : position(glm::vec2(0)) {}
 
         // Getters
-        glm::vec2 getPosition() { return position; }
+        glm::vec2 getPosition() const { return position; }
 
         // Setters
         void setPosition(glm::vec2 position) { this->position = position; }
@@ -152,9 +152,9 @@ namespace ui
         QuadInteractable(glm::vec4 corners) { setDimensions(corners); }
 
         // Getters
-        glm::vec2 getPosition() { return Interactable::getPosition(); }
-        glm::vec2 getSize() { return size; }
-        glm::vec4 getCorners() { return glm::vec4(
+        glm::vec2 getPosition() const { return Interactable::getPosition(); }
+        glm::vec2 getSize() const { return size; }
+        glm::vec4 getCorners() const { return glm::vec4(
             position.x - (size.x * 0.5f), 
             position.y - (size.y * 0.5f), 
             position.x + (size.x * 0.5f),
@@ -183,8 +183,8 @@ namespace ui
         EllipseInteractable(glm::vec2 position, float radiusX, float radiusY) : Interactable(position), radii(glm::vec2(radiusX, radiusY)) {}
 
         // Getters
-        glm::vec2 getPosition() { return Interactable::getPosition(); }
-        glm::vec2 getRadii() { return radii; }
+        glm::vec2 getPosition() const { return Interactable::getPosition(); }
+        glm::vec2 getRadii() const { return radii; }
 
         // Setters
         void setXRadius(float radius) { this->radii.x = radius; }

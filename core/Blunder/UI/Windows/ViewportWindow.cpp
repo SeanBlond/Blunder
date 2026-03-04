@@ -2,16 +2,11 @@
 using namespace ui;
 
 // Viewport Window Functions
-void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
+void ViewportWindow::UpdateWindow()
 {
-    // Rendering the Scene to the Viewport
-    RenderScene();
+    std::cout << "Update Viewport Window" << std::endl;
 
-    // Setting ViewNav draw values
-    glm::mat4 transform = smath::orthographic(-2, 2, -2, 2, 0.1f, 100.0f) * state->getCamera()->getViewMatrix() * smath::scale(glm::vec3(1.5f));
-
-    // Drawing the ViewNav
-    viewNavElement.setTransform(transform);
+    // Setting ViewNav Positions
     glm::vec4 navCorners = glm::vec4(
         position.getWidth() - viewNavElement.getNavSize() + position.getXOffset(),
         position.getHeight() - viewNavElement.getNavSize() + position.getYOffset(),
@@ -19,7 +14,19 @@ void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
         position.getHeight() + position.getYOffset()
     );
     ui::ElementPosition elementPos(navCorners, position.getXOffset(), &position);
-    viewNavElement.RenderElement(renderer, elementPos, smallText());
+    viewNavElement.UpdateElement(elementPos);
+}
+void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
+{
+    // Rendering the Scene to the Viewport
+    RenderScene();
+
+    // Setting ViewNav draw values
+    glm::mat4 transform = smath::orthographic(-2, 2, -2, 2, 0.1f, 100.0f) * state->getCamera()->getViewMatrix() * smath::scale(glm::vec3(1.5f));
+    viewNavElement.setTransform(transform);
+
+    // Drawing the ViewNav
+    viewNavElement.RenderElement(renderer, smallText());
 
     // Setting viewport size
     glm::vec4 viewportSize = glm::vec4(
@@ -32,37 +39,29 @@ void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Converting Mouse Pos to Local Coordinates
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-    xpos = (xpos - position.getXOffset()) / position.getWidth();
-    ypos = (ypos - position.getYOffset()) / position.getWidth();
+    // Converting mouse position to relative coordinates
+    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
 
-    // Finding CLicked Element
-    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-    for (int i = 0; i < interactables.size(); i++)
+    // Checking ViewNav for collision
+    if (viewNavElement.checkCollision(relMousePos) && !state->getTransforming())
     {
-        // Highlighting an Element
-        if (smath::checkUICollision(glm::vec2(xpos, ypos), interactables[i].corners) && !state->getTransforming())
+        // Clicking an Element
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
         {
-            // Clicking an Element
-            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-            {
-                state->changeState(SM_UI_INTERACT);
-                interactables[i].element->clicked = true;
-                clickedElement = (interactables[i].element);
-                clickedElement->OnClick(state);
-            }
-
-            // Highilighting an Element
-            else
-                interactables[i].element->highlighted = true;
+            state->changeState(SM_UI_INTERACT);
+            viewNavElement.clicked = true;
+            clickedElement = &viewNavElement;
+            clickedElement->OnClick(state);
         }
 
-        // Unhighlighting an Element
-        else if (interactables[i].element->highlighted)
-            interactables[i].element->highlighted = false;
+        // Highilighting an Element
+        else
+            viewNavElement.highlighted = true;
     }
+
+    // Unhighlighting an Element
+    else if (viewNavElement.highlighted)
+        viewNavElement.highlighted = false;
 
     // Managing Clicked Element
     if (clickedElement != nullptr)
@@ -74,13 +73,6 @@ void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
         {
             clickedElement->OnRelease(state);
             clickedElement->clicked = false;
-
-            // Checking if Dropdown Button was clicked
-            if (clickedElement->getType() == ui::UI_DROPDOWN)
-            {
-                GenerateInteractables();
-            }
-
             clickedElement = nullptr;
         }
     }

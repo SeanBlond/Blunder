@@ -34,13 +34,17 @@ namespace ui
         // Setters
         void setWidth(float width) { this->position.dimensions.x = width; }
         void setHeight(float height) { this->position.dimensions.y = height; }
-        void setDimensions(float width, float height, float xoffset, float yoffset, float bufferSize) { position.setPosition(width, height, xoffset, yoffset, bufferSize); }
-        void setDimensions(glm::vec2 dimensions, glm::vec2 offset, float bufferSize) { position.setPosition(dimensions, offset, bufferSize); }
-        void setDimensions(float width, float height, float xoffset, float yoffset) { position.setPosition(width, height, xoffset, yoffset); }
-        void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { position.setPosition(dimensions, offset); }
+        void setDimensions(float width, float height) { position.setDimensions(glm::vec2(width, height)); }
+        void setDimensions(glm::vec2 dimensions) { position.setDimensions(dimensions); }
+        void setOffset(float xOffset, float yOffset) { position.setOffset(glm::vec2(xOffset, yOffset)); }
+        void setOffset(glm::vec2 offset) { position.setOffset(offset); }
+        void setPosition(float width, float height, float xoffset, float yoffset, float bufferSize) { position.setPosition(width, height, xoffset, yoffset, bufferSize); }
+        void setPosition(glm::vec2 dimensions, glm::vec2 offset, float bufferSize) { position.setPosition(dimensions, offset, bufferSize); }
+        void setPosition(float width, float height, float xoffset, float yoffset) { position.setPosition(width, height, xoffset, yoffset); }
+        void setPosition(glm::vec2 dimensions, glm::vec2 offset) { position.setPosition(dimensions, offset); }
 
         // Functions
-        virtual void UpdateWindow(ui::WindowPosition newPosition) = 0;
+        virtual void UpdateWindow() = 0;
         virtual void DrawWindow(ui::UIRenderer* renderer) = 0;
         virtual void ManageInteraction(GLFWwindow* window, StateMachine* state) = 0;
         virtual void UnselectWindow() = 0;
@@ -76,6 +80,7 @@ namespace ui
         void addAttribute(ui::Attribute* attribute) { attributes.push_back(attribute); }
 
         // Functions
+        void UpdateWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
@@ -86,7 +91,6 @@ namespace ui
     private:
         obj::Object* attributeObject;
         std::vector<ui::Attribute*> attributes;
-        std::vector<ui::AttributeInteractable> interactables;
         ui::AttributeElement* clickedElement;
 
 
@@ -102,19 +106,18 @@ namespace ui
         HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr) {}
         ~HierarchyWindow()
         {
-            interactables.clear();
         }
 
         // Functions
+        void UpdateWindow() override {}
         void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
         void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override;
+        void OpenWindow() override {}
 
     private:
-        std::vector<ui::AttributeInteractable> interactables;
         StateMachine* state;
         ui::AttributeElement* clickedElement;
     };
@@ -128,8 +131,6 @@ namespace ui
             : UIWindow(width, height, xoffset, yoffset, "Viewport"), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) { CreateMesh(); }
         ~ViewportWindow()
         {
-            interactables.clear();
-
             delete viewportMesh;
             delete viewportShader;
             viewportMesh = nullptr;
@@ -137,10 +138,11 @@ namespace ui
         }
 
         // Functions
+        void UpdateWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override;
+        void OpenWindow() override { UpdateWindow(); }
         void RenderScene();
         void CreateMesh();
 
@@ -148,7 +150,6 @@ namespace ui
         StateMachine* state;
         ui::ViewNav viewNavElement;
         std::vector<ui::Attribute*> attributes;
-        std::vector<ui::AttributeInteractable> interactables;
         ui::AttributeElement* clickedElement;
 
         // Mesh Rendering stuff
@@ -171,10 +172,11 @@ namespace ui
         // Functions
         void CreateUIFromSelected();
         void ClearAttributes();
+        void UpdateWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override;
+        void OpenWindow() override { UpdateWindow(); }
 
     private:
         Color* selectedColor;
@@ -184,7 +186,6 @@ namespace ui
         glm::vec4 colorData;
         ui::Attribute* colorAttribute;
         ui::AttributeElement* clickedElement;
-        std::vector<ui::AttributeInteractable> interactables;
     };
 }
 #endif // !UIWINDOWS

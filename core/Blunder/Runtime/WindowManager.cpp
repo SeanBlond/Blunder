@@ -119,7 +119,8 @@ void LockedWindow::UpdateDimensions()
 	// Updating UI Window dimensions
 	glm::vec2 mainWindowDimensions = getMainWindowDimensions();
 	glm::vec2 windowOffset = getOffset();
-	window->setDimensions(mainWindowDimensions, windowOffset);
+	window->setPosition(mainWindowDimensions, windowOffset);
+	window->UpdateWindow();
 }
 ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 {
@@ -201,14 +202,28 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 	// Checking if screen size needs to be updated
 	if (storedScreenSize != screenSize)
 	{
+		// Updating pop up window position (if applicable)
+		if (popUpWindow)
+		{
+			// Updating position to stay in the same relative position to the screen size
+			glm::vec2 relativeOffset = popUpWindow->getPosition().offset / storedScreenSize;
+			popUpWindow->setOffset(relativeOffset * screenSize);
+		}
+
+		// Updating free window positions
+		for (int i = 0; i < freeWindows.size(); i++)
+		{
+			// Updating position to stay in the same relative position to the screen size
+			glm::vec2 relativeOffset = freeWindows[i]->getPosition().offset / storedScreenSize;
+			freeWindows[i]->setOffset(relativeOffset * screenSize);
+		}
+
+		// Updating root locked window size
 		rootLockedWindow->setDimensions(screenSize);
 	}
 
 	// Getting mouse position
 	glm::vec2 mousePos = state->getMouse()->mousePos;
-
-	// TODO:
-	// if transforming, have the mouse position wrap around the window on both axis
 
 	// If the pop-up window exists, only check it
 	if (popUpWindow)

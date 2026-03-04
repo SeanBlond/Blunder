@@ -39,7 +39,9 @@ void IntSlider::OnRelease(StateMachine* state)
 // Update Function
 void IntSlider::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

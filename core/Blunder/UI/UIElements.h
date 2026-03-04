@@ -26,13 +26,13 @@ namespace ui
     class AttributeElement
     {
     public:
-        AttributeElement(std::string label, ElementType type) : label(label), type(type) {}
+        AttributeElement(std::string label, ElementType type) : label(label), type(type), interactable(nullptr) {}
 
         // Getters
         std::string getLabel() const { return label; }
         ElementType getType() const { return type; }
         Interactable* getInteractable() { return interactable; }
-        bool checkCollision(glm::vec2 position) { return interactable->checkCollision(position); }
+        bool checkCollision(glm::vec2 position) { return (interactable ? interactable->checkCollision(position) : false); }
 
         // Setters
         void setLabel(std::string label) { this->label = label; }
@@ -51,13 +51,6 @@ namespace ui
         Interactable* interactable;
         ElementPosition position;
         std::string label;
-    };
-
-    struct AttributeInteractable
-    {
-        AttributeInteractable(glm::vec4 corners, AttributeElement* element) : corners(corners), element(element) {}
-        AttributeElement* element;
-        glm::vec4 corners;
     };
     
     // Float Entry

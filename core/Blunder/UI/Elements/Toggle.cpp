@@ -14,7 +14,9 @@ void Toggle::OnRelease(StateMachine* state)
 // Update Function
 void Toggle::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

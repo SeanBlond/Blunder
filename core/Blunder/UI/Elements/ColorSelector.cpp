@@ -199,7 +199,9 @@ void ColorSelector::OnRelease(StateMachine* state)
 // Update Function
 void ColorSelector::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

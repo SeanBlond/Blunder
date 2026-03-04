@@ -110,18 +110,16 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Converting Mouse Pos to Local Coordinates
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-    xpos = (xpos - position.getXOffset()) / position.getWidth();
-    ypos = (ypos - position.getYOffset()) / position.getWidth();
+    /*
+    // Converting mouse position to relative coordinates
+    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
 
     // Finding CLicked Element
     //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
     for (int i = 0; i < interactables.size(); i++)
     {
         // Highlighting an Element
-        if (smath::checkUICollision(glm::vec2(xpos, ypos), interactables[i].corners) && !state->getTransforming())
+        if (smath::checkUICollision(relMousePos, interactables[i].corners) && !state->getTransforming())
         {
             // Clicking an Element
             if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
@@ -156,12 +154,13 @@ void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             // Checking if Dropdown Button was clicked
             if (clickedElement->getType() == ui::UI_DROPDOWN)
             {
-                GenerateInteractables();
+                //GenerateInteractables();
             }
 
             clickedElement = nullptr;
         }
     }
+    */
 }
 void HierarchyWindow::UnselectWindow()
 {

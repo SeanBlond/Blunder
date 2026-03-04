@@ -39,7 +39,9 @@ void FloatEntry::OnRelease(StateMachine* state)
 // Update Function
 void FloatEntry::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

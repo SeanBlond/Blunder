@@ -39,7 +39,9 @@ void IntEntry::OnRelease(StateMachine* state)
 // Update Function
 void IntEntry::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

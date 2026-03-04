@@ -37,9 +37,53 @@ void ColorWindow::ClearAttributes()
         delete colorAttribute;
         colorAttribute = nullptr;
     }
+}
+void ColorWindow::UpdateWindow()
+{
+    // Setting initial yPos to Start rendering at
+    float elementHeight = position.unitScale;
+    float attributeYPos = position.getHeight() - elementHeight * 0.5f;
 
-    // Resetting Interactables
-    interactables.clear();
+    // Setting up useful UI sizes
+    attributeYPos -= elementHeight * 0.5f;
+
+    // Adding each atttribute element
+    for (int i = 0; i < colorAttribute->getElementCount(); i++)
+    {
+        // Add Each Element
+        ui::AttributeElement* element = colorAttribute->getElement(i);
+        float attributeElementWidth = position.getWidth() - 2.0f * position.getBuffer();
+
+        // Doing special sizing for color selector UI
+        if (element->getType() == ui::UI_COLOR_SELECTOR)
+        {
+            // Rendering color selector larger than normal elements
+            float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
+            attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), 0.0f, &position);
+            element->UpdateElement(elementPos);
+
+            // Updating YPos
+            attributeYPos -= (colorSelectorHeight * 0.5f) + elementHeight * 0.5f + position.getBuffer();
+        }
+        else
+        {
+            // Rendering normal elements
+            ui::ElementPosition elementPos;
+
+            // Different spacing for dropdown and text entry
+            if (element->getType() == ui::UI_DROPDOWN)
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (21.0f / 58.0f), &position);
+            else
+                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (15.0f / 58.0f), &position);
+
+
+            element->UpdateElement(elementPos);
+
+            // Updating YPos
+            attributeYPos -= (elementHeight + position.getBuffer());
+        }
+    }
 }
 void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
@@ -72,8 +116,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             // Rendering color selector larger than normal elements
             float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
             attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), 0.0f, &position);
-            element->RenderElement(renderer, elementPos, mediumText());
+            element->RenderElement(renderer, mediumText());
 
             // Updating YPos
             attributeYPos -= (colorSelectorHeight * 0.5f) + elementHeight * 0.5f + position.getBuffer();
@@ -81,16 +124,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
         else
         {
             // Rendering normal elements
-            ui::ElementPosition elementPos;
-
-            // Different spacing for dropdown and text entry
-            if (element->getType() == ui::UI_DROPDOWN)
-                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (21.0f / 58.0f), &position);
-            else
-                elementPos = ui::ElementPosition(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * (15.0f/58.0f), &position);
-            
-            
-            element->RenderElement(renderer, elementPos, mediumText());
+            element->RenderElement(renderer, mediumText());
 
             // Updating YPos
             attributeYPos -= (elementHeight + position.getBuffer());

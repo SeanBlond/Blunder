@@ -2,12 +2,57 @@
 using namespace ui;
 
 // Attribute Window Functions
+void AttributeWindow::UpdateWindow()
+{
+    // Setting initial yPos to start position at
+    float attributeTitleHeight = position.unitScale * 1.5f;
+    float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
+
+    // Adding Each Attribute
+    for (int i = 0; i < attributes.size(); i++)
+    {
+        // Adding Label Box
+        float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
+
+        // Checking if elements should be rendered
+        if (attributes[i]->getCollapsed())
+        {
+            attributeYPos -= (position.getWidth() * 0.1f + position.getBuffer());
+        }
+        else
+        {
+            attributeYPos -= attributeTitleHeight * 0.5f;
+
+            // Setting up useful UI sizes
+            float elementHeight = position.unitScale;
+            attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
+
+            for (int j = 0; j < attributes[i]->getElementCount(); j++)
+            {
+                // Add Each Element
+                ui::AttributeElement* element = attributes[i]->getElement(j);
+                float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
+                element->UpdateElement(elementPos);
+
+                // Updating YPos
+                attributeYPos -= (elementHeight + position.getBuffer());
+            }
+
+            // Adding space after containter
+            attributeYPos -= position.getBuffer();
+        }
+
+        // Creating Space for Next Attribute
+        attributeYPos -= position.getBuffer();
+    }
+}
 void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
     renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
 
-    // Setting initial yPos to Start rendering at
+    // Setting initial yPos to start rendering at
     float attributeTitleHeight = position.unitScale * 1.5f;
     float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
 
@@ -41,9 +86,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
             {
                 // Add Each Element
                 ui::AttributeElement* element = attributes[i]->getElement(j);
-                float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
-                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
-                element->RenderElement(renderer, elementPos, mediumText());
+                element->RenderElement(renderer, mediumText());
 
                 // Updating YPos
                 attributeYPos -= (elementHeight + position.getBuffer());
@@ -68,45 +111,43 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
+    // Converting mouse position to relative coordinates
+    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
+
     // Checking if StateMachine selected object differs from attribute object, and if it does, changes it
     if (attributeObject != state->getSelectedObject())
     {
         CreateUIfromObject(state->getSelectedObject());
     }
 
-    // Converting Mouse Pos to Local Coordinates
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-    xpos = (xpos - position.getXOffset()) / position.getWidth();
-    ypos = (ypos - position.getYOffset()) / position.getWidth();
-
-    // Finding CLicked Element
-    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-    for (int i = 0; i < interactables.size(); i++)
+    // Finding clicked element by looping through each element within each attribute
+    for (int i = 0; i < attributes.size(); i++)
     {
-        //std::cout << "Checking interactable with corners: " << smath::outputVec4(interactables[i].corners) << std::endl;
-        // Highlighting an Element
-        if (smath::checkUICollision(glm::vec2(xpos, ypos), interactables[i].corners) && !state->getTransforming())
+        for (int j = 0; j < attributes[i]->getElementCount(); j++)
         {
-            // Clicking an Element
-            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+            ui::AttributeElement* currentElement = attributes[i]->getElement(j);
+
+            // Collision detection
+            if (currentElement->checkCollision(relMousePos) && !state->getTransforming())
             {
-                state->changeState(SM_UI_INTERACT);
-                interactables[i].element->clicked = true;
-                clickedElement = (interactables[i].element);
-                clickedElement->OnClick(state);
+                // Clicking an Element
+                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+                {
+                    state->changeState(SM_UI_INTERACT);
+                    currentElement->clicked = true;
+                    clickedElement = (currentElement);
+                    clickedElement->OnClick(state);
+                }
+
+                // Highilighting an Element
+                else
+                    currentElement->highlighted = true;
             }
 
-            // Highilighting an Element
-            else
-                interactables[i].element->highlighted = true;
+            // Unhighlighting an Element
+            else if (currentElement->highlighted)
+                currentElement->highlighted = false;
         }
-
-        // Unhighlighting an Element
-        else if (interactables[i].element->highlighted)
-            interactables[i].element->highlighted = false;
-
-
     }
 
     // Managing Clicked Element
@@ -123,7 +164,7 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             // Checking if Collapse Button was clicked
             if (clickedElement->getType() == ui::UI_ATTRIBUTE_COLLAPSE)
             {
-                //GenerateInteractables();
+                UpdateWindow();
             }
 
             clickedElement = nullptr;
@@ -141,7 +182,6 @@ void AttributeWindow::ClearAttributes()
 
     // Resetting Vectors
     attributes.clear();
-    interactables.clear();
 }
 void AttributeWindow::CreateUIfromObject(obj::Object* object)
 {
@@ -214,9 +254,6 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
         // Adding the attributes
         addAttribute(meshAttribute);
     }
-
-    // Generating the Interactables
-    GenerateInteractables();
 }
 void AttributeWindow::UnselectWindow()
 {
@@ -226,6 +263,5 @@ void AttributeWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
-
     }
 }

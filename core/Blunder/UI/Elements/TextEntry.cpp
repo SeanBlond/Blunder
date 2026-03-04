@@ -18,7 +18,9 @@ void TextEntry::OnRelease(StateMachine* state)
 // Update Function
 void TextEntry::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function

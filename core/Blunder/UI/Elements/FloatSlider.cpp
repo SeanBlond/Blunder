@@ -39,7 +39,9 @@ void FloatSlider::OnRelease(StateMachine* state)
 // Update Function
 void FloatSlider::UpdateElement(const ElementPosition& newPosition)
 {
+    this->position = newPosition;
 
+    // TODO: Update interactable
 }
 
 // Render Function
