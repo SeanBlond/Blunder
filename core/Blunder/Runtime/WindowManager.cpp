@@ -220,6 +220,9 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 
 		// Updating root locked window size
 		rootLockedWindow->setDimensions(screenSize);
+
+		// Updating stored screen size
+		storedScreenSize = screenSize;
 	}
 
 	// Getting mouse position

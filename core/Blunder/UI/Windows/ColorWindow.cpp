@@ -40,6 +40,8 @@ void ColorWindow::ClearAttributes()
 }
 void ColorWindow::UpdateWindow()
 {
+    std::cout << "Update window function called" << std::endl;
+
     // Setting initial yPos to Start rendering at
     float elementHeight = position.unitScale;
     float attributeYPos = position.getHeight() - elementHeight * 0.5f;
@@ -116,7 +118,8 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             // Rendering color selector larger than normal elements
             float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
             attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
-            element->RenderElement(renderer, mediumText());
+            element->RenderElement(renderer, 
+                mediumText());
 
             // Updating YPos
             attributeYPos -= (colorSelectorHeight * 0.5f) + elementHeight * 0.5f + position.getBuffer();

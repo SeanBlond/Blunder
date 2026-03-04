@@ -90,7 +90,7 @@ public:
 
 	// Functions
 	void closePopUp() { if (popUpWindow) { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; } }
-	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); }
+	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); window->UpdateWindow(); }
 	void UpdateWindows(GLFWwindow* window, glm::vec2 screenSize);
 	void DrawWindows(ui::UIRenderer* renderer);
 	void CreateDefaultWindows(glm::vec2 screenSize);

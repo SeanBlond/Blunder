@@ -176,7 +176,7 @@ namespace ui
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { UpdateWindow(); }
+        void OpenWindow() override { CreateUIFromSelected(); UpdateWindow(); }
 
     private:
         Color* selectedColor;
