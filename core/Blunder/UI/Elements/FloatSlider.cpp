@@ -36,8 +36,14 @@ void FloatSlider::OnRelease(StateMachine* state)
     }
 }
 
+// Update Function
+void FloatSlider::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void FloatSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void FloatSlider::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

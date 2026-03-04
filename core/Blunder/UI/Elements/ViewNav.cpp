@@ -78,8 +78,14 @@ ViewNav::~ViewNav()
     navShader = nullptr;
 }
 
+// Update Function
+void ViewNav::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Functions
-void ViewNav::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void ViewNav::RenderElement(UIRenderer* renderer, float textSize)
 {
     float xCenter = position.left_x + navSize * 0.5f - position.split;
     float yCenter = position.bottom_y + navSize * 0.5f;

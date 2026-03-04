@@ -36,8 +36,14 @@ void FloatEntry::OnRelease(StateMachine* state)
     }
 }
 
+// Update Function
+void FloatEntry::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void FloatEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void FloatEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

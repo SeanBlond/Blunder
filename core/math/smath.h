@@ -362,8 +362,8 @@ namespace smath
     }
     inline bool checkUICollisionEllipse(glm::vec2 pos, glm::vec2 ellipsePos, glm::vec2 ellipseRadii)
     {
-        float xCollision = (pow(ellipsePos.x - pos.x, 2) / (ellipseRadii.x * ellipseRadii.x);
-        float yCollision = (pow(ellipsePos.y - pos.y, 2) / (ellipseRadii.y * ellipseRadii.y);
+        float xCollision = pow(ellipsePos.x - pos.x, 2) / (ellipseRadii.x * ellipseRadii.x);
+        float yCollision = pow(ellipsePos.y - pos.y, 2) / (ellipseRadii.y * ellipseRadii.y);
         return (xCollision + yCollision) <= 1.0f;
     }
     inline bool checkUICollision_Y(glm::vec2 pos, glm::vec2 corners_y)

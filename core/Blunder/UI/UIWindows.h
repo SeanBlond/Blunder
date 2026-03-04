@@ -40,7 +40,7 @@ namespace ui
         void setDimensions(glm::vec2 dimensions, glm::vec2 offset) { position.setPosition(dimensions, offset); }
 
         // Functions
-        virtual void GenerateInteractables() = 0;
+        virtual void UpdateWindow(ui::WindowPosition newPosition) = 0;
         virtual void DrawWindow(ui::UIRenderer* renderer) = 0;
         virtual void ManageInteraction(GLFWwindow* window, StateMachine* state) = 0;
         virtual void UnselectWindow() = 0;
@@ -76,8 +76,6 @@ namespace ui
         void addAttribute(ui::Attribute* attribute) { attributes.push_back(attribute); }
 
         // Functions
-        // Once UI Quads are better optimized, GenerateInteractables should be reworked
-        void GenerateInteractables() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
@@ -108,15 +106,12 @@ namespace ui
         }
 
         // Functions
-        void generateFolderInteractable(Folder* folder, int indent, float& yPos);
-        void generateElementInteractable(HierarchyElement* element, int indent, float& yPos);
-        void GenerateInteractables() override;
         void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
         void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { GenerateInteractables(); }
+        void OpenWindow() override;
 
     private:
         std::vector<ui::AttributeInteractable> interactables;
@@ -142,11 +137,10 @@ namespace ui
         }
 
         // Functions
-        void GenerateInteractables() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { GenerateInteractables(); }
+        void OpenWindow() override;
         void RenderScene();
         void CreateMesh();
 
@@ -177,11 +171,10 @@ namespace ui
         // Functions
         void CreateUIFromSelected();
         void ClearAttributes();
-        void GenerateInteractables() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { GenerateInteractables(); }
+        void OpenWindow() override;
 
     private:
         Color* selectedColor;

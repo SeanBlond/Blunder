@@ -41,11 +41,6 @@ void ColorWindow::ClearAttributes()
     // Resetting Interactables
     interactables.clear();
 }
-void ColorWindow::GenerateInteractables()
-{
-    // Clearing interactables
-    interactables.clear();
-}
 void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad

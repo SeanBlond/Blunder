@@ -2,81 +2,6 @@
 using namespace ui;
 
 // Attribute Window Functions
-void AttributeWindow::GenerateInteractables()
-{
-    std::cout << "Called Attribute Generate" << std::endl;
-
-    // Clearing previously generated interactables
-    interactables.clear();
-
-    // Setting up initial positioning values
-    float attributeTitleHeight = 0.12f;
-    float attributeYPos = attributeTitleHeight * 0.5f + position.bufferSize;
-
-    // Going through UI Positions and creating interactables out of the elements
-    for (int i = 0; i < attributes.size(); i++)
-    {
-        // Attribute Dropdown Button
-        glm::vec4 dropdownCorners = glm::vec4(
-            position.bufferSize,
-            attributeYPos - attributeTitleHeight * 0.5f,
-            1.0f - position.bufferSize,
-            attributeYPos + attributeTitleHeight * 0.5f
-        );
-        ui::AttributeInteractable dropDownInteractable(dropdownCorners, attributes[i]->getDropDownButton());
-        interactables.push_back(dropDownInteractable);
-
-        // Checking if elements should be added
-        if (attributes[i]->getCollapsed())
-        {
-            attributeYPos += 0.1f + position.bufferSize;
-        }
-        else
-        {
-            attributeYPos += attributeTitleHeight * 0.5f;
-
-            // Setting up useful UI sizes
-            float elementHeight = 0.08f;
-
-            attributeYPos += elementHeight * 0.5f + position.bufferSize;
-
-            // Adding Each Element to interactables
-            for (int j = 0; j < attributes[i]->getElementCount(); j++)
-            {
-                // Positioning for the element
-                float attributeElementWidth = position.getWidth() - 4.0f * position.getBuffer();
-                float attributeElementYPos = attributeYPos * position.getWidth();
-                ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeElementYPos), glm::vec2(attributeElementWidth, position.getWidth() * elementHeight), position.getWidth() * 0.44f, &position);
-
-                // Corners for input
-                glm::vec4 corners = glm::vec4(0);
-                if (attributes[i]->getElement(j)->getType() == ui::UI_TOGGLE) // Toggle has smaller corners
-                {
-                    corners = elementPos.getRightCorners(elementHeight * position.getWidth()) / position.getWidth();
-                }
-                else // Everything else is the same
-                {
-                    corners = elementPos.getRightCorners() / position.getWidth();
-                }
-
-                // Adding the interactable
-                ui::AttributeInteractable tempInteractable(corners, attributes[i]->getElement(j));
-                interactables.push_back(tempInteractable);
-
-                std::cout << "Attribute Interactable Generated at " << smath::outputVec4(corners) << ", with element: " << tempInteractable.element->getLabel() << std::endl;
-
-                // Updating YPos
-                attributeYPos += elementHeight + position.bufferSize;
-            }
-
-            // Adding space after containter
-            attributeYPos += position.bufferSize;
-        }
-
-        // Creating Space for Next Attribute
-        attributeYPos += position.bufferSize;
-    }
-}
 void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Adding Base Quad
@@ -195,10 +120,10 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             clickedElement->OnRelease(state);
             clickedElement->clicked = false;
 
-            // Checking if Dropdown Button was clicked
+            // Checking if Collapse Button was clicked
             if (clickedElement->getType() == ui::UI_ATTRIBUTE_COLLAPSE)
             {
-                GenerateInteractables();
+                //GenerateInteractables();
             }
 
             clickedElement = nullptr;

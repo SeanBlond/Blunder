@@ -31,13 +31,15 @@ namespace ui
         // Getters
         std::string getLabel() const { return label; }
         ElementType getType() const { return type; }
+        Interactable* getInteractable() { return interactable; }
+        bool checkCollision(glm::vec2 position) { return interactable->checkCollision(position); }
 
         // Setters
         void setLabel(std::string label) { this->label = label; }
 
-
         // Override Functions
-        virtual void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) = 0;
+        virtual void UpdateElement(const ElementPosition& newPosition) = 0;
+        virtual void RenderElement(UIRenderer* renderer, float textSize) = 0;
         virtual void OnClick(StateMachine* state) = 0;
         virtual void OnHold(StateMachine* state) = 0;
         virtual void OnRelease(StateMachine* state) = 0;
@@ -46,6 +48,8 @@ namespace ui
         bool highlighted = false;
     protected:
         ElementType type;
+        Interactable* interactable;
+        ElementPosition position;
         std::string label;
     };
 
@@ -68,7 +72,8 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = value; }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -99,7 +104,8 @@ namespace ui
         // Element Functions
         void setValue(float value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(float* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -129,7 +135,8 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = value; }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -160,7 +167,8 @@ namespace ui
         // Element Functions
         void setValue(int value) { *(this->value) = smath::clamp(value, min, max); }
         void setValue(int* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -187,7 +195,8 @@ namespace ui
         // Element Functions
         void setToggle(bool value) { *(this->value) = value; }
         void toggleValue() { *value = !(*value); }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -205,7 +214,8 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -226,7 +236,8 @@ namespace ui
         void addOption(std::string option) { options.push_back(option); }
         void addOptions(std::vector<std::string> options) { this->options.insert(this->options.end(), options.begin(), options.end()); }
         void removeOption(int index) { options.erase(options.begin() + index); }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -250,7 +261,8 @@ namespace ui
         // Functions
         void CreateShaders();
         void CreateMesh();
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -275,7 +287,8 @@ namespace ui
         // Element Functions
         void setValue(std::string value) { *(this->value) = value; }
         void setValue(std::string* value) { this->value = value; }
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
@@ -306,7 +319,8 @@ namespace ui
 
         // Functions
         void CreateMesh();
-        void RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize) override;
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;

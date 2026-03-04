@@ -40,9 +40,14 @@ void Dropdown::OnRelease(StateMachine* state)
     firstOptionYPos = 0;
 }
 
-// Render Function
+// Update Function
+void Dropdown::UpdateElement(const ElementPosition& newPosition)
+{
 
-void Dropdown::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+}
+
+// Render Function
+void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

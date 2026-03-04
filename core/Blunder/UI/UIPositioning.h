@@ -193,7 +193,7 @@ namespace ui
         void setRadii(glm::vec2 radii) { this->radii = radii; }
 
         // Functions
-        bool checkCollision(glm::vec2 position) override { return smath::checkUICollisionEllipse(position, Instance::position, radii); }
+        bool checkCollision(glm::vec2 position) override { return smath::checkUICollisionEllipse(position, Interactable::position, radii); }
 
     private:
         glm::vec2 radii;

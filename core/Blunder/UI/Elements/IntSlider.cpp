@@ -36,8 +36,14 @@ void IntSlider::OnRelease(StateMachine* state)
     }
 }
 
+// Update Function
+void IntSlider::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void IntSlider::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void IntSlider::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

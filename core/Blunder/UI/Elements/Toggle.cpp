@@ -11,8 +11,14 @@ void Toggle::OnRelease(StateMachine* state)
     *value = !(*value);
 }
 
+// Update Function
+void Toggle::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void Toggle::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void Toggle::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

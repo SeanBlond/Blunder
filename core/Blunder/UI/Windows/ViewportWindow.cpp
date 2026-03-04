@@ -2,19 +2,6 @@
 using namespace ui;
 
 // Viewport Window Functions
-void ViewportWindow::GenerateInteractables()
-{
-    // ViewNav interactable 
-    float viewNavBuffer = 0.005;
-    glm::vec4 tempCorners = glm::vec4(
-        1 - (viewNavElement.getNavSize() / position.getWidth()) - viewNavBuffer,
-        viewNavBuffer,
-        1 - viewNavBuffer,
-        viewNavElement.getNavSize() / position.getHeight() - viewNavBuffer
-    );
-    ui::AttributeInteractable viewNavInteract(tempCorners, &viewNavElement);
-    interactables.push_back(viewNavInteract);
-}
 void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // Rendering the Scene to the Viewport

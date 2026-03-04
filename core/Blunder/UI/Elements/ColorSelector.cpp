@@ -196,8 +196,14 @@ void ColorSelector::OnRelease(StateMachine* state)
 
 }
 
+// Update Function
+void ColorSelector::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void ColorSelector::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void ColorSelector::RenderElement(UIRenderer* renderer, float textSize)
 {
     // Rendering the Color Circle
     float svWidth = position.getWidth() * (40.0f / 58.0f);

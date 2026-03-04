@@ -37,8 +37,14 @@ void HierarchyTextEntry::OnRelease(StateMachine* state)
     }
 }
 
+// Update Function
+void HierarchyTextEntry::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void HierarchyTextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);

@@ -15,8 +15,14 @@ void TextEntry::OnRelease(StateMachine* state)
     state->changeState(SM_UI_TYPING);
 }
 
+// Update Function
+void TextEntry::UpdateElement(const ElementPosition& newPosition)
+{
+
+}
+
 // Render Function
-void TextEntry::RenderElement(UIRenderer* renderer, const ElementPosition& position, float textSize)
+void TextEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
     float width = (position.right_x - position.left_x);
     float ySize = (position.top_y - position.bottom_y);
