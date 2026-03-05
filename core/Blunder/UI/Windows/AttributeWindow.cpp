@@ -111,8 +111,8 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Converting mouse position to relative coordinates
-    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
+    // Getting (and temporarily storing) the mouse Position
+    glm::vec2 mousePos = state->getMouse()->mousePos;
 
     // Checking if StateMachine selected object differs from attribute object, and if it does, changes it
     if (attributeObject != state->getSelectedObject())
@@ -121,21 +121,25 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     }
 
     // Finding clicked element by looping through each element within each attribute
+    std::cout << "Mouse Pos: " << smath::outputVec2(mousePos) << std::endl;
     for (int i = 0; i < attributes.size(); i++)
     {
         for (int j = 0; j < attributes[i]->getElementCount(); j++)
         {
             ui::AttributeElement* currentElement = attributes[i]->getElement(j);
 
+            if (currentElement->getInteractable())
+                std::cout << "Checking element \"" << currentElement->getLabel() << "\" at pos: " << smath::outputVec2(currentElement->getInteractable()->getPosition()) << std::endl;
+
             // Collision detection
-            if (currentElement->checkCollision(relMousePos) && !state->getTransforming())
+            if (currentElement->checkCollision(mousePos) && !state->getTransforming())
             {
                 // Clicking an Element
                 if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
                 {
                     state->changeState(SM_UI_INTERACT);
-                    currentElement->clicked = true;
-                    clickedElement = (currentElement);
+                    clickedElement = currentElement;
+                    clickedElement->clicked = true;
                     clickedElement->OnClick(state);
                 }
 
@@ -185,8 +189,6 @@ void AttributeWindow::ClearAttributes()
 }
 void AttributeWindow::CreateUIfromObject(obj::Object* object)
 {
-    std::cout << "Create ui from object" << std::endl;
-
     // Checking if object exists
     if (object == nullptr)
         return;
@@ -214,10 +216,6 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     scaleAtrribute->addElement(new FloatEntry("X", &(object->transform.scale.x)));
     scaleAtrribute->addElement(new FloatEntry("Y", &(object->transform.scale.y)));
     scaleAtrribute->addElement(new FloatEntry("Z", &(object->transform.scale.z)));
-    // Adding Test Dropdown REMOVE AT SOME POINT
-    std::vector<std::string> options = { "Option 1", "Option 2", "Option 3", "Option 4" };
-    testDropdownValue = 0;
-    scaleAtrribute->addElement(new Dropdown("Test", &testDropdownValue, options));
     addAttribute(scaleAtrribute);
 
 

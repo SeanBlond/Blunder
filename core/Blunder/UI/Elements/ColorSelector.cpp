@@ -201,7 +201,12 @@ void ColorSelector::UpdateElement(const ElementPosition& newPosition)
 {
     this->position = newPosition;
 
-    // TODO: Update interactable
+    // Update interactable
+    if (interactable)
+    {
+        delete interactable;
+    }
+    interactable = new ui::QuadInteractable(position.getRightCorners());
 }
 
 // Render Function

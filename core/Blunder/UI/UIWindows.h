@@ -92,10 +92,6 @@ namespace ui
         obj::Object* attributeObject;
         std::vector<ui::Attribute*> attributes;
         ui::AttributeElement* clickedElement;
-
-
-        // REMOVE AT SOME POINT
-        int testDropdownValue;
     };
 
     // Hierarchy Window

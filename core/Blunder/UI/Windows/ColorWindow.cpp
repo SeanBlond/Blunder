@@ -40,8 +40,6 @@ void ColorWindow::ClearAttributes()
 }
 void ColorWindow::UpdateWindow()
 {
-    std::cout << "Update window function called" << std::endl;
-
     // Setting initial yPos to Start rendering at
     float elementHeight = position.unitScale;
     float attributeYPos = position.getHeight() - elementHeight * 0.5f;

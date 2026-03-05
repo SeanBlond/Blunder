@@ -4,8 +4,6 @@ using namespace ui;
 // Viewport Window Functions
 void ViewportWindow::UpdateWindow()
 {
-    std::cout << "Update Viewport Window" << std::endl;
-
     // Setting ViewNav Positions
     glm::vec4 navCorners = glm::vec4(
         position.getWidth() - viewNavElement.getNavSize() + position.getXOffset(),
