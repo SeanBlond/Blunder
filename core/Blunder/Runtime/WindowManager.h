@@ -91,9 +91,9 @@ public:
 	// Functions
 	void closePopUp() { if (popUpWindow) { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; } }
 	void addFreeWindow(ui::UIWindow* window) { freeWindows.push_back(window); window->UpdateWindow(); }
-	void UpdateWindows(GLFWwindow* window, glm::vec2 screenSize);
+	void UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize);
 	void DrawWindows(ui::UIRenderer* renderer);
-	void CreateDefaultWindows(glm::vec2 screenSize);
+	void CreateDefaultWindows(glm::ivec2 screenSize);
 
 private:
 	// Window Layers
@@ -102,7 +102,7 @@ private:
 	ui::UIWindow* popUpWindow;
 
 	Color testColor;
-	glm::vec2 storedScreenSize;
+	glm::ivec2 storedScreenSize;
 	ui::UIWindow* selectedWindow;
 	StateMachine* state;
 };

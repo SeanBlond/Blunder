@@ -50,7 +50,7 @@ class StateMachine
 {
 public:
     // Cosntructor & Destructor
-    StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeCamera);
+    StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeCamera, glm::ivec2 dimensions = glm::ivec2(0));
     ~StateMachine();
 
     // Getters
@@ -63,11 +63,13 @@ public:
     OrbitCamera* getCamera() { return activeCamera; }
     scn::Scene* getScene() { return scene; }
     ui::WindowPosition* getSelectedWindowPosition() { return selectedWindowPosition; }
+    glm::ivec2 getWindowDimensions() { return windowDimensions; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }
     void setTextInput(ui::TextInput* textInput) { this->textInput = textInput; }
     void setSelectedWindowPosition(ui::WindowPosition* position) { this->selectedWindowPosition = position; }
+    void setWindowDimensions(glm::ivec2 dimensions) { this->windowDimensions = dimensions; }
 
     //Functions
     void selectObject(obj::Object* newObject);
@@ -90,6 +92,7 @@ private:
     ui::WindowPosition* selectedWindowPosition;
     glm::vec3 saveValue;
     glm::vec3 stateAxis;
+    glm::ivec2 windowDimensions;
 };
 
 #endif

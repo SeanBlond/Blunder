@@ -1,11 +1,12 @@
 #include "StateMachine.h"
 
 // Cosntructor & Destructor
-StateMachine::StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeCamera)
+StateMachine::StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeCamera, glm::ivec2 dimensions)
 {
     this->activeCamera = activeCamera;
     this->scene = scene;
     this->mouse = mouse;
+    this->windowDimensions = dimensions;
     currentState = SM_NONE;
     transforming = false;
     UIInteracting = false;

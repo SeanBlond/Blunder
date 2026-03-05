@@ -45,7 +45,7 @@ scn::Scene activeScene;
 int obj::Object::nextID = 0;
 
 // State Machine Info
-StateMachine state(&activeScene, &mouse, &camera);
+StateMachine state(&activeScene, &mouse, &camera, glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT));
 
 // Initialize static members
 TimeManager* TimeManager::instancePtr = nullptr;
@@ -135,10 +135,6 @@ int main()
         glm::vec3 viewportColor = colors::murkyGrey.rgb();
         glClearColor(viewportColor.x, viewportColor.y, viewportColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // UI Math
-        float uiwidth = (0.25f) * SCREEN_HEIGHT;
-        glViewport(uiwidth, 0, SCREEN_WIDTH - (2.0f * uiwidth), SCREEN_HEIGHT);
 
         // Time Management
         Time->UpdateTime(glfwGetTime());

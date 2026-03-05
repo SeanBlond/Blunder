@@ -134,7 +134,55 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
+    // Getting (and temporarily storing) the mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
+    // Finding clicked element by looping through each element within each attribute
+    //std::cout << "Mouse Pos: " << smath::outputVec2(mousePos) << std::endl;
+    for (int i = 0; i < colorAttribute->getElementCount(); i++)
+    {
+        ui::AttributeElement* currentElement = colorAttribute->getElement(i);
+
+        if (currentElement->getInteractable())
+
+            // Collision detection
+            if (currentElement->checkCollision(mousePos) && !state->getTransforming())
+            {
+                // Clicking an Element
+                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+                {
+                    state->changeState(SM_UI_INTERACT);
+                    clickedElement = currentElement;
+                    clickedElement->clicked = true;
+                    clickedElement->OnClick(state);
+                }
+
+                // Highilighting an Element
+                else
+                    currentElement->highlighted = true;
+            }
+
+        // Unhighlighting an Element
+        else if (currentElement->highlighted)
+            currentElement->highlighted = false;
+    }
+
+    // Managing Clicked Element
+    if (clickedElement != nullptr)
+    {
+        clickedElement->OnHold(state);
+
+        // Unclicking an Element
+        if (clickedElement->clicked && !glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+        {
+            clickedElement->OnRelease(state);
+            clickedElement->clicked = false;
+            clickedElement = nullptr;
+        }
+    }
 }
 void ColorWindow::UnselectWindow()
 {

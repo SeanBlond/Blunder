@@ -197,7 +197,7 @@ WindowManager::~WindowManager()
 }
 
 // Functions
-void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
+void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 {
 	// Checking if screen size needs to be updated
 	if (storedScreenSize != screenSize)
@@ -206,27 +206,33 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 		if (popUpWindow)
 		{
 			// Updating position to stay in the same relative position to the screen size
-			glm::vec2 relativeOffset = popUpWindow->getPosition().offset / storedScreenSize;
-			popUpWindow->setOffset(relativeOffset * screenSize);
+			glm::vec2 relativeOffset = popUpWindow->getPosition().offset / (glm::vec2)storedScreenSize;
+			popUpWindow->setOffset(relativeOffset * (glm::vec2)screenSize);
 		}
 
 		// Updating free window positions
 		for (int i = 0; i < freeWindows.size(); i++)
 		{
 			// Updating position to stay in the same relative position to the screen size
-			glm::vec2 relativeOffset = freeWindows[i]->getPosition().offset / storedScreenSize;
-			freeWindows[i]->setOffset(relativeOffset * screenSize);
+			glm::vec2 relativeOffset = freeWindows[i]->getPosition().offset / (glm::vec2)storedScreenSize;
+			freeWindows[i]->setOffset(relativeOffset * (glm::vec2)screenSize);
 		}
 
 		// Updating root locked window size
-		rootLockedWindow->setDimensions(screenSize);
+		rootLockedWindow->setDimensions((glm::vec2)screenSize);
 
 		// Updating stored screen size
 		storedScreenSize = screenSize;
+
+		// Updating State Machine window size
+		state->setWindowDimensions(screenSize);
 	}
 
 	// Getting mouse position
 	glm::vec2 mousePos = state->getMouse()->mousePos;
+
+	// Inverting mouse pos so that (0, 0) is at bottom left instead of top left
+	mousePos.y = screenSize.y - mousePos.y;
 
 	// If the pop-up window exists, only check it
 	if (popUpWindow)
@@ -259,9 +265,11 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::vec2 screenSize)
 		if (!freeWindowSelected)
 		{
 			selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
-			if (selectedWindow)
-				selectedWindow->ManageInteraction(window, state);
 		}
+
+		// Running Manage Interaction (if there is a selected window)
+		if (selectedWindow)
+			selectedWindow->ManageInteraction(window, state);
 	}
 
 	// Passing selected window position to state machine
@@ -288,7 +296,7 @@ void WindowManager::DrawWindows(ui::UIRenderer* renderer)
 	if (popUpWindow)
 		popUpWindow->DrawWindow(renderer);
 }
-void WindowManager::CreateDefaultWindows(glm::vec2 screenSize)
+void WindowManager::CreateDefaultWindows(glm::ivec2 screenSize)
 {
 	storedScreenSize = screenSize;
 

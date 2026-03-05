@@ -111,8 +111,11 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Getting (and temporarily storing) the mouse Position
-    glm::vec2 mousePos = state->getMouse()->mousePos;
+    // Getting (and temporarily storing) the mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
     // Checking if StateMachine selected object differs from attribute object, and if it does, changes it
     if (attributeObject != state->getSelectedObject())
@@ -121,7 +124,6 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     }
 
     // Finding clicked element by looping through each element within each attribute
-    std::cout << "Mouse Pos: " << smath::outputVec2(mousePos) << std::endl;
     for (int i = 0; i < attributes.size(); i++)
     {
         for (int j = 0; j < attributes[i]->getElementCount(); j++)

@@ -50,11 +50,11 @@ void Dropdown::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = glm::vec4(
-        position.getRightCorners().x,
-        position.parentWindow->getHeight() - position.getRightCorners().w,
-        position.getRightCorners().z,
-        position.parentWindow->getHeight() - position.getRightCorners().y
+    glm::vec4 corners = position.getRightCorners() + glm::vec4(
+        position.parentWindow->getXOffset(),
+        position.parentWindow->getYOffset(),
+        position.parentWindow->getXOffset(),
+        position.parentWindow->getYOffset()
     );
     interactable = new ui::QuadInteractable(corners);
 }
