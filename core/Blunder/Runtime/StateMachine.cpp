@@ -168,9 +168,20 @@ void StateMachine::UpdateMouse(GLFWwindow* window)
     // TODO: Make sensitivty a member variable
     float sensitivity = 0.5f;
 
-    // Checking if mouse should be wrapped around the selected window
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+    double xposIn, yposIn;
+    glfwGetCursorPos(window, &xposIn, &yposIn);
+    std::cout << "Read raw mouse data: " << smath::outputVec2(glm::vec2(xposIn, yposIn)) << std::endl;
+
+    /*
+    // Checking if mouse should be hidden when ui interacting
     if (selectedWindowPosition && currentState == SM_UI_INTERACT)
         mouse->UpdateMouse(window, sensitivity, selectedWindowPosition->getCorners());
     else
         mouse->UpdateMouse(window, sensitivity);
+    */
 }
