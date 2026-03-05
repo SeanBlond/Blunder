@@ -228,55 +228,53 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 		state->setWindowDimensions(screenSize);
 	}
 
-	// Getting mouse position
-	glm::vec2 mousePos = state->getMouse()->mousePos;
-
-	// Inverting mouse pos so that (0, 0) is at bottom left instead of top left
-	mousePos.y = screenSize.y - mousePos.y;
-
-	// If the pop-up window exists, only check it
-	if (popUpWindow)
+	// Updating selected window if the UI is not actively being interacted with
+	if (state->getState() != SM_UI_INTERACT)
 	{
-		// Check for collision
-		glm::vec4 checkCorners = popUpWindow->getPosition().getCorners();
-		if (smath::checkUICollision(mousePos, checkCorners))
-			selectedWindow = popUpWindow;
-	}
-	// Checking non-pop-up windows
-	else
-	{
-		// Checking free windows
-		bool freeWindowSelected = false;
-		if (freeWindows.size() > 0)
+		// Getting mouse position
+		glm::vec2 mousePos = state->getMouse()->mousePos;
+
+		// Inverting mouse pos so that (0, 0) is at bottom left instead of top left
+		mousePos.y = screenSize.y - mousePos.y;
+
+		// If the pop-up window exists, only check it
+		if (popUpWindow)
 		{
-			// Looping through each open window to check for collision
-			for (int i = 0; i < freeWindows.size(); i++)
+			// Check for collision
+			glm::vec4 checkCorners = popUpWindow->getPosition().getCorners();
+			if (smath::checkUICollision(mousePos, checkCorners))
+				selectedWindow = popUpWindow;
+		}
+		// Checking non-pop-up windows
+		else
+		{
+			// Checking free windows
+			bool freeWindowSelected = false;
+			if (freeWindows.size() > 0)
 			{
-				// Checking for collision
-				if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
+				// Looping through each open window to check for collision
+				for (int i = 0; i < freeWindows.size(); i++)
 				{
-					freeWindowSelected = true;
-					selectedWindow = freeWindows[i];
+					// Checking for collision
+					if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
+					{
+						freeWindowSelected = true;
+						selectedWindow = freeWindows[i];
+					}
 				}
 			}
-		}
 
-		// Checking locked window collision (only if no free window was selected)
-		if (!freeWindowSelected)
-		{
-			selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
+			// Checking locked window collision (only if no free window was selected)
+			if (!freeWindowSelected)
+			{
+				selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
+			}
 		}
-
-		// Running Manage Interaction (if there is a selected window)
-		if (selectedWindow)
-			selectedWindow->ManageInteraction(window, state);
 	}
 
-	// Passing selected window position to state machine
+	// Running Manage Interaction (if there is a selected window)
 	if (selectedWindow)
-		state->setSelectedWindowPosition(selectedWindow->getPositionAddress());
-	else
-		state->setSelectedWindowPosition(nullptr);
+		selectedWindow->ManageInteraction(window, state);
 
 	// TODO:
 	// Create UpdateWindow functions in the UIWindow class that get called when the window is running, but not being interacted with

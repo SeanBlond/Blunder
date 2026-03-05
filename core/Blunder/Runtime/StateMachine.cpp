@@ -168,20 +168,28 @@ void StateMachine::UpdateMouse(GLFWwindow* window)
     // TODO: Make sensitivty a member variable
     float sensitivity = 0.5f;
 
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (glfwRawMouseMotionSupported())
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-    double xposIn, yposIn;
-    glfwGetCursorPos(window, &xposIn, &yposIn);
-    std::cout << "Read raw mouse data: " << smath::outputVec2(glm::vec2(xposIn, yposIn)) << std::endl;
-
-    /*
     // Checking if mouse should be hidden when ui interacting
-    if (selectedWindowPosition && currentState == SM_UI_INTERACT)
-        mouse->UpdateMouse(window, sensitivity, selectedWindowPosition->getCorners());
+    if (currentState == SM_UI_INTERACT && glfwRawMouseMotionSupported())
+    {
+        if (!mouse->rawData)
+        {
+            std::cout << "Raw Data Mode: ON" << std::endl;
+            mouse->rawData = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        }
+    }
     else
-        mouse->UpdateMouse(window, sensitivity);
-    */
+    {
+        if (mouse->rawData)
+        {
+            std::cout << "Raw Data Mode: OFF" << std::endl;
+            mouse->rawData = false;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+        }
+    }
+
+    // Updating mouse data
+    mouse->UpdateMouse(window, sensitivity);
 }

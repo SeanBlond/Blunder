@@ -13,9 +13,10 @@ enum EditingState { SM_NONE, SM_SELECT, SM_TRANSLATE, SM_ROTATE, SM_SCALE, SM_UI
 
 struct Mouse 
 {
-    Mouse(glm::vec2 pos = glm::vec2(0)) : mousePos(pos), previousMouse(pos), mouseDelta(glm::vec2(0)) {}
+    Mouse(glm::vec2 pos = glm::vec2(0)) : mousePos(pos), previousMouse(pos), mouseDelta(glm::vec2(0)), rawData(false) {}
     glm::vec2 mousePos;
     glm::vec2 mouseDelta;
+    bool rawData;
 
     void UpdateMouse(GLFWwindow* window, float sensitivity) 
     { 
@@ -25,21 +26,6 @@ struct Mouse
         previousMouse = mousePos; 
         mousePos = glm::vec2(xposIn, yposIn); 
         mouseDelta = (previousMouse - mousePos) * sensitivity * glm::vec2(-1, 1);
-    }
-    void UpdateMouse(GLFWwindow* window, float sensitivity, glm::vec4 bounds) 
-    {
-        double xPos, yPos;
-        glfwGetCursorPos(window, &xPos, &yPos);
-
-        glm::vec2 newMousePos = smath::wrapPosition(glm::vec2(xPos, yPos), bounds);
-        
-        glfwSetCursorPos(window, newMousePos.x, newMousePos.y);
-
-        // Calculating mouseDelta
-        previousMouse = mousePos;
-        mousePos = newMousePos;
-        glm::vec2 dimensions = glm::vec2(abs(bounds.z - bounds.x), abs(bounds.w - bounds.y)) * 0.5f;
-        mouseDelta = smath::wrapPosition(previousMouse - mousePos, glm::vec4(-dimensions, dimensions)) * sensitivity * glm::vec2(-1, 1);
     }
 
 private:
@@ -62,13 +48,11 @@ public:
     Mouse* getMouse() { return mouse; }
     OrbitCamera* getCamera() { return activeCamera; }
     scn::Scene* getScene() { return scene; }
-    ui::WindowPosition* getSelectedWindowPosition() { return selectedWindowPosition; }
     glm::ivec2 getWindowDimensions() { return windowDimensions; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }
     void setTextInput(ui::TextInput* textInput) { this->textInput = textInput; }
-    void setSelectedWindowPosition(ui::WindowPosition* position) { this->selectedWindowPosition = position; }
     void setWindowDimensions(glm::ivec2 dimensions) { this->windowDimensions = dimensions; }
 
     //Functions
@@ -89,7 +73,6 @@ private:
     Mouse* mouse;
     OrbitCamera* activeCamera;
     ui::TextInput* textInput;
-    ui::WindowPosition* selectedWindowPosition;
     glm::vec3 saveValue;
     glm::vec3 stateAxis;
     glm::ivec2 windowDimensions;
