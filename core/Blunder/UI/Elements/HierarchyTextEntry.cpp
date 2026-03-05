@@ -42,7 +42,18 @@ void HierarchyTextEntry::UpdateElement(const ElementPosition& newPosition)
 {
     this->position = newPosition;
 
-    // TODO: Update interactable
+    // Updating interactable
+    if (interactable)
+    {
+        delete interactable;
+    }
+    glm::vec4 corners = glm::vec4(
+        position.getRightCorners().x,
+        position.parentWindow->getHeight() - position.getRightCorners().w,
+        position.getRightCorners().z,
+        position.parentWindow->getHeight() - position.getRightCorners().y
+    );
+    interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function

@@ -129,7 +129,6 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             ui::AttributeElement* currentElement = attributes[i]->getElement(j);
 
             if (currentElement->getInteractable())
-                std::cout << "Checking element \"" << currentElement->getLabel() << "\" at pos: " << smath::outputVec2(currentElement->getInteractable()->getPosition()) << std::endl;
 
             // Collision detection
             if (currentElement->checkCollision(mousePos) && !state->getTransforming())
