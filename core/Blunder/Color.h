@@ -116,7 +116,7 @@ public:
 		int g = static_cast<int>(smath::clamp(rgb.y, 0.0f, 1.0f) * 255);
 		int b = static_cast<int>(smath::clamp(rgb.z, 0.0f, 1.0f) * 255);
 
-		std::string result = '#' + smath::decToHexa(r) + smath::decToHexa(g) + smath::decToHexa(b);
+		std::string result = '#' + smath::decToHexa(r, 2) + smath::decToHexa(g, 2) + smath::decToHexa(b, 2);
 		return result;
 	}
 	static std::string RGBAtoHEX(glm::vec4 rgba)
@@ -127,7 +127,7 @@ public:
 		int b = static_cast<int>(smath::clamp(rgba.z, 0.0f, 1.0f) * 255);
 		int a = static_cast<int>(smath::clamp(rgba.w, 0.0f, 1.0f) * 255);
 
-		std::string result = '#' + smath::decToHexa(r) + smath::decToHexa(g) + smath::decToHexa(b) + smath::decToHexa(a);
+		std::string result = '#' + smath::decToHexa(r, 2) + smath::decToHexa(g, 2) + smath::decToHexa(b, 2) + smath::decToHexa(a, 2);
 		return result;
 	}
 	static std::string HSVtoHEX(glm::vec3 hsv)

@@ -436,6 +436,50 @@ namespace smath
         // Returning the ouput
         return hexadecimal;
     }
+    inline std::string decToHexa(int value, int numChars)
+    {
+        // String that values will be stored in
+        std::string hexadecimal = "";
+
+        // If value is already 0, just convert it to a string of 0s
+        if (value == 0)
+        {
+            for (int i = 0; i < numChars; i++)
+            {
+                hexadecimal += '0';
+            }
+            return hexadecimal;
+        }
+
+        // Converting the value by looping through each decimal
+        int index = 0;
+        while (value != 0)
+        {
+            // Getting the remainder
+            int remainder = value % 16;
+
+            // Converting the remainder to hexadecimal
+            if (remainder < 10)
+                hexadecimal += 48 + remainder;
+            else
+                hexadecimal += 55 + remainder;
+
+            // Moving on to the next decimal place
+            value /= 16;
+        }
+        
+        // Adding 0s to fir char length
+        for (int i = 0; i < numChars - hexadecimal.length(); i++)
+        {
+            hexadecimal += '0';
+        }
+
+        // Reversing the string
+        std::reverse(hexadecimal.begin(), hexadecimal.end());
+
+        // Returning the ouput
+        return hexadecimal;
+    }
     inline int hexaToDec(std::string value)
     {
         // Integer that values will be stored in

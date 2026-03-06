@@ -89,25 +89,33 @@ void ColorWindow::UpdateWindow()
 void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
     // TODO: Create a window function that will get called every frame that manages changes even if it's not being interacted with (replace current UpdateWindow() with a ResizeWindow())
-    
+   
     // Updating color values
-    if (!interactingColor.interacting)
+    if (colorAttribute->getElement(colorAttribute->getElementCount() - 1)->clicked) // Changing color with hex value
     {
-        if (currentColorMode == 0) // RGBA
-            interactingColor.selectedColor->setRGBA(colorData);
-        else if (currentColorMode == 1) // HSVA
-            interactingColor.selectedColor->setHSVA(colorData);
-
+        // Updating hex values
+        interactingColor.selectedColor->setHex(hexCode);
     }
     else
     {
-        if (currentColorMode == 0) // RGBA
-            colorData = interactingColor.selectedColor->rgba();
-        else if (currentColorMode == 1) // HSVA
-            colorData = interactingColor.selectedColor->hsva();
-
-        // Updating Color Labels
+        if (interactingColor.interacting || colorAttribute->getElement(1)->clicked) // Changing color value with color seelctor or dropdown change
+        {
+            if (currentColorMode == 0) // RGBA
+                colorData = interactingColor.selectedColor->rgba();
+            else if (currentColorMode == 1) // HSVA
+                colorData = interactingColor.selectedColor->hsva();
+        }
+        else // Changing color with float sliders
+        {
+            if (currentColorMode == 0) // RGBA
+                interactingColor.selectedColor->setRGBA(colorData);
+            else if (currentColorMode == 1) // HSVA
+                interactingColor.selectedColor->setHSVA(colorData);
+        }
+        // Setting hex value
+        hexCode = interactingColor.selectedColor->hex();
     }
+
 
     // Updating Color Labels
     if (currentColorMode == 0 && colorAttribute->getElement(2)->getLabel() != "R") // RGB
@@ -122,9 +130,6 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
         colorAttribute->getElement(3)->setLabel("S");
         colorAttribute->getElement(4)->setLabel("V");
     }
-
-    // Updating hex values
-    //selectedColor->setHex(hexCode);
 
     // Adding Base Quad
     renderer->addQuad(position.getCorners(), 0.0f, glm::vec3(0.35f));
@@ -155,8 +160,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             // Rendering color selector larger than normal elements
             float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
             attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
-            element->RenderElement(renderer, 
-                mediumText());
+            element->RenderElement(renderer, mediumText());
 
             // Updating YPos
             attributeYPos -= (colorSelectorHeight * 0.5f) + elementHeight * 0.5f + position.getBuffer();
