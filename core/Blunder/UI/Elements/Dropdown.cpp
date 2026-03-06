@@ -4,6 +4,8 @@ using namespace ui;
 // Dropdown Mouse Functions
 void Dropdown::OnClick(StateMachine* state)
 {
+    state->changeState(SM_UI_INTERACT);
+
     // Activating dropdown
     droppedDown = true;
 
@@ -12,23 +14,27 @@ void Dropdown::OnClick(StateMachine* state)
 }
 void Dropdown::OnHold(StateMachine* state)
 {
-    // Checking if option ui values have been set before checking mouse 
-    if (optionSize.x != 0)
-    {
-        // Checking each options for a mouse y-collision
-        for (int i = 0; i < options.size(); i++)
-        {
-            // Setting corners
-            glm::vec2 optionCorners = glm::vec2(
-                firstOptionYPos - (optionSize.y / 2) + (optionSize.y * (i + 1)),
-                firstOptionYPos + (optionSize.y / 2) + (optionSize.y * (i + 1))
-            );
+    // Getting mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
-            // Checking collision
-            if (smath::checkUICollision_Y(state->getMouse()->mousePos, optionCorners))
-            {
-                *value = i;
-            }
+    // Checking each options for a mouse y-collision
+    for (int i = 0; i < options.size(); i++)
+    {
+        // Setting corners
+        float optionHeight = position.getHeight();
+        float firstOptionYPos = (position.top_y - (optionHeight / 2)) + position.getYOffset();
+        glm::vec2 optionCorners = glm::vec2(
+            firstOptionYPos - (optionHeight / 2) - (optionHeight * (i + 1)),
+            firstOptionYPos + (optionHeight / 2) - (optionHeight * (i + 1))
+        );
+
+        // Checking collision
+        if (smath::checkUICollision_Y(mousePos, optionCorners))
+        {
+            *value = i;
         }
     }
 }
@@ -36,8 +42,6 @@ void Dropdown::OnRelease(StateMachine* state)
 {
     // Resetting values
     droppedDown = false;
-    optionSize = glm::vec2(0);
-    firstOptionYPos = 0;
     state->exitState();
 }
 
@@ -63,8 +67,8 @@ void Dropdown::UpdateElement(const ElementPosition& newPosition)
 // Render Function
 void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float ySize = (position.top_y - position.bottom_y);
+    float width = position.getWidth();
+    float ySize = position.getHeight();
     float yPos = position.top_y - (ySize / 2);
 
     // Drawing Label Text
@@ -89,8 +93,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
     {
 
         // Setting optionYSize for UI interaction
-        float optionWidth = position.getRightCorners().z - position.getRightCorners().x;
-        optionSize = glm::vec2(optionWidth, ySize);
+        float optionWidth = position.getWidthAfterSplit();
 
         // Checking if there is enough space for the dropdown to drop downwards
         bool directionDown = true;
@@ -99,10 +102,8 @@ void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
         {
             // Dropdown needs to drop upwards
             directionDown = false;
-            optionSize *= glm::vec2(1, -1);
+            //optionSize *= glm::vec2(1, -1);
         }
-
-        firstOptionYPos = position.parentWindow->getHeight() - yPos - (ySize / 2);
 
         // Drawing a quad that outlines the options
         glm::vec4 outlineCorner = glm::vec4(

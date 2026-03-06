@@ -2,7 +2,7 @@
 using namespace ui;
 
 // Toggle Mouse Functions
-void Toggle::OnClick(StateMachine* state) {}
+void Toggle::OnClick(StateMachine* state) { state->changeState(SM_UI_INTERACT); }
 void Toggle::OnHold(StateMachine* state) {}
 void Toggle::OnRelease(StateMachine* state)
 {

@@ -4,6 +4,9 @@ using namespace ui;
 // Int Slider Mouse Functions
 void IntSlider::OnClick(StateMachine* state)
 {
+    // Setting State
+    state->changeState(SM_UI_TRANSLATING);
+
     // Storing Initial Mouse Pos
     slideStarted = false;
     saveValue = *value;

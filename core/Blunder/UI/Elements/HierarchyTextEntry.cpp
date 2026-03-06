@@ -4,6 +4,8 @@ using namespace ui;
 // Hierarchy Text Entry Mouse Functions
 void HierarchyTextEntry::OnClick(StateMachine* state)
 {
+    state->changeState(SM_UI_INTERACT);
+
     // If the clicks occur within 0.25 second, it will register as a double click, and do text entry
     if (TimeManager::getInstance()->getTime() - clickTime < 0.25f)
     {

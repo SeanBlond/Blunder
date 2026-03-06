@@ -4,6 +4,7 @@ using namespace ui;
 // Text Entry Mouse Functions
 void TextEntry::OnClick(StateMachine* state)
 {
+    state->changeState(SM_UI_INTERACT);
     saveValue = *value;
 }
 void TextEntry::OnHold(StateMachine* state) {}

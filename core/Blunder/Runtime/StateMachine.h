@@ -9,7 +9,7 @@
 #include "../UI/UIPositioning.h"
 #include "../Scene/Scene.h"
 
-enum EditingState { SM_NONE, SM_SELECT, SM_TRANSLATE, SM_ROTATE, SM_SCALE, SM_UI_INTERACT, SM_UI_TYPING };
+enum EditingState { SM_NONE, SM_SELECT, SM_TRANSLATE, SM_ROTATE, SM_SCALE, SM_UI_INTERACT, SM_UI_TYPING, SM_UI_TRANSLATING };
 
 struct Mouse 
 {

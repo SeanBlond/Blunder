@@ -138,7 +138,6 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
                 // Clicking an Element
                 if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
                 {
-                    state->changeState(SM_UI_INTERACT);
                     clickedElement = currentElement;
                     clickedElement->clicked = true;
                     clickedElement->OnClick(state);
@@ -258,7 +257,6 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
     ui::Attribute* colorAttribute = new ui::Attribute("Color");
     colorAttribute->addElement(new ColorEntry("Test Color", &(object->testColor)));
     addAttribute(colorAttribute);
-    std::cout << "Attribute Color address: " << &(object->testColor) << std::endl;
 }
 void AttributeWindow::UnselectWindow()
 {

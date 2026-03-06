@@ -216,6 +216,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 			// Updating position to stay in the same relative position to the screen size
 			glm::vec2 relativeOffset = freeWindows[i]->getPosition().offset / (glm::vec2)storedScreenSize;
 			freeWindows[i]->setOffset(relativeOffset * (glm::vec2)screenSize);
+			freeWindows[i]->UpdateWindow();
 		}
 
 		// Updating root locked window size
@@ -229,7 +230,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 	}
 
 	// Updating selected window if the UI is not actively being interacted with
-	if (state->getState() != SM_UI_INTERACT)
+	if (state->getState() != SM_UI_TRANSLATING)
 	{
 		// Getting mouse position
 		glm::vec2 mousePos = state->getMouse()->mousePos;
@@ -310,6 +311,5 @@ void WindowManager::CreateDefaultWindows(glm::ivec2 screenSize)
 	// REMOVE AT SOME POINT
 	// Test Color Window
 	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &(state->getSelectedObject()->testColor));
-	std::cout << "Color address: " << &(state->getSelectedObject()->testColor) << std::endl;
 	addFreeWindow(testColorWindow);
 }

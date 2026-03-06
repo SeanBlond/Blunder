@@ -72,14 +72,6 @@ int main()
         return 1;
     }
 
-    const int resolution = 10;
-    for (int i = 0; i <= resolution; i++)
-    {
-        float saturation = (float)i / (float)resolution;
-        glm::vec3 tempHSV = glm::vec3(1.0f, saturation, 1.0f);
-        std::cout << "HSV " << smath::outputVec3(tempHSV) << " to RGB " << smath::outputVec3(Color::HSVtoRGB(tempHSV)) << " back to HSV " << smath::outputVec3(Color::RGBtoHSV(Color::HSVtoRGB(tempHSV))) << std::endl;
-    }
-
     // Loading software image
     GLFWimage images[1];
     images[0].pixels = stbi_load("assets/icon.png", &images[0].width, &images[0].height, 0, 4); // Load as RGBA

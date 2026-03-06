@@ -166,9 +166,9 @@ void ViewNav::OnHold(StateMachine* state)
     if (glm::length(state->getMouse()->mousePos - initialMousePos) > 1.0f || slideStarted)
     {
         // Setting state to be UI Transforming
-        if (state->getState() != SM_UI_INTERACT)
+        if (state->getState() != SM_UI_TRANSLATING)
         {
-            state->changeState(SM_UI_INTERACT);
+            state->changeState(SM_UI_TRANSLATING);
         }
 
         slideStarted = true;

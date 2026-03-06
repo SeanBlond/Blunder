@@ -193,7 +193,6 @@ void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
                 // Clicking an Element
                 if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
                 {
-                    state->changeState(SM_UI_INTERACT);
                     clickedElement = currentElement;
                     clickedElement->clicked = true;
                     clickedElement->OnClick(state);

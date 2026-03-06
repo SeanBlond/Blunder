@@ -223,7 +223,7 @@ namespace ui
     class Dropdown : public AttributeElement
     {
     public:
-        Dropdown(std::string label, int* value, std::vector<std::string> options) : value(value), options(options), optionSize(glm::vec2(0)), firstOptionYPos(0), droppedDown(false), AttributeElement(label, UI_DROPDOWN) {}
+        Dropdown(std::string label, int* value, std::vector<std::string> options) : value(value), options(options), droppedDown(false), AttributeElement(label, UI_DROPDOWN) {}
 
         // Element Functions
         void addOption(std::string option) { options.push_back(option); }
@@ -238,8 +238,6 @@ namespace ui
     private:
         int* value;
         bool droppedDown;
-        glm::vec2 optionSize;
-        float firstOptionYPos;
         std::vector<std::string> options; // Index corresponds to value
     };
 

@@ -8,6 +8,7 @@ void ColorEntry::OnRelease(StateMachine* state)
 {
     // TODO: Create Color Pop-Up window
     std::cout << "Color Entry clicked" << std::endl;
+    state->exitState();
 }
 
 // Update Function

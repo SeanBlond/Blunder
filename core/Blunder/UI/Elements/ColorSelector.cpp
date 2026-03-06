@@ -185,6 +185,9 @@ ColorSelector::~ColorSelector()
 // Mouse Functions
 void ColorSelector::OnClick(StateMachine* state)
 {
+    // Setting State
+    state->changeState(SM_UI_TRANSLATING);
+
     // Getting mouse Position (flipping the y because glfw is stupid)
     glm::vec2 mousePos = glm::vec2(
         state->getMouse()->mousePos.x,

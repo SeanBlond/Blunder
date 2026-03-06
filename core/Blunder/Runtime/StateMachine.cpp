@@ -99,6 +99,10 @@ void StateMachine::manageStateMachine()
         UIInteracting = true;
         break;
 
+    case SM_UI_TRANSLATING:
+        UIInteracting = true;
+        break;
+
     case SM_UI_TYPING:
         UIInteracting = true;
         break;
@@ -169,7 +173,7 @@ void StateMachine::UpdateMouse(GLFWwindow* window)
     float sensitivity = 0.5f;
 
     // Checking if mouse should be hidden when ui interacting
-    if (currentState == SM_UI_INTERACT && glfwRawMouseMotionSupported())
+    if (currentState == SM_UI_TRANSLATING && glfwRawMouseMotionSupported())
     {
         if (!mouse->rawData)
         {
