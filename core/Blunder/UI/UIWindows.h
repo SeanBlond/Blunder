@@ -159,7 +159,7 @@ namespace ui
     public:
         // Constructor & Deconstructor
         ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, "Color", 0.125), colorAttribute(nullptr), interactingColor(selectedColor), colorData(selectedColor->hsva()), clickedElement(nullptr)
-        { hexCode = storedHexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
+        { hexCode = storedHexCode = Color::RGBAtoHEX(selectedColor->rgba()); CreateUIFromSelected(); }
         ~ColorWindow()
         {
             ClearAttributes();
