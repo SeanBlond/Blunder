@@ -91,10 +91,26 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
     // TODO: Create a window function that will get called every frame that manages changes even if it's not being interacted with (replace current UpdateWindow() with a ResizeWindow())
    
     // Updating color values
-    if (colorAttribute->getElement(colorAttribute->getElementCount() - 1)->clicked) // Changing color with hex value
+    if (hexCode != storedHexCode) // Changing color with hex value
     {
-        // Updating hex values
-        interactingColor.selectedColor->setHex(hexCode);
+        // Checking if new hex code is valid
+        if (interactingColor.selectedColor->setHex(hexCode))
+        {
+            // New hex code is valid, setting Color
+            storedHexCode = hexCode;
+
+            // Storing new color data
+            if (currentColorMode == 0) // RGBA
+                colorData = interactingColor.selectedColor->rgba();
+            else if (currentColorMode == 1) // HSVA
+                colorData = interactingColor.selectedColor->hsva();
+        }
+        else
+        {
+            // New hex code isn't valid, resetting it
+            std::cout << "ERROR: Failed to convert hex code \"" << hexCode << "\" to a color value" << std::endl;
+            hexCode = storedHexCode;
+        }
     }
     else
     {
@@ -112,8 +128,9 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             else if (currentColorMode == 1) // HSVA
                 interactingColor.selectedColor->setHSVA(colorData);
         }
+
         // Setting hex value
-        hexCode = interactingColor.selectedColor->hex();
+        storedHexCode = hexCode = interactingColor.selectedColor->hex();
     }
 
 

@@ -36,11 +36,53 @@ public:
 	void setRGBA(const glm::vec4 rgba) { color = rgba; }
 	void setHSV(const glm::vec3 hsv) {color = glm::vec4(HSVtoRGB(hsv), color.w); }
 	void setHSVA(const glm::vec4 hsva) { color = HSVAtoRGBA(hsva); }
-	void setHex(const std::string hex) { glm::vec4 testConvert = HEXtoRGBA(hex); color = (testConvert == glm::vec4(-1) ? color : testConvert); }
 	void setHue(const float hue)               { setHSV(glm::vec3(hue, s(),        v())); }
 	void setSaturation(const float saturation) { setHSV(glm::vec3(h(), saturation, v())); }
 	void setValue(const float value)           { setHSV(glm::vec3(h(), s(),        value)); }
 	void setAlpha(const float alpha) { color.w = alpha; }
+	bool setHex(std::string hex) 
+	{ 
+		// Erasing hashtag symbol (if it exists)
+		if (hex[0] == '#')
+		{
+			hex.erase(hex.begin());
+		}
+
+		// Checking if hex value has alpha 
+		if (hex.length() == 8) // alpha
+		{
+			glm::vec4 testConvert = HEXtoRGBA(hex);
+			if (testConvert == glm::vec4(-1))
+			{
+				color = rgba();
+				return false; // Returning false for failed conversion
+			}
+			else
+			{
+				color = testConvert;
+				return true; // Returning true for successful conversion
+			}
+
+		}
+		else if (hex.length() == 6) // no alpha
+		{
+			glm::vec3 testConvert = HEXtoRGB(hex);
+			if (testConvert == glm::vec3(-1))
+			{
+				color = rgba();
+				return false; // Returning false for failed conversion
+			}
+			else
+			{
+				color = glm::vec4(testConvert, alpha());;
+				return true; // Returning true for successful conversion
+
+			}
+		}
+
+		// Returning false for improper length
+		return false;
+	}
 
 	// RGB <--> HSV Functions
 	static glm::vec3 RGBtoHSV(glm::vec3 rgb) 

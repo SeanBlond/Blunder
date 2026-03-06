@@ -499,8 +499,8 @@ namespace smath
                 tempDecimal = (value[i] - (65 - 10));
 
             // Checking for chars 'a' through 'f'
-            else if (141 <= value[i] && value[i] <= 146)
-                tempDecimal = (value[i] - (141 - 10));
+            else if (97 <= value[i] && value[i] <= 102)
+                tempDecimal = (value[i] - (97 - 10));
 
             // Char could not be converted to decimal
             else

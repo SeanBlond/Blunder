@@ -159,7 +159,7 @@ namespace ui
     public:
         // Constructor & Deconstructor
         ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, "Color", 0.125), colorAttribute(nullptr), interactingColor(selectedColor), colorData(selectedColor->hsva()), clickedElement(nullptr)
-        { hexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
+        { hexCode = storedHexCode = Color::RGBAtoHEX(colorData); CreateUIFromSelected(); }
         ~ColorWindow()
         {
             ClearAttributes();
@@ -180,6 +180,7 @@ namespace ui
         int currentColorMode = 1;
         glm::vec4 colorData;
         std::string hexCode;
+        std::string storedHexCode;
         ui::Attribute* colorAttribute;
         ui::AttributeElement* clickedElement;
     };
