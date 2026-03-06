@@ -42,7 +42,7 @@ public:
 	void setValue(const float value)           { setHSV(glm::vec3(h(), s(),        value)); }
 	void setAlpha(const float alpha) { color.w = alpha; }
 
-	// RGB <--> HSV Functions (Used Algorithm from Wikipedia Page: https://en.wikipedia.org/wiki/HSL_and_HSV)
+	// RGB <--> HSV Functions
 	static glm::vec3 RGBtoHSV(glm::vec3 rgb) 
 	{
 		// Necessary Values for Calculations
@@ -83,28 +83,27 @@ public:
 	static glm::vec4 RGBAtoHSVA(glm::vec4 rgba) { return glm::vec4(RGBtoHSV(rgba), rgba.w); }
 	static glm::vec3 HSVtoRGB(glm::vec3 hsv) 
 	{
-		// Necessary Values for Calculations
-		float h = hsv.x * 6.0f;
-		float c = hsv.z * hsv.y;
-		float x = c * (1.0f - (std::fmod(h, 2.0f) - 1.0f));
+		// Getting hue
+		float h = smath::fmod(hsv.x, 1.0f);
 
-		// Assigning (some) RGB values
+		// Sector calculations
+		int i = static_cast<int>(h * 6.0f);
+		float f = h * 6.0f - i;
+		float p = hsv.z * (1.0f - hsv.y);
+		float q = hsv.z * (1.0f - f * hsv.y);
+		float t = hsv.z * (1.0f - (1.0f - f) * hsv.y);
+
+		// Assigning RGB values
 		glm::vec3 rgb;
-		if (h >= 0 && h < 1)
-			rgb = glm::vec3(c, x, 0);
-		else if (h >= 1 && h < 2)
-			rgb = glm::vec3(x, c, 0);
-		else if (h >= 2 && h < 3)
-			rgb = glm::vec3(0, c, x);
-		else if (h >= 3 && h < 4)
-			rgb = glm::vec3(0, x, c);
-		else if (h >= 4 && h < 5)
-			rgb = glm::vec3(x, 0, c);
-		else
-			rgb = glm::vec3(c, 0, x);
-
-		// Final changes to rgb
-		rgb += glm::vec3(hsv.z - c);
+		switch (i % 6)
+		{
+		case 0: rgb = glm::vec3(hsv.y, t, p); break;
+		case 1: rgb = glm::vec3(q, hsv.z, p); break;
+		case 2: rgb = glm::vec3(p, hsv.z, t); break;
+		case 3: rgb = glm::vec3(p, q, hsv.z); break;
+		case 4: rgb = glm::vec3(t, p, hsv.z); break;
+		case 5: rgb = glm::vec3(hsv.z, p, q); break;
+		}
 
 		// Returning the RGB value
 		return rgb;
