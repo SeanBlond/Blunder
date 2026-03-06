@@ -75,9 +75,9 @@ int main()
     const int resolution = 10;
     for (int i = 0; i <= resolution; i++)
     {
-        float hue = (float)i / (float)resolution;
-        glm::vec3 tempHSV = glm::vec3(hue, 1.0f, 1.0f);
-        std::cout << "HSV " << smath::outputVec3(tempHSV) << " to RGB " << smath::outputVec3(Color::HSVtoRGB(tempHSV)) << std::endl;
+        float saturation = (float)i / (float)resolution;
+        glm::vec3 tempHSV = glm::vec3(1.0f, saturation, 1.0f);
+        std::cout << "HSV " << smath::outputVec3(tempHSV) << " to RGB " << smath::outputVec3(Color::HSVtoRGB(tempHSV)) << " back to HSV " << smath::outputVec3(Color::RGBtoHSV(Color::HSVtoRGB(tempHSV))) << std::endl;
     }
 
     // Loading software image

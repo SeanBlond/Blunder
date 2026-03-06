@@ -97,6 +97,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             interactingColor.selectedColor->setRGBA(colorData);
         else if (currentColorMode == 1) // HSVA
             interactingColor.selectedColor->setHSVA(colorData);
+
     }
     else
     {
@@ -104,6 +105,22 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
             colorData = interactingColor.selectedColor->rgba();
         else if (currentColorMode == 1) // HSVA
             colorData = interactingColor.selectedColor->hsva();
+
+        // Updating Color Labels
+    }
+
+    // Updating Color Labels
+    if (currentColorMode == 0 && colorAttribute->getElement(2)->getLabel() != "R") // RGB
+    {
+        colorAttribute->getElement(2)->setLabel("R");
+        colorAttribute->getElement(3)->setLabel("G");
+        colorAttribute->getElement(4)->setLabel("B");
+    }
+    else if (currentColorMode == 1 && colorAttribute->getElement(2)->getLabel() != "H") // HSV
+    {
+        colorAttribute->getElement(2)->setLabel("H");
+        colorAttribute->getElement(3)->setLabel("S");
+        colorAttribute->getElement(4)->setLabel("V");
     }
 
     // Updating hex values

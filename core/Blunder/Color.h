@@ -45,68 +45,66 @@ public:
 	// RGB <--> HSV Functions
 	static glm::vec3 RGBtoHSV(glm::vec3 rgb) 
 	{
-		// Necessary Values for Calculations
-		glm::vec3 hsv;
-		float cmax = smath::max(rgb.x, rgb.y, rgb.z);
-		float cmin = smath::min(rgb.x, rgb.y, rgb.z);
-		float delta = cmax - cmin;
+		// Necessary Values for 
+		const float chromaMax = smath::max(rgb.x, rgb.y, rgb.z);
+		const float chromaMin = smath::min(rgb.x, rgb.y, rgb.z);
+		const float chromaDelta = chromaMax - chromaMin;
 
-		hsv.z = cmax;
+		// Calculating saturation
+		const float saturation = (chromaMax <= 0.0f ? 0 : chromaDelta / chromaMax);
 
-		// Checking for NaN safety stuff :(
-		if (delta <= 0.0001f || cmax <= 0.0f)
+		// Calculating saturation
+		const float value = chromaMax;
+
+		// Calculating hue
+		float hue = 0.0f;
+		if (chromaDelta <= 0.0f) // NaN
+			return glm::vec3(hue, saturation, value);
+		if (chromaMax == rgb.x)
+			hue = 60.0f * fmod((rgb.y - rgb.z) / chromaDelta, 6.0f);
+		else if (chromaMax == rgb.y)
+			hue = 60.0f * (((rgb.z - rgb.x) / chromaDelta) + 2.0f);
+		else if (chromaMax == rgb.z)
+			hue = 60.0f * (((rgb.x - rgb.y) / chromaDelta) + 4.0f);
+
+		// Making sure hue is above 0
+		if (hue < 0.0f)
 		{
-			hsv.x = 0;
-			hsv.y = 0;
-			return hsv;
+			hue += 360.0f;
 		}
 
-		float hue = 0.0f;
-		if (rgb.x >= cmax)
-			hue = (rgb.y - rgb.z) / cmax;
-		else if (rgb.y >= cmax)
-			hue = ((rgb.z - rgb.x) / delta) + 2.0f;
-		else
-			hue = ((rgb.x - rgb.y) / delta) + 4.0f;
-		hue /= (6.0f);
+		// Converting hue to 0-1
+		hue /= 360.0f;
 
-		if (hue < 0.0f)
-			hue += 1.0f;
-
-		// Setting hue and saturation
-		hsv.x = hue;
-		hsv.y = (delta / cmax);
-
-		// Returning Final Value
-		return hsv;
+		return glm::vec3(hue, saturation, value);
 	}
 	static glm::vec4 RGBAtoHSVA(glm::vec4 rgba) { return glm::vec4(RGBtoHSV(rgba), rgba.w); }
 	static glm::vec3 HSVtoRGB(glm::vec3 hsv) 
 	{
-		// Getting hue
-		float h = smath::fmod(hsv.x, 1.0f);
+		// Getting hue (and other variables)
+		const float hue = hsv.x * 360.0f;
+		const float chroma = hsv.y * hsv.z;
+		const float huePrime = fmod(hue / 60.0f, 6.0f);
+		const float x = chroma * (1.0f - abs(fmod(huePrime, 2.0f) - 1.0f));
+		const float m = hsv.z - chroma;
 
-		// Sector calculations
-		int i = static_cast<int>(h * 6.0f);
-		float f = h * 6.0f - i;
-		float p = hsv.z * (1.0f - hsv.y);
-		float q = hsv.z * (1.0f - f * hsv.y);
-		float t = hsv.z * (1.0f - (1.0f - f) * hsv.y);
+		// Calculating rgb
+		glm::vec3 rgb = glm::vec3(0);
 
-		// Assigning RGB values
-		glm::vec3 rgb;
-		switch (i % 6)
-		{
-		case 0: rgb = glm::vec3(hsv.y, t, p); break;
-		case 1: rgb = glm::vec3(q, hsv.z, p); break;
-		case 2: rgb = glm::vec3(p, hsv.z, t); break;
-		case 3: rgb = glm::vec3(p, q, hsv.z); break;
-		case 4: rgb = glm::vec3(t, p, hsv.z); break;
-		case 5: rgb = glm::vec3(hsv.z, p, q); break;
-		}
+		if (huePrime <= 1.0f)
+			rgb = glm::vec3(chroma, x, 0);
+		else if (huePrime <= 2.0f)
+			rgb = glm::vec3(x, chroma, 0);
+		else if (huePrime <= 3.0f)
+			rgb = glm::vec3(0, chroma, x);
+		else if (huePrime <= 4.0f)
+			rgb = glm::vec3(0, x, chroma);
+		else if (huePrime <= 5.0f)
+			rgb = glm::vec3(x, 0, chroma);
+		else if (huePrime <= 6.0f)
+			rgb = glm::vec3(chroma, 0, x);
 
-		// Returning the RGB value
-		return rgb;
+		return rgb + glm::vec3(m);
 	}
 	static glm::vec4 HSVAtoRGBA(glm::vec4 hsva) { return glm::vec4(HSVtoRGB(hsva), hsva.w); }
 
