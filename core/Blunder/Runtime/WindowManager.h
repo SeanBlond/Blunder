@@ -101,7 +101,6 @@ private:
 	std::vector<ui::UIWindow*> freeWindows;
 	ui::UIWindow* popUpWindow;
 
-	Color testColor;
 	glm::ivec2 storedScreenSize;
 	ui::UIWindow* selectedWindow;
 	StateMachine* state;

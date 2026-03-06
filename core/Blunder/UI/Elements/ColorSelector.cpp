@@ -185,15 +185,32 @@ ColorSelector::~ColorSelector()
 // Mouse Functions
 void ColorSelector::OnClick(StateMachine* state)
 {
+    // Getting mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
+    setSelectedInteraction(mousePos);
 }
 void ColorSelector::OnHold(StateMachine* state)
 {
+    // Getting mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
+    // Managing interaction
+    interactingColor->interacting = true;
+    ManageMouseInteraction(mousePos);
 }
 void ColorSelector::OnRelease(StateMachine* state)
 {
-
+    // Resetting interaction
+    interactingColor->interacting = false;
+    selectedInteraction = -1;
+    state->exitState();
 }
 
 // Update Function
@@ -206,19 +223,22 @@ void ColorSelector::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void ColorSelector::RenderElement(UIRenderer* renderer, float textSize)
 {
-    // Rendering the Color Circle
+    // Updating values while not interacting
+    if (!interactingColor->interacting)
+    {
+        svMousePos = glm::vec2(interactingColor->selectedColor->s(), interactingColor->selectedColor->v());
+        hMousePos = glm::vec2(0, interactingColor->selectedColor->h());
+        aMousePos = glm::vec2(0, interactingColor->selectedColor->a());
+    }
+
+    // Getting widths of the different selectors
     float svWidth = position.getWidth() * (40.0f / 58.0f);
     float haWidth = position.getWidth() * (8.0f / 58.0f);
 
@@ -229,20 +249,16 @@ void ColorSelector::RenderElement(UIRenderer* renderer, float textSize)
     svShader->useShader();
     glm::mat4 transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::scale(glm::vec3(svWidth, position.getHeight(), 1.0f));
     svShader->setMat4("transform", transform);
-    svShader->setVec2("mousePos", glm::vec2(0.0f, 1.0f));
-    svShader->setFloat("currentHue", 0.0f);
+    svShader->setVec2("mousePos", svMousePos);
+    svShader->setFloat("currentHue", interactingColor->selectedColor->h());
     csMesh->DrawMesh();
-
-    // Rendering the Value Slider
-    glm::vec2 sliderSize = glm::vec2(position.getWidthAfterSplit(), position.getWidthBeforeSplit());
-
 
     // Drawing Hue Selector
     hShader->useShader();
     float hOffset = svWidth + position.getBuffer();
     transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::translate(glm::vec3(hOffset, 0, 0)) * smath::scale(glm::vec3(haWidth, position.getHeight(), 1.0f));
     hShader->setMat4("transform", transform);
-    hShader->setVec2("mousePos", glm::vec2(0.0f));
+    hShader->setVec2("mousePos", hMousePos);
     csMesh->DrawMesh();
 
     // Drawing Alpha Selector
@@ -250,6 +266,57 @@ void ColorSelector::RenderElement(UIRenderer* renderer, float textSize)
     float aOffset = hOffset + haWidth + position.getBuffer();
     transform = smath::orthographic(0, position.getWidth(), 0, position.getHeight()) * smath::translate(glm::vec3(aOffset, 0, 0)) * smath::scale(glm::vec3(haWidth, position.getHeight(), 1.0f));
     aShader->setMat4("transform", transform);
-    aShader->setVec2("mousePos", glm::vec2(0.0f));
+    aShader->setVec2("mousePos", aMousePos);
     csMesh->DrawMesh();
+}
+void ColorSelector::ManageMouseInteraction(glm::vec2 mousePos)
+{
+    // Checking what selector is being interacted with
+    if (selectedInteraction == 0)
+    {
+        // Interacting with SV selector
+        glm::vec2 selectorDimensions = glm::vec2(position.getWidthBeforeSplit(), position.getHeight());
+        svMousePos = smath::clamp01((mousePos - (glm::vec2(position.left_x, position.bottom_y) + position.getOffset())) / selectorDimensions);
+    }
+    else if (selectedInteraction == 1)
+    {
+        // Interacting with H selector
+        glm::vec2 selectorDimensions = glm::vec2(position.getWidthAfterSplit() * 0.5f, position.getHeight());
+        hMousePos = smath::clamp01((mousePos - (glm::vec2(position.split, position.bottom_y) + position.getOffset())) / selectorDimensions);
+    }
+    else if (selectedInteraction == 2)
+    {
+        // Interacting with A selector
+        glm::vec2 selectorDimensions = glm::vec2(position.getWidthAfterSplit() * 0.5f, position.getHeight());
+        aMousePos = smath::clamp01((mousePos - (glm::vec2(position.getMiddleAfterSplit(), position.bottom_y) + position.getOffset())) / selectorDimensions);
+    }
+
+    // Setting the color
+    interactingColor->selectedColor->setHSVA(glm::vec4(hMousePos.y, svMousePos, aMousePos.y));
+}
+void ColorSelector::setSelectedInteraction(glm::vec2 mousePos)
+{
+    // Getting the sv interaction corners
+    glm::vec4 svCorners = position.getLeftCorners() + position.getOffsetCorners();
+
+    // Checking what selector is being collided with
+    if (smath::checkUICollision(mousePos, svCorners))
+    {
+        // Interacting with SV selector
+        selectedInteraction = 0;
+    }
+    else
+    {
+        // Checking whether the H or A selector is collided with
+        if (mousePos.x < position.getMiddleAfterSplit() + position.getXOffset())
+        {
+            // Interacting with H selector
+            selectedInteraction = 1;
+        }
+        else
+        {
+            // Interacting with A selector
+            selectedInteraction = 2;
+        }
+    }
 }

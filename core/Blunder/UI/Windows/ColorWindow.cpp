@@ -5,7 +5,7 @@ using namespace ui;
 void ColorWindow::CreateUIFromSelected()
 {
     // Checking if the selected color exists
-    if (!selectedColor)
+    if (!interactingColor.selectedColor)
         return;
 
     // Clearing attributes at the beginning
@@ -15,16 +15,16 @@ void ColorWindow::CreateUIFromSelected()
     colorAttribute = new ui::Attribute("Color");
 
     // Color Selector
-    colorAttribute->addElement(new ColorSelector(selectedColor));
+    colorAttribute->addElement(new ColorSelector(&interactingColor));
 
     // Adding Mode Dropdown
     colorAttribute->addElement(new Dropdown("Mode", &currentColorMode, colorMode));
 
     // Adding Color Values (R, G, B, A)
-    colorAttribute->addElement(new FloatSlider("R", &(colorData.x), 1.0f, 0.0f, 1.0f));
-    colorAttribute->addElement(new FloatSlider("G", &(colorData.y), 1.0f, 0.0f, 1.0f));
-    colorAttribute->addElement(new FloatSlider("B", &(colorData.z), 1.0f, 0.0f, 1.0f));
-    colorAttribute->addElement(new FloatSlider("A", &(colorData.w), 1.0f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("R", &(colorData.x), 0.01f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("G", &(colorData.y), 0.01f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("B", &(colorData.z), 0.01f, 0.0f, 1.0f));
+    colorAttribute->addElement(new FloatSlider("A", &(colorData.w), 0.01f, 0.0f, 1.0f));
 
     // Adding Hex Entry
     colorAttribute->addElement(new TextEntry("Hex", &hexCode));
@@ -59,8 +59,9 @@ void ColorWindow::UpdateWindow()
         {
             // Rendering color selector larger than normal elements
             float colorSelectorHeight = position.getWidth() * (2.0f / 3.0f);
+            float colorSelectorSplit = attributeElementWidth * (40.0f / 58.0f);
             attributeYPos -= (colorSelectorHeight * 0.5f) + position.getBuffer();
-            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), 0.0f, &position);
+            ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, colorSelectorHeight), colorSelectorSplit, &position);
             element->UpdateElement(elementPos);
 
             // Updating YPos
@@ -87,6 +88,27 @@ void ColorWindow::UpdateWindow()
 }
 void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 {
+    // TODO: Create a window function that will get called every frame that manages changes even if it's not being interacted with (replace current UpdateWindow() with a ResizeWindow())
+    
+    // Updating color values
+    if (!interactingColor.interacting)
+    {
+        if (currentColorMode == 0) // RGBA
+            interactingColor.selectedColor->setRGBA(colorData);
+        else if (currentColorMode == 1) // HSVA
+            interactingColor.selectedColor->setHSVA(colorData);
+    }
+    else
+    {
+        if (currentColorMode == 0) // RGBA
+            colorData = interactingColor.selectedColor->rgba();
+        else if (currentColorMode == 1) // HSVA
+            colorData = interactingColor.selectedColor->hsva();
+    }
+
+    // Updating hex values
+    //selectedColor->setHex(hexCode);
+
     // Adding Base Quad
     renderer->addQuad(position.getCorners(), 0.0f, glm::vec3(0.35f));
 
@@ -134,7 +156,7 @@ void ColorWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Getting (and temporarily storing) the mouse Position (flipping the y because glfw is stupid)
+    // Getting mouse Position (flipping the y because glfw is stupid)
     glm::vec2 mousePos = glm::vec2(
         state->getMouse()->mousePos.x,
         (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y

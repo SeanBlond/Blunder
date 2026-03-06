@@ -87,14 +87,19 @@ namespace ui
         glm::vec4 getLeftCorners(float width) const { return glm::vec4(split - width, bottom_y, split, top_y); }
         glm::vec4 getRightCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(split + offset.x, bottom_y + offset.y, right_x + offset.x, top_y + offset.y); }
         glm::vec4 getRightCorners(float width) const { return glm::vec4(split, bottom_y, split + width, top_y); }
+        glm::vec4 getEndCorners(float width) const { return glm::vec4(right_x - width, bottom_y, right_x, top_y); }
+        float getXOffset() const { return (parentWindow ? parentWindow->getXOffset() : 0); }
+        float getYOffset() const { return (parentWindow ? parentWindow->getYOffset() : 0); }
+        glm::vec2 getOffset() const { return glm::vec2(getXOffset(), getYOffset()); }
+        glm::vec4 getOffsetCorners() const { return glm::vec4(getXOffset(), getYOffset(), getXOffset(), getYOffset()); }
         float getMiddleAfterSplit() const { return split + (right_x - split) * 0.5f; }
         float getWidthAfterSplit() const { return right_x - split; }
         float getMiddleBeforeSplit() const { return split + (split - left_x) * 0.5f; }
         float getWidthBeforeSplit() const { return split - left_x; }
         float getWidth() const { return abs(right_x - left_x); }
         float getHeight() const { return abs(top_y - bottom_y); }
-        float getBuffer() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
-        float getFixedUnit() const { return (parentWindow != nullptr ? parentWindow->getBuffer() : 0); }
+        float getBuffer() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
+        float getFixedUnit() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
 
         // Multi-Setters
         void setCorners(glm::vec4 corners) {

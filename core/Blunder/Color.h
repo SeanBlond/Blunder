@@ -22,12 +22,24 @@ public:
 	glm::vec3 hsv() const { return RGBtoHSV(color); }
 	glm::vec4 hsva() const { return RGBAtoHSVA(color); }
 	float alpha() const { return color.w; }
+	std::string hex() const { return RGBAtoHEX(color); }
+	float r() const { return color.x; }
+	float g() const { return color.y; }
+	float b() const { return color.z; }
+	float h() const { return hsv().x; }
+	float s() const { return hsv().y; }
+	float v() const { return hsv().z; }
+	float a() const { return color.w; }
 
 	// Setters
 	void setRGB(const glm::vec3 rgb) { color = glm::vec4(rgb, color.w); }
 	void setRGBA(const glm::vec4 rgba) { color = rgba; }
 	void setHSV(const glm::vec3 hsv) {color = glm::vec4(HSVtoRGB(hsv), color.w); }
 	void setHSVA(const glm::vec4 hsva) { color = HSVAtoRGBA(hsva); }
+	void setHex(const std::string hex) { glm::vec4 testConvert = HEXtoRGBA(hex); color = (testConvert == glm::vec4(-1) ? color : testConvert); }
+	void setHue(const float hue)               { setHSV(glm::vec3(hue, s(),        v())); }
+	void setSaturation(const float saturation) { setHSV(glm::vec3(h(), saturation, v())); }
+	void setValue(const float value)           { setHSV(glm::vec3(h(), s(),        value)); }
 	void setAlpha(const float alpha) { color.w = alpha; }
 
 	// RGB <--> HSV Functions (Used Algorithm from Wikipedia Page: https://en.wikipedia.org/wiki/HSL_and_HSV)
@@ -205,6 +217,14 @@ public:
 
 private:
 	glm::vec4 color;
+};
+
+// Custom Struct for Color Interaction
+struct InteractingColor
+{
+	InteractingColor(Color* selectedColor) : selectedColor(selectedColor), interacting(false) {}
+	Color* selectedColor;
+	bool interacting;
 };
 
 namespace colors

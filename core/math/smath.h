@@ -258,6 +258,36 @@ namespace smath
         return value;
     }
 
+    inline float clamp01(float value)
+    {
+        if (value < 0)
+            value = 0;
+        if (value > 1)
+            value = 1;
+        return value;
+    }
+    inline glm::vec2 clamp01(glm::vec2 value)
+    {
+        value.x = clamp01(value.x);
+        value.y = clamp01(value.y);
+        return value;
+    }
+    inline glm::vec3 clamp01(glm::vec3 value)
+    {
+        value.x = clamp01(value.x);
+        value.y = clamp01(value.y);
+        value.z = clamp01(value.z);
+        return value;
+    }
+    inline glm::vec4 clamp01(glm::vec4 value)
+    {
+        value.x = clamp01(value.x);
+        value.y = clamp01(value.y);
+        value.z = clamp01(value.z);
+        value.w = clamp01(value.w);
+        return value;
+    }
+
     template <typename T>
     inline T max(T value1, T value2)
     { 

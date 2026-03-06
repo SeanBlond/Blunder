@@ -253,6 +253,12 @@ void AttributeWindow::CreateUIfromObject(obj::Object* object)
         // Adding the attributes
         addAttribute(meshAttribute);
     }
+
+    // TODO: REMOVE THIS AT SOME POINT
+    ui::Attribute* colorAttribute = new ui::Attribute("Color");
+    colorAttribute->addElement(new ColorEntry("Test Color", &(object->testColor)));
+    addAttribute(colorAttribute);
+    std::cout << "Attribute Color address: " << &(object->testColor) << std::endl;
 }
 void AttributeWindow::UnselectWindow()
 {

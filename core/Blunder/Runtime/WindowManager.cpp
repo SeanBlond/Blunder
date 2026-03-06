@@ -309,6 +309,7 @@ void WindowManager::CreateDefaultWindows(glm::ivec2 screenSize)
 
 	// REMOVE AT SOME POINT
 	// Test Color Window
-	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &testColor);
+	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &(state->getSelectedObject()->testColor));
+	std::cout << "Color address: " << &(state->getSelectedObject()->testColor) << std::endl;
 	addFreeWindow(testColorWindow);
 }

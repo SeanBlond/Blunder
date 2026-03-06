@@ -38,6 +38,7 @@ void Dropdown::OnRelease(StateMachine* state)
     droppedDown = false;
     optionSize = glm::vec2(0);
     firstOptionYPos = 0;
+    state->exitState();
 }
 
 // Update Function

@@ -20,7 +20,7 @@
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV, UI_COLOR_SELECTOR };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_COLOR_ENTRY, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV, UI_COLOR_SELECTOR };
 
     // Attribute Element Parent Class
     class AttributeElement
@@ -243,12 +243,39 @@ namespace ui
         std::vector<std::string> options; // Index corresponds to value
     };
 
+    // Color Element
+    class ColorEntry : public AttributeElement
+    {
+    public:
+        ColorEntry(std::string label, Color* value) : value(value), AttributeElement(label, UI_COLOR_ENTRY) {}
+
+        // Element Functions
+        void setValue(Color value) { *(this->value) = value; }
+        void setValue(Color* value) { this->value = value; }
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        Color* value;
+        Color saveValue;
+    };
+    
     // Hue Saturation Selector
     class ColorSelector : public AttributeElement
     {
     public:
         // Constructor
-        ColorSelector(Color* color) : AttributeElement("Color-Selector", UI_COLOR_SELECTOR), activeColor(color) { CreateMesh(); CreateShaders(); }
+        ColorSelector(InteractingColor* interactingColor) : AttributeElement("Color-Selector", UI_COLOR_SELECTOR), interactingColor(interactingColor), selectedInteraction(-1) 
+        { 
+            svMousePos = glm::vec2(interactingColor->selectedColor->s(), interactingColor->selectedColor->v());
+            hMousePos = glm::vec2(0, interactingColor->selectedColor->h());
+            aMousePos = glm::vec2(0, interactingColor->selectedColor->a());
+            CreateMesh(); 
+            CreateShaders(); 
+        }
         ~ColorSelector();
 
         // Functions
@@ -259,9 +286,16 @@ namespace ui
         void OnClick(StateMachine* state) override;
         void OnHold(StateMachine* state) override;
         void OnRelease(StateMachine* state) override;
+        void ManageMouseInteraction(glm::vec2 mousePos);
+        void setSelectedInteraction(glm::vec2 mousePos);
+        glm::vec2 svFromPosition(glm::vec2 position);
 
     private:
-        Color* activeColor;
+        InteractingColor* interactingColor;
+        glm::vec2 svMousePos = glm::vec2(0);
+        glm::vec2 hMousePos = glm::vec2(0);
+        glm::vec2 aMousePos = glm::vec2(0);
+        int selectedInteraction; // -1: None, 0: SV, 1: H, 2: A
 
         // Rendering Stuff
         Mesh* csMesh;

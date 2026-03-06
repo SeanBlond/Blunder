@@ -4,7 +4,7 @@
 #include "mesh.h"
 #include "../math/smath.h"
 #include "transform.h"
-
+#include "../Blunder/Color.h"
 
 namespace obj
 {
@@ -51,6 +51,9 @@ namespace obj
         Object operator=(const Object& aObject);
 
         Transform transform;
+
+        // TODO: REMOVE AT SOME POINT
+        Color testColor;
     private:
         std::string name;
         Mesh* mesh;
