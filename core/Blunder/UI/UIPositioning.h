@@ -98,6 +98,8 @@ namespace ui
         float getWidthBeforeSplit() const { return split - left_x; }
         float getWidth() const { return abs(right_x - left_x); }
         float getHeight() const { return abs(top_y - bottom_y); }
+        float getXCenter() const { return left_x + getWidth() * 0.5f; }
+        float getYCenter() const { return bottom_y + getHeight() * 0.5f; }
         float getBuffer() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
         float getFixedUnit() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
 

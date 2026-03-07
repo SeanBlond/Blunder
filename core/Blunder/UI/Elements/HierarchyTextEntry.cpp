@@ -49,22 +49,13 @@ void HierarchyTextEntry::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float ySize = (position.top_y - position.bottom_y);
-    float yPos = position.top_y - (ySize / 2);
-
     // Updating Text
     if (text.getStored())
     {
@@ -88,5 +79,5 @@ void HierarchyTextEntry::RenderElement(UIRenderer* renderer, float textSize)
         renderer->addQuad(position.getCorners(), 0.2f, colors::darkerGrey.rgb() * colorMod, position.parentWindow->offset);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3(position.left_x, yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset);
+    text.addText(renderer, glm::vec3(position.left_x, position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset);
 }

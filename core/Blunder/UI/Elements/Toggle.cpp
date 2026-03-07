@@ -21,24 +21,15 @@ void Toggle::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void Toggle::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float ySize = (position.top_y - position.bottom_y);
-    float yPos = position.top_y - (ySize / 2);
-
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
 
     // Calculating Color
     glm::vec3 color;
@@ -55,7 +46,7 @@ void Toggle::RenderElement(UIRenderer* renderer, float textSize)
         colorMod = glm::vec3(1.25f);
 
     // Drawing Toggle Box
-    renderer->addQuad(position.getRightCorners(ySize), 0.2f, color * colorMod, position.parentWindow->offset);
+    renderer->addQuad(position.getRightCorners(position.getHeight()), 0.2f, color * colorMod, position.parentWindow->offset);
 
     // Draw Check (eventually)
 

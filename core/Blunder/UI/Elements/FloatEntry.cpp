@@ -49,22 +49,13 @@ void FloatEntry::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void FloatEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float ySize = (position.top_y - position.bottom_y);
-    float yPos = position.top_y - (ySize / 2);
-
     // Updating Text
     if (text.getStored())
     {
@@ -94,7 +85,7 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float textSize)
     }
 
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -111,5 +102,5 @@ void FloatEntry::RenderElement(UIRenderer* renderer, float textSize)
     //stream << std::fixed << std::setprecision(3) << (*value);
 
     // Drawing Value
-    text.addText(renderer, glm::vec3(position.getMiddleAfterSplit(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, CENTER);
+    text.addText(renderer, glm::vec3(position.getMiddleAfterSplit(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, CENTER);
 }

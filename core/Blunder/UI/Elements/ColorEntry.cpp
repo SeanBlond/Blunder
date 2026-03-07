@@ -21,24 +21,15 @@ void ColorEntry::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void ColorEntry::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = (position.right_x - position.left_x);
-    float height = (position.top_y - position.bottom_y);
-    float yPos = position.top_y - (height / 2);
-
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -51,5 +42,5 @@ void ColorEntry::RenderElement(UIRenderer* renderer, float textSize)
     renderer->addQuad(position.getRightCorners(), 0.2f, value->rgb() * colorMod, position.parentWindow->offset);
 
     // Drawing Alpha/Color Box
-    renderer->addQuad(position.getEndCorners(height), 0.21f, glm::vec3(value->alpha()), position.parentWindow->offset);
+    renderer->addQuad(position.getEndCorners(position.getHeight()), 0.21f, glm::vec3(value->alpha()), position.parentWindow->offset);
 }

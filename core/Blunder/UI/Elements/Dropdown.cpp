@@ -55,24 +55,15 @@ void Dropdown::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
 // Render Function
 void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
 {
-    float width = position.getWidth();
-    float ySize = position.getHeight();
-    float yPos = position.top_y - (ySize / 2);
-
     // Drawing Label Text
-    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
+    renderer->addText(label, glm::vec3(position.split - position.getBuffer(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, RIGHT);
 
     // Color Modifier
     glm::vec3 colorMod(1);
@@ -86,19 +77,18 @@ void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
 
     // Drawing Dropdown Icon
     ui::UITexture dropdownIcon = (droppedDown ? UI_DROPDOWN_T : UI_DROPDOWN_F);
-    renderer->addQuad(position.getRightCorners(ySize), 0.21f, colors::lightestgrey.rgb(), position.parentWindow->offset, dropdownIcon);
+    renderer->addQuad(position.getRightCorners(position.getHeight()), 0.21f, colors::lightestgrey.rgb(), position.parentWindow->offset, dropdownIcon);
 
     // Drawing each option if dropped down
     if (droppedDown)
     {
-
         // Setting optionYSize for UI interaction
         float optionWidth = position.getWidthAfterSplit();
 
         // Checking if there is enough space for the dropdown to drop downwards
         bool directionDown = true;
-        float lowestPoint = position.bottom_y - ySize * options.size();
-        if (lowestPoint < ySize)
+        float lowestPoint = position.bottom_y - position.getHeight() * options.size();
+        if (lowestPoint < position.getHeight())
         {
             // Dropdown needs to drop upwards
             directionDown = false;
@@ -117,7 +107,7 @@ void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
         // Drawing each option
         for (int i = 0; i < options.size(); i++)
         {
-            float optionYOffset = -(ySize * (i + 1));
+            float optionYOffset = -(position.getHeight() * (i + 1));
 
             // Highlighting the option if it is currently selected
             glm::vec3 optionColor = (i == *value ? colors::blunderGreen.rgb() : colors::darkerGrey.rgb());
@@ -126,13 +116,13 @@ void Dropdown::RenderElement(UIRenderer* renderer, float textSize)
             renderer->addQuad(position.getRightCorners(glm::vec2(0, optionYOffset)), 0.9f, optionColor, position.parentWindow->offset);
 
             // Drawing Option Circle
-            renderer->addQuad(glm::vec3(position.split + ySize * 0.5f, yPos + optionYOffset, 0.91f), glm::vec2(width * 0.02f), colors::lightestgrey.rgb(), position.parentWindow->offset, UI_NO_TEXTURE, QUAD_CIRCLE);
+            renderer->addQuad(glm::vec3(position.split + position.getHeight() * 0.5f, position.getYCenter() + optionYOffset, 0.91f), glm::vec2(position.getFixedUnit() * 2.0f), colors::lightestgrey.rgb(), position.parentWindow->offset, UI_NO_TEXTURE, QUAD_CIRCLE);
 
             // Drawing Value
-            renderer->addText(options[i], glm::vec3(position.split + ySize, yPos + optionYOffset, 1), textSize, glm::vec3(1.0f), position.parentWindow->offset, LEFT);
+            renderer->addText(options[i], glm::vec3(position.split + position.getHeight(), position.getYCenter() + optionYOffset, 1), textSize, glm::vec3(1.0f), position.parentWindow->offset, LEFT);
         }
     }
 
     // Drawing Value
-    renderer->addText(options[*value], glm::vec3(position.split + ySize, yPos, 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, LEFT);
+    renderer->addText(options[*value], glm::vec3(position.split + position.getHeight(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, LEFT);
 }
