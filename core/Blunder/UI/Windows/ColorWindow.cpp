@@ -221,12 +221,24 @@ void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 
                 // Highilighting an Element
                 else
-                    currentElement->highlighted = true;
+                {
+                    if (highlightedElement && highlightedElement != currentElement)
+                    {
+                        highlightedElement->highlighted = false;
+                    }
+
+                    highlightedElement = currentElement;
+                    highlightedElement->highlighted = true;
+
+                }
             }
 
         // Unhighlighting an Element
-        else if (currentElement->highlighted)
-            currentElement->highlighted = false;
+        else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)
+        {
+            highlightedElement->highlighted = false;
+            highlightedElement = nullptr;
+        }
     }
 
     // Managing Clicked Element
@@ -251,5 +263,12 @@ void ColorWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
+    }
+
+    // Unhighlighting an Element
+    if (highlightedElement)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
     }
 }

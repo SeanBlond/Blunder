@@ -136,21 +136,33 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             if (currentElement->checkCollision(mousePos) && !state->getTransforming())
             {
                 // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
+                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && !clickedElement)
                 {
                     clickedElement = currentElement;
                     clickedElement->clicked = true;
                     clickedElement->OnClick(state);
                 }
 
-                // Highilighting an Element
+                // Highlighting an Element
                 else
-                    currentElement->highlighted = true;
+                {
+                    if (highlightedElement && highlightedElement != currentElement)
+                    {
+                        highlightedElement->highlighted = false;
+                    }
+
+                    highlightedElement = currentElement;
+                    highlightedElement->highlighted = true;
+                    
+                }
             }
 
             // Unhighlighting an Element
-            else if (currentElement->highlighted)
-                currentElement->highlighted = false;
+            else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)
+            {
+                highlightedElement->highlighted = false;
+                highlightedElement = nullptr;
+            }
         }
     }
 
@@ -266,5 +278,12 @@ void AttributeWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
+    }
+
+    // Unhighlighting an Element
+    if (highlightedElement)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
     }
 }

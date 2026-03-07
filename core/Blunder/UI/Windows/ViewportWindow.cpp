@@ -55,14 +55,26 @@ void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             clickedElement->OnClick(state);
         }
 
-        // Highilighting an Element
+        // Highlighting an Element
         else
-            viewNavElement.highlighted = true;
+        {
+            if (highlightedElement && highlightedElement != &viewNavElement)
+            {
+                highlightedElement->highlighted = false;
+            }
+
+            highlightedElement = &viewNavElement;
+            highlightedElement->highlighted = true;
+
+        }
     }
 
     // Unhighlighting an Element
-    else if (viewNavElement.highlighted)
-        viewNavElement.highlighted = false;
+    else if (highlightedElement && &viewNavElement == highlightedElement && highlightedElement->highlighted)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
+    }
 
     // Managing Clicked Element
     if (clickedElement != nullptr)
@@ -86,7 +98,13 @@ void ViewportWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
+    }
 
+    // Unhighlighting an Element
+    if (highlightedElement)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
     }
 }
 void ViewportWindow::RenderScene()

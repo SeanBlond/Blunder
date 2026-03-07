@@ -230,6 +230,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 	}
 
 	// Updating selected window if the UI is not actively being interacted with
+	ui::UIWindow* newSelectedWindow = selectedWindow;
 	if (state->getState() != SM_UI_TRANSLATING)
 	{
 		// Getting mouse position
@@ -244,7 +245,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 			// Check for collision
 			glm::vec4 checkCorners = popUpWindow->getPosition().getCorners();
 			if (smath::checkUICollision(mousePos, checkCorners))
-				selectedWindow = popUpWindow;
+				newSelectedWindow = popUpWindow;
 		}
 		// Checking non-pop-up windows
 		else
@@ -260,7 +261,7 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 					if (smath::checkUICollision(mousePos, freeWindows[i]->getPosition().getCorners()))
 					{
 						freeWindowSelected = true;
-						selectedWindow = freeWindows[i];
+						newSelectedWindow = freeWindows[i];
 					}
 				}
 			}
@@ -268,12 +269,19 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 			// Checking locked window collision (only if no free window was selected)
 			if (!freeWindowSelected)
 			{
-				selectedWindow = rootLockedWindow->checkForCollisions(mousePos);
+				newSelectedWindow = rootLockedWindow->checkForCollisions(mousePos);
 			}
 		}
 	}
 
-	// Running Manage Interaction (if there is a selected window)
+	// Unselecting previous window (if applicable)
+	if (selectedWindow && selectedWindow != newSelectedWindow)
+		selectedWindow->UnselectWindow();
+	
+	// Setting new selected window
+	selectedWindow = newSelectedWindow;
+
+	// Managing selected window interaction (if there is a selected window)
 	if (selectedWindow)
 		selectedWindow->ManageInteraction(window, state);
 

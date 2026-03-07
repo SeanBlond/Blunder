@@ -66,7 +66,7 @@ namespace ui
     {
     public:
         // Constructor & Desconstructor
-        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, "Attribute"), attributeObject(attributeObject), clickedElement(nullptr) {}
+        AttributeWindow(float width, float height, float xoffset, float yoffset, obj::Object* attributeObject = nullptr) : UIWindow(width, height, xoffset, yoffset, "Attribute"), attributeObject(attributeObject), clickedElement(nullptr), highlightedElement(nullptr) {}
         ~AttributeWindow()
         {
             ClearAttributes();
@@ -92,6 +92,7 @@ namespace ui
         obj::Object* attributeObject;
         std::vector<ui::Attribute*> attributes;
         ui::AttributeElement* clickedElement;
+        ui::AttributeElement* highlightedElement;
     };
 
     // Hierarchy Window
@@ -124,7 +125,7 @@ namespace ui
     public:
         // Constructor & Deconstructor
         ViewportWindow(float width, float height, float xoffset, float yoffset, StateMachine* state)
-            : UIWindow(width, height, xoffset, yoffset, "Viewport"), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr) { CreateMesh(); }
+            : UIWindow(width, height, xoffset, yoffset, "Viewport"), state(state), viewNavElement("ViewNav", 150, 0.01f), clickedElement(nullptr), highlightedElement(nullptr) { CreateMesh(); }
         ~ViewportWindow()
         {
             delete viewportMesh;
@@ -147,6 +148,7 @@ namespace ui
         ui::ViewNav viewNavElement;
         std::vector<ui::Attribute*> attributes;
         ui::AttributeElement* clickedElement;
+        ui::AttributeElement* highlightedElement;
 
         // Mesh Rendering stuff
         Mesh* viewportMesh;
@@ -158,7 +160,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, "Color", 0.125), colorAttribute(nullptr), interactingColor(selectedColor), colorData(selectedColor->hsva()), clickedElement(nullptr)
+        ColorWindow(float width, float height, float xoffset, float yoffset, Color* selectedColor) : UIWindow(width, height, xoffset, yoffset, "Color", 0.125), colorAttribute(nullptr), interactingColor(selectedColor), colorData(selectedColor->hsva()), clickedElement(nullptr), highlightedElement(nullptr)
         { hexCode = storedHexCode = Color::RGBAtoHEX(selectedColor->rgba()); CreateUIFromSelected(); }
         ~ColorWindow()
         {
@@ -183,6 +185,7 @@ namespace ui
         std::string storedHexCode;
         ui::Attribute* colorAttribute;
         ui::AttributeElement* clickedElement;
+        ui::AttributeElement* highlightedElement;
     };
 }
 #endif // !UIWINDOWS
