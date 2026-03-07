@@ -88,6 +88,7 @@ namespace ui
         glm::vec4 getRightCorners(glm::vec2 offset = glm::vec2(0)) const { return glm::vec4(split + offset.x, bottom_y + offset.y, right_x + offset.x, top_y + offset.y); }
         glm::vec4 getRightCorners(float width) const { return glm::vec4(split, bottom_y, split + width, top_y); }
         glm::vec4 getEndCorners(float width) const { return glm::vec4(right_x - width, bottom_y, right_x, top_y); }
+        glm::vec4 getStartCorners(float width) const { return glm::vec4(left_x, bottom_y, left_x + width, top_y); }
         float getXOffset() const { return (parentWindow ? parentWindow->getXOffset() : 0); }
         float getYOffset() const { return (parentWindow ? parentWindow->getYOffset() : 0); }
         glm::vec2 getOffset() const { return glm::vec2(getXOffset(), getYOffset()); }
