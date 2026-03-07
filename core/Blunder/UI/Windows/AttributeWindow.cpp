@@ -111,7 +111,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Getting (and temporarily storing) the mouse Position (flipping the y because glfw is stupid)
+    // Getting the mouse Position (flipping the y because glfw is stupid)
     glm::vec2 mousePos = glm::vec2(
         state->getMouse()->mousePos.x,
         (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y

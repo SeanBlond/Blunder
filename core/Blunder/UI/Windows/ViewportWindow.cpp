@@ -37,11 +37,14 @@ void ViewportWindow::DrawWindow(ui::UIRenderer* renderer)
 }
 void ViewportWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    // Converting mouse position to relative coordinates
-    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
+    // Getting the mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
     // Checking ViewNav for collision
-    if (viewNavElement.checkCollision(relMousePos) && !state->getTransforming())
+    if (viewNavElement.checkCollision(mousePos) && !state->getTransforming())
     {
         // Clicking an Element
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)

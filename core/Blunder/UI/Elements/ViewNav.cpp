@@ -88,12 +88,8 @@ void ViewNav::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + glm::vec4(
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset(),
-        position.parentWindow->getXOffset(),
-        position.parentWindow->getYOffset()
-    );
+    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
+    std::cout << "Created viewnav corners at " << smath::outputVec4(corners) << std::endl;
     interactable = new ui::QuadInteractable(corners);
 }
 
