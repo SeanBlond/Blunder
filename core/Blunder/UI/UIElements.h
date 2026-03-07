@@ -20,7 +20,7 @@
 
 namespace ui
 {
-    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_COLOR_ENTRY, UI_ATTRIBUTE_COLLAPSE, UI_VIEW_NAV, UI_COLOR_SELECTOR };
+    enum ElementType { UI_TOGGLE, UI_FLOAT_SLIDER, UI_FLOAT_ENTRY, UI_INT_SLIDER, UI_INT_ENTRY, UI_TEXT_ENTRY, UI_DROPDOWN, UI_COLOR_ENTRY, UI_ATTRIBUTE_HEADER, UI_VIEW_NAV, UI_COLOR_SELECTOR };
 
     // Attribute Element Parent Class
     class AttributeElement
@@ -31,6 +31,7 @@ namespace ui
         // Getters
         std::string getLabel() const { return label; }
         ElementType getType() const { return type; }
+        ElementPosition getPosition() const { return position; }
         Interactable* getInteractable() { return interactable; }
         bool checkCollision(glm::vec2 position) { return (interactable ? interactable->checkCollision(position) : false); }
 
@@ -302,6 +303,25 @@ namespace ui
         shdr::Shader* aShader;
     };
 
+    // AttributerHeader
+    class AttributeHeader : public AttributeElement
+    {
+    public:
+        AttributeHeader(std::string label, bool* value, ElementType type = UI_TOGGLE) : value(value), AttributeElement(label, type) {}
+
+        // Element Functions
+        void setToggle(bool value) { *(this->value) = value; }
+        void toggleValue() { *value = !(*value); }
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        bool* value;
+    };
+
     // Hierarchy UI Elements
     // Hierarchy Text Entry
     class HierarchyTextEntry : public AttributeElement
@@ -375,7 +395,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { dropdown = new Toggle(name, &(this->collapsed), UI_ATTRIBUTE_COLLAPSE); }
+        Attribute(std::string name, bool collapsed = false) : attributeName(name), collapsed(collapsed) { header = new AttributeHeader(name, &(this->collapsed), UI_ATTRIBUTE_HEADER); }
         ~Attribute()
         {
             for (int i = 0; i < elements.size(); i++)
@@ -385,8 +405,8 @@ namespace ui
             }
             elements.clear();
 
-            delete dropdown;
-            dropdown = nullptr;
+            delete header;
+            header = nullptr;
         }
 
         // Getters
@@ -394,7 +414,7 @@ namespace ui
         std::string getName() const { return attributeName; }
         bool getCollapsed() const { return collapsed; }
         int getElementCount() const { return elements.size(); }
-        AttributeElement* getDropDownButton() { return dropdown; }
+        AttributeElement* getHeader() { return header; }
 
         // Setters
         void setName(std::string name) { this->attributeName = name; }
@@ -406,7 +426,7 @@ namespace ui
     private:
         std::string attributeName;
         bool collapsed;
-        AttributeElement* dropdown;
+        AttributeHeader* header;
         std::vector<AttributeElement*> elements;
     };
 }

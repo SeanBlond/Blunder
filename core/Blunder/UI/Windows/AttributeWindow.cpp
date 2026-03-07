@@ -11,27 +11,29 @@ void AttributeWindow::UpdateWindow()
     // Adding Each Attribute
     for (int i = 0; i < attributes.size(); i++)
     {
-        // Adding Label Box
-        float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
+        // Adding Attribute Header
+        float elementHeight = position.unitScale;
+        float attributeHeaderWidth = position.getWidth() - 2.0f * position.getBuffer();
+        ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeHeaderWidth, attributeTitleHeight), 0.0f, &position);
+        attributes[i]->getHeader()->UpdateElement(elementPos);
 
         // Checking if elements should be rendered
         if (attributes[i]->getCollapsed())
         {
-            attributeYPos -= (position.getWidth() * 0.1f + position.getBuffer());
+            attributeYPos -= (attributeTitleHeight + elementHeight) * 0.5f + position.getBuffer();
         }
         else
         {
             attributeYPos -= attributeTitleHeight * 0.5f;
 
             // Setting up useful UI sizes
-            float elementHeight = position.unitScale;
             attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
 
             for (int j = 0; j < attributes[i]->getElementCount(); j++)
             {
                 // Add Each Element
                 ui::AttributeElement* element = attributes[i]->getElement(j);
-                float attributeElementWidth = attributeBoxWidth - 2.0f * position.getBuffer();
+                float attributeElementWidth = attributeHeaderWidth - 2.0f * position.getBuffer();
                 ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeElementWidth, elementHeight), position.getWidth() * 0.44f, &position);
                 element->UpdateElement(elementPos);
 
@@ -60,6 +62,7 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
     for (int i = 0; i < attributes.size(); i++)
     {
         // Adding Label Box
+        float elementHeight = position.unitScale;
         float attributeBoxWidth = position.getWidth() - 2.0f * position.getBuffer();
         renderer->addQuad(glm::vec3((position.getWidth() / 2), attributeYPos, 0.1f), glm::vec2(attributeBoxWidth, attributeTitleHeight), glm::vec3(0.51f), position.offset);
 
@@ -70,14 +73,13 @@ void AttributeWindow::DrawWindow(ui::UIRenderer* renderer)
         // Checking if elements should be rendered
         if (attributes[i]->getCollapsed())
         {
-            attributeYPos -= (position.getWidth() * 0.1f + position.getBuffer());
+            attributeYPos -= (attributeTitleHeight + elementHeight) * 0.5f + position.getBuffer();
         }
         else
         {
             attributeYPos -= attributeTitleHeight * 0.5f;
 
             // Setting up useful UI sizes
-            float elementHeight = position.unitScale;
             float containerStartHeight = attributeYPos;
 
             attributeYPos -= (elementHeight * 0.5f + position.getBuffer());
@@ -124,46 +126,30 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     }
 
     // Finding clicked element by looping through each element within each attribute
+    bool elementInteracted = false;
     for (int i = 0; i < attributes.size(); i++)
     {
-        for (int j = 0; j < attributes[i]->getElementCount(); j++)
+        // Checking attribute header
+        if (checkElementInteraction(window, mousePos, attributes[i]->getHeader(), state))
+            break;
+
+        // Making sure attribute isn't collapsed before checking elements
+        if (!attributes[i]->getCollapsed())
         {
-            ui::AttributeElement* currentElement = attributes[i]->getElement(j);
-
-            if (currentElement->getInteractable())
-
-            // Collision detection
-            if (currentElement->checkCollision(mousePos) && !state->getTransforming())
+            for (int j = 0; j < attributes[i]->getElementCount(); j++)
             {
-                // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && !clickedElement)
+                // Checking each element in the attribute
+                if (checkElementInteraction(window, mousePos, attributes[i]->getElement(j), state))
                 {
-                    clickedElement = currentElement;
-                    clickedElement->clicked = true;
-                    clickedElement->OnClick(state);
+                    elementInteracted = true;
+                    break;
                 }
-
-                // Highlighting an Element
-                else
-                {
-                    if (highlightedElement && highlightedElement != currentElement)
-                    {
-                        highlightedElement->highlighted = false;
-                    }
-
-                    highlightedElement = currentElement;
-                    highlightedElement->highlighted = true;
-                    
-                }
-            }
-
-            // Unhighlighting an Element
-            else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)
-            {
-                highlightedElement->highlighted = false;
-                highlightedElement = nullptr;
             }
         }
+
+        // Breaking out of main loop
+        if (elementInteracted)
+            break;
     }
 
     // Managing Clicked Element
@@ -178,7 +164,7 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             clickedElement->clicked = false;
 
             // Checking if Collapse Button was clicked
-            if (clickedElement->getType() == ui::UI_ATTRIBUTE_COLLAPSE)
+            if (clickedElement->getType() == ui::UI_ATTRIBUTE_HEADER)
             {
                 UpdateWindow();
             }
@@ -286,4 +272,44 @@ void AttributeWindow::UnselectWindow()
         highlightedElement->highlighted = false;
         highlightedElement = nullptr;
     }
+}
+bool AttributeWindow::checkElementInteraction(GLFWwindow* window, glm::vec2 mousePos, ui::AttributeElement* element, StateMachine* state)
+{
+    bool elementCollided = false;
+
+    // Collision detection
+    if (element->checkCollision(mousePos) && !state->getTransforming())
+    {
+        elementCollided = true;
+
+        // Clicking an Element
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && !clickedElement)
+        {
+            clickedElement = element;
+            clickedElement->clicked = true;
+            clickedElement->OnClick(state);
+        }
+
+        // Highlighting an Element
+        else
+        {
+            if (highlightedElement && highlightedElement != element)
+            {
+                highlightedElement->highlighted = false;
+            }
+
+            highlightedElement = element;
+            highlightedElement->highlighted = true;
+
+        }
+    }
+
+    // Unhighlighting an Element
+    else if (highlightedElement && element == highlightedElement && highlightedElement->highlighted)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
+    }
+
+    return elementCollided;
 }

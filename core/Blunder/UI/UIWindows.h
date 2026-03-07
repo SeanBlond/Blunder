@@ -87,6 +87,7 @@ namespace ui
         void OpenWindow() override { CreateUIfromObject(attributeObject); }
         void ClearAttributes();
         void CreateUIfromObject(obj::Object* object);
+        bool checkElementInteraction(GLFWwindow* window, glm::vec2 mousePos, ui::AttributeElement* element, StateMachine* state);
 
     private:
         obj::Object* attributeObject;
