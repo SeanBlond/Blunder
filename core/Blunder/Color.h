@@ -271,9 +271,9 @@ namespace colors
 	const Color black(0);
 	const Color darkerGrey(0.256f);
 	const Color murkyGrey(0.3f); // Essentially only used for viewport background color
-	const Color darkGrey(0.514f);
 	const Color grey(0.434f);
 	const Color lightgrey(0.354f);
+	const Color lightergrey(0.514f);
 	const Color lightestgrey(0.825f);
 	const Color white(1);
 	

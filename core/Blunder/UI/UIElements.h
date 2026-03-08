@@ -199,6 +199,27 @@ namespace ui
         bool* value;
     };
 
+    class ImageToggle : public AttributeElement
+    {
+    public:
+        ImageToggle(std::string label, bool* value, ui::UITexture trueTexture, ui::UITexture falseTexture, Color color = colors::lightestgrey, ElementType type = UI_TOGGLE) : value(value), trueTex(trueTexture), falseTex(falseTexture), imageColor(color), AttributeElement(label, type) {}
+
+        // Element Functions
+        void setToggle(bool value) { *(this->value) = value; }
+        void toggleValue() { *value = !(*value); }
+        void UpdateElement(const ElementPosition& newPosition) override;
+        void RenderElement(UIRenderer* renderer, float textSize) override;
+        void OnClick(StateMachine* state) override;
+        void OnHold(StateMachine* state) override;
+        void OnRelease(StateMachine* state) override;
+
+    private:
+        bool* value;
+        Color imageColor;
+        ui::UITexture trueTex;
+        ui::UITexture falseTex;
+    };
+
     // Text Entry
     class TextEntry : public AttributeElement
     {
@@ -428,6 +449,37 @@ namespace ui
         bool collapsed;
         AttributeHeader* header;
         std::vector<AttributeElement*> elements;
+    };
+
+    struct HierarchyUIElement
+    {
+        HierarchyUIElement(HierarchyInfo* element, ui::UITexture elementSymbol)
+        {
+            this->element = element;
+            this->elementSymbol = elementSymbol;
+            dropdownToggle = new ImageToggle(element->getName() + "-dropdown", element->getDropdownAddress(), ui::UI_DROPDOWN_T, ui::UI_DROPDOWN_F);
+            nameEntry = new HierarchyTextEntry(element->getName() + "-name", element->getNameAddress());
+            displayToggle = new ImageToggle(element->getName() + "-display", element->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
+            renderToggle = new ImageToggle(element->getName() + "-toggle", element->getRenderedAddress(), ui::UI_RENDER_T, UI_RENDER_F);
+        }
+        ~HierarchyUIElement()
+        {
+            delete dropdownToggle;
+            dropdownToggle = nullptr;
+            delete nameEntry;
+            nameEntry = nullptr;
+            delete displayToggle;
+            displayToggle = nullptr;
+            delete renderToggle;
+            renderToggle = nullptr;
+        }
+
+        HierarchyInfo* element;
+        ImageToggle* dropdownToggle;
+        ui::UITexture elementSymbol;
+        HierarchyTextEntry* nameEntry;
+        ImageToggle* displayToggle;
+        ImageToggle* renderToggle;
     };
 }
 #endif // !UI Elements

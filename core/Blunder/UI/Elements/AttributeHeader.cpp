@@ -29,7 +29,7 @@ void AttributeHeader::UpdateElement(const ElementPosition& newPosition)
 void AttributeHeader::RenderElement(UIRenderer* renderer, float textSize)
 {
     // Drawing Base Quad
-    renderer->addQuad(position.getCorners(), 0.2, glm::vec3(0.51f));
+    renderer->addQuad(position.getCorners(), 0.2, colors::lightergrey.rgb());
 
     // Drawing Label Text
     renderer->addText(label, glm::vec3(position.getXCenter(), position.getYCenter(), 0), textSize, glm::vec3(1.0f), position.parentWindow->offset, CENTER);
@@ -43,7 +43,7 @@ void AttributeHeader::RenderElement(UIRenderer* renderer, float textSize)
 
     // Drawing Dropdown symbol
     if (*value)
-        renderer->addQuad(position.getStartCorners(position.getHeight()), 0.21f, colors::white.rgb() * colorMod, position.parentWindow->offset, UI_DROPDOWN_F);
+        renderer->addQuad(position.getStartCorners(position.getHeight()), 0.21f, colors::lightestgrey.rgb() * colorMod, position.parentWindow->offset, UI_DROPDOWN_F);
     else
         renderer->addQuad(position.getStartCorners(position.getHeight()), 0.21f, colors::lightestgrey.rgb() * colorMod, position.parentWindow->offset, UI_DROPDOWN_T);
 
