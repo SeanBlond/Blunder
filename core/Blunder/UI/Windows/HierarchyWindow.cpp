@@ -2,6 +2,39 @@
 using namespace ui;
 
 // Hierarchy Window Functions
+void HierarchyWindow::CreateHierarchyElementsFromRoot(Folder* root)
+{
+    // Deleting old root (if applicable)
+    if (rootAttribute)
+    {
+        delete rootAttribute;
+    }
+
+    // Creating root attribute from passed in element
+    CreateHierarchyElementsFromFolder(root, rootAttribute);
+}
+void HierarchyWindow::CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute)
+{
+    // Adding each hierarchy element at an attribute child
+    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
+    {
+        // TODO: Make it so different element symbols are passed in to the child constructor
+        folderAttribute->children.push_back(new ui::HierarchyAttribute(folder->getHierarchyElement(i), ui::UI_OBJECT_SYMBOL));
+    }
+
+    // Going through eaach child folder of the main folder and creating attributes for them
+    for (int i = 0; i < folder->getChildFoldersSize(); i++)
+    {
+        // Creating a temporry pointer to the new attribute
+        ui::HierarchyAttribute* tempAttribute = new ui::HierarchyAttribute(folder->getChildFolder(i), ui::UI_FOLDER_SYMBOL);
+
+        // Properly creating the folder attribute
+        CreateHierarchyElementsFromFolder(folder->getChildFolder(i), tempAttribute);
+
+        // Adding the fully created attribute to the child vector
+        folderAttribute->children.push_back(tempAttribute);
+    }
+}
 void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos)
 {
     // Rendering the base folder UI

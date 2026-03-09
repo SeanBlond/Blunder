@@ -102,12 +102,14 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr) {}
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), rootAttribute(nullptr) {}
         ~HierarchyWindow()
         {
         }
 
         // Functions
+        void CreateHierarchyElementsFromRoot(Folder* root);
+        void CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute);
         void ResizeWindow() override {}
         void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
         void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
@@ -118,7 +120,7 @@ namespace ui
 
     private:
         StateMachine* state;
-        std::vector<ui::HierarchyAttribute*> attributes;
+        ui::HierarchyAttribute* rootAttribute;
         ui::AttributeElement* clickedElement;
     };
 

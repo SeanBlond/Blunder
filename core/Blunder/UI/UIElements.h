@@ -472,6 +472,13 @@ namespace ui
             displayToggle = nullptr;
             delete renderToggle;
             renderToggle = nullptr;
+
+            for (int i = 0; i < children.size(); i++)
+            {
+                delete children[i];
+                children[i] = nullptr;
+            }
+            children.clear();
         }
 
         HierarchyInfo* element;
@@ -480,6 +487,7 @@ namespace ui
         HierarchyTextEntry* nameEntry;
         ImageToggle* displayToggle;
         ImageToggle* renderToggle;
+        std::vector<HierarchyAttribute*> children;
     };
 }
 #endif // !UI Elements
