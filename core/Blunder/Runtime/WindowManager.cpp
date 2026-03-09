@@ -116,11 +116,11 @@ void LockedWindow::UpdateDimensions()
 	if (bottomWindow)
 		bottomWindow->setDimensions(glm::vec2(topBottomWindowWidth, bottomHeight * dimensions.y));
 
-	// Updating UI Window dimensions
+	// Resizing UI Window dimensions
 	glm::vec2 mainWindowDimensions = getMainWindowDimensions();
 	glm::vec2 windowOffset = getOffset();
 	window->setPosition(mainWindowDimensions, windowOffset);
-	window->UpdateWindow();
+	window->ResizeWindow();
 }
 ui::UIWindow* LockedWindow::checkForCollisions(glm::vec2 position)
 {
@@ -210,13 +210,13 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 			popUpWindow->setOffset(relativeOffset * (glm::vec2)screenSize);
 		}
 
-		// Updating free window positions
+		// RTesizing free window positions
 		for (int i = 0; i < freeWindows.size(); i++)
 		{
 			// Updating position to stay in the same relative position to the screen size
 			glm::vec2 relativeOffset = freeWindows[i]->getPosition().offset / (glm::vec2)storedScreenSize;
 			freeWindows[i]->setOffset(relativeOffset * (glm::vec2)screenSize);
-			freeWindows[i]->UpdateWindow();
+			freeWindows[i]->ResizeWindow();
 		}
 
 		// Updating root locked window size

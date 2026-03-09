@@ -38,7 +38,7 @@ void ColorWindow::ClearAttributes()
         colorAttribute = nullptr;
     }
 }
-void ColorWindow::UpdateWindow()
+void ColorWindow::ResizeWindow()
 {
     // Setting initial yPos to Start rendering at
     float elementHeight = position.unitScale;

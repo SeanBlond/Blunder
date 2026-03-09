@@ -2,7 +2,7 @@
 using namespace ui;
 
 // Viewport Window Functions
-void ViewportWindow::UpdateWindow()
+void ViewportWindow::ResizeWindow()
 {
     // Setting ViewNav Positions
     glm::vec4 navCorners = glm::vec4(

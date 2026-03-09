@@ -2,7 +2,7 @@
 using namespace ui;
 
 // Attribute Window Functions
-void AttributeWindow::UpdateWindow()
+void AttributeWindow::ResizeWindow()
 {
     // Setting initial yPos to start position at
     float elementHeight = position.unitScale;
@@ -164,7 +164,7 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             // Checking if Collapse Button was clicked
             if (clickedElement->getType() == ui::UI_ATTRIBUTE_HEADER)
             {
-                UpdateWindow();
+                ResizeWindow();
             }
 
             clickedElement = nullptr;

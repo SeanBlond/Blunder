@@ -44,7 +44,8 @@ namespace ui
         void setPosition(glm::vec2 dimensions, glm::vec2 offset) { position.setPosition(dimensions, offset); }
 
         // Functions
-        virtual void UpdateWindow() = 0;
+        //virtual void UpdateWindow() = 0;
+        virtual void ResizeWindow() = 0;
         virtual void DrawWindow(ui::UIRenderer* renderer) = 0;
         virtual void ManageInteraction(GLFWwindow* window, StateMachine* state) = 0;
         virtual void UnselectWindow() = 0;
@@ -80,7 +81,7 @@ namespace ui
         void addAttribute(ui::Attribute* attribute) { attributes.push_back(attribute); }
 
         // Functions
-        void UpdateWindow() override;
+        void ResizeWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
@@ -107,7 +108,7 @@ namespace ui
         }
 
         // Functions
-        void UpdateWindow() override {}
+        void ResizeWindow() override {}
         void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
         void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
         void DrawWindow(ui::UIRenderer* renderer) override;
@@ -117,6 +118,7 @@ namespace ui
 
     private:
         StateMachine* state;
+        std::vector<ui::HierarchyAttribute*> attributes;
         ui::AttributeElement* clickedElement;
     };
 
@@ -136,11 +138,11 @@ namespace ui
         }
 
         // Functions
-        void UpdateWindow() override;
+        void ResizeWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { UpdateWindow(); }
+        void OpenWindow() override { ResizeWindow(); }
         void RenderScene();
         void CreateMesh();
 
@@ -171,11 +173,11 @@ namespace ui
         // Functions
         void CreateUIFromSelected();
         void ClearAttributes();
-        void UpdateWindow() override;
+        void ResizeWindow() override;
         void DrawWindow(ui::UIRenderer* renderer) override;
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
-        void OpenWindow() override { CreateUIFromSelected(); UpdateWindow(); }
+        void OpenWindow() override { CreateUIFromSelected(); ResizeWindow(); }
 
     private:
         InteractingColor interactingColor;

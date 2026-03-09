@@ -451,9 +451,9 @@ namespace ui
         std::vector<AttributeElement*> elements;
     };
 
-    struct HierarchyUIElement
+    struct HierarchyAttribute // Struct that stores all the different UI elements a hierarchy element could have
     {
-        HierarchyUIElement(HierarchyInfo* element, ui::UITexture elementSymbol)
+        HierarchyAttribute(HierarchyInfo* element, ui::UITexture elementSymbol)
         {
             this->element = element;
             this->elementSymbol = elementSymbol;
@@ -462,7 +462,7 @@ namespace ui
             displayToggle = new ImageToggle(element->getName() + "-display", element->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
             renderToggle = new ImageToggle(element->getName() + "-toggle", element->getRenderedAddress(), ui::UI_RENDER_T, UI_RENDER_F);
         }
-        ~HierarchyUIElement()
+        ~HierarchyAttribute()
         {
             delete dropdownToggle;
             dropdownToggle = nullptr;
