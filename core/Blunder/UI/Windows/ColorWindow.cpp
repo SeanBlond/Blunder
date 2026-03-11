@@ -206,32 +206,30 @@ void ColorWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     {
         ui::AttributeElement* currentElement = colorAttribute->getElement(i);
 
-        if (currentElement->getInteractable())
-
-            // Collision detection
-            if (currentElement->checkCollision(mousePos) && !state->getTransforming())
+        // Collision detection
+        if (currentElement->checkCollision(mousePos) && !state->getTransforming())
+        {
+            // Clicking an Element
+            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
             {
-                // Clicking an Element
-                if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-                {
-                    clickedElement = currentElement;
-                    clickedElement->clicked = true;
-                    clickedElement->OnClick(state);
-                }
-
-                // Highilighting an Element
-                else
-                {
-                    if (highlightedElement && highlightedElement != currentElement)
-                    {
-                        highlightedElement->highlighted = false;
-                    }
-
-                    highlightedElement = currentElement;
-                    highlightedElement->highlighted = true;
-
-                }
+                clickedElement = currentElement;
+                clickedElement->clicked = true;
+                clickedElement->OnClick(state);
             }
+
+            // Highilighting an Element
+            else
+            {
+                if (highlightedElement && highlightedElement != currentElement)
+                {
+                    highlightedElement->highlighted = false;
+                }
+
+                highlightedElement = currentElement;
+                highlightedElement->highlighted = true;
+
+            }
+        }
 
         // Unhighlighting an Element
         else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)

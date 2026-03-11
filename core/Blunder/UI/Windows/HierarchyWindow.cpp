@@ -63,15 +63,17 @@ void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int ind
 
     // Resizing the render toggle
     attribute->renderToggle->UpdateElement(ElementPosition(tempPos.getEndCorners(position.unitScale), 0.0f, &(this->position)));
-    std::cout << "Resized Render Toggle to " << smath::outputVec4(tempPos.getEndCorners(position.unitScale)) << std::endl;
 
     // Updating yPos for next attribute
     yPos -= position.unitScale;
 
-    // Resizing attribute children
-    for (int i = 0; i < attribute->children.size(); i++)
+    // Resizing attribute children (if not dropped down)
+    if (attribute->element->getDropdown())
     {
-        ResizeAttribute(attribute->children[i], indent + 1, yPos);
+        for (int i = 0; i < attribute->children.size(); i++)
+        {
+            ResizeAttribute(attribute->children[i], indent + 1, yPos);
+        }
     }
 }
 void HierarchyWindow::ResizeWindow()
@@ -110,10 +112,13 @@ void HierarchyWindow::DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::Hie
     // Changing the yPos
     yPos -= position.unitScale;
 
-    // Rendering the attributes children
-    for (int i = 0; i < attribute->children.size(); i++)
+    // Rendering the attributes children (if not dropped down)
+    if (attribute->element->getDropdown())
     {
-        DrawUIHierarchyAttribute(renderer, attribute->children[i], indent + 1, yPos);
+        for (int i = 0; i < attribute->children.size(); i++)
+        {
+            DrawUIHierarchyAttribute(renderer, attribute->children[i], indent + 1, yPos);
+        }
     }
 }
 void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
@@ -135,36 +140,79 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
     // Starting the UI Draw from the root folder
     DrawUIHierarchyAttribute(renderer, rootAttribute, 0, yPos);
 }
+ui::AttributeElement* HierarchyWindow::CheckAttributeInteraction(ui::HierarchyAttribute* attribute, glm::vec2 pos)
+{
+    // Checking the dropdown element (if applicable)
+    if (attribute->children.size() > 0 && attribute->dropdownToggle->checkCollision(pos))
+        return attribute->dropdownToggle;
+
+    // Checking the name entry
+    if (attribute->nameEntry->checkCollision(pos))
+        return attribute->nameEntry;
+
+    // Checking the display toggle
+    if (attribute->displayToggle->checkCollision(pos))
+        return attribute->displayToggle;
+
+    // Checking the render toggle
+    if (attribute->renderToggle->checkCollision(pos))
+        return attribute->renderToggle;
+
+    // Checking the children (if not dropped down)
+    if (attribute->element->getDropdown())
+    {
+        for (int i = 0; i < attribute->children.size(); i++)
+        {
+            return CheckAttributeInteraction(attribute->children[i], pos);
+        }
+    }
+
+    // Not collision found, return null
+    return nullptr;
+}
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
-    /*
-    // Converting mouse position to relative coordinates
-    glm::vec2 relMousePos = state->getMouse()->mousePos / position.dimensions;
+    // Getting mouse Position (flipping the y because glfw is stupid)
+    glm::vec2 mousePos = glm::vec2(
+        state->getMouse()->mousePos.x,
+        (float)(state->getWindowDimensions().y) - state->getMouse()->mousePos.y
+    );
 
-    // Finding CLicked Element
-    //std::cout << "Mouse Pos: (" << xpos << ", " << ypos << ")" << std::endl;
-    for (int i = 0; i < interactables.size(); i++)
+    // Determinig current element
+    ui::AttributeElement* currentElement = CheckAttributeInteraction(rootAttribute, mousePos);
+    if (currentElement)
+        std::cout << "COLLISION: " << currentElement->getLabel() << std::endl;
+
+    // Doing interaction stuff if collision exists
+    if (currentElement && !state->getTransforming())
     {
-        // Highlighting an Element
-        if (smath::checkUICollision(relMousePos, interactables[i].corners) && !state->getTransforming())
+        // Clicking an Element
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
         {
-            // Clicking an Element
-            if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) && clickedElement == nullptr)
-            {
-                state->changeState(SM_UI_INTERACT);
-                interactables[i].element->clicked = true;
-                clickedElement = (interactables[i].element);
-                clickedElement->OnClick(state);
-            }
-
-            // Highilighting an Element
-            else
-                interactables[i].element->highlighted = true;
+            clickedElement = currentElement;
+            clickedElement->clicked = true;
+            clickedElement->OnClick(state);
         }
 
-        // Unhighlighting an Element
-        else if (interactables[i].element->highlighted)
-            interactables[i].element->highlighted = false;
+        // Highilighting an Element
+        else
+        {
+            if (highlightedElement && highlightedElement != currentElement)
+            {
+                highlightedElement->highlighted = false;
+            }
+
+            highlightedElement = currentElement;
+            highlightedElement->highlighted = true;
+
+        }
+    }
+
+    // Unhighlighting an Element
+    else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
     }
 
     // Managing Clicked Element
@@ -178,16 +226,13 @@ void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
             clickedElement->OnRelease(state);
             clickedElement->clicked = false;
 
-            // Checking if Dropdown Button was clicked
-            if (clickedElement->getType() == ui::UI_DROPDOWN)
-            {
-                //GenerateInteractables();
-            }
+            // Checking if UI Sizing needs to be redone
+            if (clickedElement->getType() == ui::UI_ATTRIBUTE_HEADER)
+                ResizeWindow();
 
             clickedElement = nullptr;
         }
     }
-    */
 }
 void HierarchyWindow::UnselectWindow()
 {

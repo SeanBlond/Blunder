@@ -102,7 +102,7 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), rootAttribute(nullptr) { 
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootAttribute(nullptr) {
             CreateHierarchyElementsFromRoot(state->getScene()->getRootFolder()); }
         ~HierarchyWindow()
         {
@@ -113,10 +113,9 @@ namespace ui
         void CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute);
         void ResizeWindow() override;
         void ResizeAttribute(ui::HierarchyAttribute* attribute, int indent, float& yPos);
-        //void DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos);
-        //void DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos);
         void DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::HierarchyAttribute* attribute, int indent, float& yPos);
         void DrawWindow(ui::UIRenderer* renderer) override;
+        ui::AttributeElement* CheckAttributeInteraction(ui::HierarchyAttribute* attribute, glm::vec2 pos);
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
         void OpenWindow() override {}
@@ -124,6 +123,7 @@ namespace ui
     private:
         StateMachine* state;
         ui::HierarchyAttribute* rootAttribute;
+        ui::AttributeElement* highlightedElement;
         ui::AttributeElement* clickedElement;
     };
 
