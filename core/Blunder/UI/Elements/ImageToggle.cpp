@@ -21,7 +21,7 @@ void ImageToggle::UpdateElement(const ElementPosition& newPosition)
     {
         delete interactable;
     }
-    glm::vec4 corners = position.getRightCorners() + position.getOffsetCorners();
+    glm::vec4 corners = position.getCorners() + position.getOffsetCorners();
     interactable = new ui::QuadInteractable(corners);
 }
 
@@ -37,7 +37,7 @@ void ImageToggle::RenderElement(UIRenderer* renderer, float textSize)
 
     // Drawing the texture
     if (*value)
-        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, trueTex);
+        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, position.getOffset(), trueTex);
     else
-        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, falseTex);
+        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, position.getOffset(), falseTex);
 }

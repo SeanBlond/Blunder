@@ -40,7 +40,7 @@ void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int ind
 {
     // Creating the base position that all elements of the attribute will be based on
     ElementPosition tempPos = ElementPosition(
-        glm::vec2(position.getWidth() * 0.5f + (indent * position.unitScale * 0.5f) + position.getXOffset(), yPos),    // Center
+        glm::vec2(position.getWidth() * 0.5f + (indent * position.unitScale * 0.5f), yPos),    // Center
         glm::vec2(position.getWidth() - 2.0f * position.getBuffer() - (indent * position.unitScale), position.unitScale),   // Size
         0.0f,   // Split
         &(this->position)   // Parent Position
@@ -163,7 +163,9 @@ ui::AttributeElement* HierarchyWindow::CheckAttributeInteraction(ui::HierarchyAt
     {
         for (int i = 0; i < attribute->children.size(); i++)
         {
-            return CheckAttributeInteraction(attribute->children[i], pos);
+            // Checking if a child interaction returns a non-null element, then returning it
+            ui::AttributeElement* childInteraction = CheckAttributeInteraction(attribute->children[i], pos);
+            if (childInteraction) { return childInteraction; }
         }
     }
 
@@ -180,8 +182,6 @@ void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 
     // Determinig current element
     ui::AttributeElement* currentElement = CheckAttributeInteraction(rootAttribute, mousePos);
-    if (currentElement)
-        std::cout << "COLLISION: " << currentElement->getLabel() << std::endl;
 
     // Doing interaction stuff if collision exists
     if (currentElement && !state->getTransforming())
