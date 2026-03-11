@@ -11,6 +11,7 @@ void HierarchyWindow::CreateHierarchyElementsFromRoot(Folder* root)
     }
 
     // Creating root attribute from passed in element
+    rootAttribute = new ui::HierarchyAttribute(root, ui::UI_FOLDER_SYMBOL);
     CreateHierarchyElementsFromFolder(root, rootAttribute);
 }
 void HierarchyWindow::CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute)
@@ -35,91 +36,84 @@ void HierarchyWindow::CreateHierarchyElementsFromFolder(Folder* folder, ui::Hier
         folderAttribute->children.push_back(tempAttribute);
     }
 }
-void HierarchyWindow::DrawUIFolder(ui::UIRenderer* renderer, Folder* folder, int indent, float& yPos)
+void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int indent, float& yPos)
 {
-    // Rendering the base folder UI
-    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2.0f * position.getBuffer(), position.unitScale), colors::lightgrey.rgb(), position.offset);
+    // Creating the base position that all elements of the attribute will be based on
+    ElementPosition tempPos = ElementPosition(
+        glm::vec2(position.getWidth() * 0.5f + (indent * position.unitScale * 0.5f) + position.getXOffset(), yPos),    // Center
+        glm::vec2(position.getWidth() - 2.0f * position.getBuffer() - (indent * position.unitScale), position.unitScale),   // Size
+        0.0f,   // Split
+        &(this->position)   // Parent Position
+    );
 
-    // Dropdown Symbol
-    if (folder->hasChildren())
-        renderer->addQuad(glm::vec3((position.unitScale * 0.5f + position.getBuffer()) + (position.unitScale * indent), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (folder->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+    // Resizing the dropdown toggle (if applicable)
+    if (attribute->dropdownToggle)
+        attribute->dropdownToggle->UpdateElement(ElementPosition(tempPos.getStartCorners(position.unitScale), 0.0f, &(this->position)));
 
-    // Folder Symbol
-    renderer->addQuad(glm::vec3((position.unitScale * 1.5f + position.getBuffer()) + (position.unitScale * indent), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, ui::UI_FOLDER_SYMBOL);
+    // Resizing the hierarchy text element
+    attribute->nameEntry->UpdateElement(ElementPosition(glm::vec4(
+        position.unitScale * (2.0f + indent),
+        tempPos.bottom_y,
+        tempPos.getWidth() - (position.unitScale * 2.0f),
+        tempPos.top_y),
+    0.0f, &(this->position)));
 
-    // Folder Text
-    //ui::ElementPosition textPos(glm::vec4(
-    //    position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
-    //    yPos - (0.04f * position.getWidth()),
-    //    position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
-    //    yPos + (0.04f * position.getWidth())
-    //), 0.0f, &position);
-    //folder->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
+    // Resizing the display toggle
+    attribute->displayToggle->UpdateElement(ElementPosition(tempPos.getEndCorners(position.unitScale) - ui::ElementPosition::getXPosCorners(position.unitScale), 0.0f, &(this->position)));
 
-    // Visibility Symbol
-    renderer->addQuad(glm::vec3(position.getWidth() - (position.unitScale * 1.5f + position.getBuffer()), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (folder->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    // Resizing the render toggle
+    attribute->renderToggle->UpdateElement(ElementPosition(tempPos.getEndCorners(position.unitScale), 0.0f, &(this->position)));
+    std::cout << "Resized Render Toggle to " << smath::outputVec4(tempPos.getEndCorners(position.unitScale)) << std::endl;
 
-    // Render Symbol
-    renderer->addQuad(glm::vec3(position.getWidth() - (position.unitScale * 0.5f + position.getBuffer()), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (folder->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    // Updating yPos for next attribute
+    yPos -= position.unitScale;
 
-    // Changing yPos
-    yPos -= (position.unitScale);
-
-    // Checking if children should be displayed
-    if (folder->getDropdown())
+    // Resizing attribute children
+    for (int i = 0; i < attribute->children.size(); i++)
     {
-        // Rendering each folder UI
-        for (int i = 0; i < folder->getChildFoldersSize(); i++)
-        {
-            DrawUIFolder(renderer, folder->getChildFolder(i), indent + 1, yPos);
-        }
-
-        // Rendering each element UI
-        for (int i = 0; i < folder->getHierarchyElementSize(); i++)
-        {
-            DrawUIHierarchyElement(renderer, folder->getHierarchyElement(i), indent + 1, yPos);
-        }
+        ResizeAttribute(attribute->children[i], indent + 1, yPos);
     }
 }
-void HierarchyWindow::DrawUIHierarchyElement(ui::UIRenderer* renderer, HierarchyElement* element, int indent, float& yPos)
+void HierarchyWindow::ResizeWindow()
 {
-    // Rendering the base element UI
-    Color baseColor = (state->getSelectedObject() == element->getObject() ? colors::grey.rgb() : colors::lightgrey.rgb());
-    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2.0f * position.getBuffer(), position.unitScale), baseColor.rgb(), position.offset);
+    // Setting up initial positioning values
+    float hierarchyTitleHeight = position.unitScale * 1.5f;
+    float yPos = position.getHeight() - hierarchyTitleHeight - position.getBuffer() - (position.unitScale * 0.5f);
 
-    // Dropdown Symbol
-    if (element->hasChildren())
-        renderer->addQuad(glm::vec3((position.unitScale * 0.5f + position.getBuffer()) + (position.unitScale * indent), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (element->getDropdown() ? ui::UI_DROPDOWN_T : ui::UI_DROPDOWN_F));
+    // Starting the resizing from the root folder
+    ResizeAttribute(rootAttribute, 0, yPos);
+}
+void HierarchyWindow::DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::HierarchyAttribute* attribute, int indent, float& yPos)
+{
+    // Drawing the dropdown symbol (if applicable)
+    if (attribute->children.size() > 0)
+        attribute->dropdownToggle->RenderElement(renderer, mediumText());
 
-    // Object Symbol
-    renderer->addQuad(glm::vec3((position.unitScale * 1.5f + position.getBuffer()) + (position.unitScale * indent), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, ui::UI_OBJECT_SYMBOL);
+    // Drawing the element symbol
+    glm::vec4 symbolCorners = glm::vec4(
+        position.unitScale * (1.0f + indent),
+        yPos - position.unitScale * 0.5f,
+        position.unitScale * (2.0f + indent),
+        yPos + position.unitScale * 0.5f
+    );
+    renderer->addQuad(symbolCorners, 0.21f, colors::lightestgrey.rgb(), position.offset, attribute->elementSymbol);
 
-    // Object Text
-    //ui::ElementPosition textPos(glm::vec4(
-    //    position.getBuffer() + (0.16f + (0.08f * indent)) * position.getWidth(),
-    //    yPos - (0.04f * position.getWidth()),
-    //    position.getWidth() - (position.getBuffer() + (0.16f * position.getWidth())),
-    //    yPos + (0.04f * position.getWidth())
-    //), 0.0f, &position);
-    //element->getHierarchyTextUI()->RenderElement(renderer, textPos, mediumText());
+    // TODO: Drawing the Element Name
+    attribute->nameEntry->RenderElement(renderer, mediumText());
 
-    // Visibility Symbol
-    renderer->addQuad(glm::vec3(position.getWidth() - (position.unitScale * 1.5f + position.getBuffer()), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (element->getDisplayed() ? ui::UI_DISPLAY_T : ui::UI_DISPLAY_F));
+    // Drawing the display symbol
+    attribute->displayToggle->RenderElement(renderer, mediumText());
+    
+    // Drawing the render symbol
+    attribute->renderToggle->RenderElement(renderer, mediumText());
 
-    // Render Symbol
-    renderer->addQuad(glm::vec3(position.getWidth() - (position.unitScale * 0.5f + position.getBuffer()), yPos, 0.15f), glm::vec2(position.unitScale), colors::white.rgb(), position.offset, (element->getRendered() ? ui::UI_RENDER_T : ui::UI_RENDER_F));
+    // Changing the yPos
+    yPos -= position.unitScale;
 
-    // Changing yPos
-    yPos -= (position.unitScale);
-
-    // Checking if children should be displayed
-    if (element->getDropdown())
+    // Rendering the attributes children
+    for (int i = 0; i < attribute->children.size(); i++)
     {
-        // Rendering each child of the element
-        for (int i = 0; i < element->getChildrenSize(); i++)
-        {
-            DrawUIHierarchyElement(renderer, element->getChild(i), indent + 1, yPos);
-        }
+        DrawUIHierarchyAttribute(renderer, attribute->children[i], indent + 1, yPos);
     }
 }
 void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
@@ -139,7 +133,7 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
     yPos -= (hierarchyTitleHeight * 0.5f) + (position.unitScale * 0.5f);
 
     // Starting the UI Draw from the root folder
-    DrawUIFolder(renderer, state->getScene()->getRootFolder(), 0, yPos);
+    DrawUIHierarchyAttribute(renderer, rootAttribute, 0, yPos);
 }
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {

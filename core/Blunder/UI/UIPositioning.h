@@ -104,6 +104,11 @@ namespace ui
         float getBuffer() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
         float getFixedUnit() const { return (parentWindow ? parentWindow->getBuffer() : 0); }
 
+        // Static Getters
+        static glm::vec4 getXPosCorners(float xPos) { return glm::vec4(xPos, 0, xPos, 0); }
+        static glm::vec4 getYPosCorners(float yPos) { return glm::vec4(0, yPos, 0, yPos); }
+        static glm::vec4 getPosCorners(glm::vec2 position) { return glm::vec4(position.x, position.y, position.x, position.y); }
+
         // Multi-Setters
         void setCorners(glm::vec4 corners) {
             left_x = corners.x;
