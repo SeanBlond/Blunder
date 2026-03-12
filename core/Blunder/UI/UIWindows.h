@@ -8,7 +8,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "../../line/line.h"
 #include "../Runtime/StateMachine.h"
 #include "../Scene/Scene.h"
 #include "UIElements.h"
