@@ -7,6 +7,7 @@ StateMachine::StateMachine(scn::Scene* scene, Mouse* mouse, OrbitCamera* activeC
     this->scene = scene;
     this->mouse = mouse;
     this->windowDimensions = dimensions;
+    this->windowManager = nullptr;
     currentState = SM_NONE;
     transforming = false;
     UIInteracting = false;

@@ -11,6 +11,8 @@
 
 enum EditingState { SM_NONE, SM_SELECT, SM_TRANSLATE, SM_ROTATE, SM_SCALE, SM_UI_INTERACT, SM_UI_TYPING, SM_UI_TRANSLATING };
 
+class WindowManager;
+
 struct Mouse 
 {
     Mouse(glm::vec2 pos = glm::vec2(0)) : mousePos(pos), previousMouse(pos), mouseDelta(glm::vec2(0)), rawData(false) {}
@@ -49,11 +51,13 @@ public:
     OrbitCamera* getCamera() { return activeCamera; }
     scn::Scene* getScene() { return scene; }
     glm::ivec2 getWindowDimensions() { return windowDimensions; }
+    WindowManager* getWindowManager() { return windowManager; }
 
     // Setters
     void setAxis(const glm::vec3 axis) { this->stateAxis = axis; }
     void setTextInput(ui::TextInput* textInput) { this->textInput = textInput; }
     void setWindowDimensions(glm::ivec2 dimensions) { this->windowDimensions = dimensions; }
+    void setWindowManager(WindowManager* windowManager) { this->windowManager = windowManager; }
 
     //Functions
     void selectObject(obj::Object* newObject);
@@ -72,6 +76,7 @@ private:
     obj::Object* selectedObject;
     Mouse* mouse;
     OrbitCamera* activeCamera;
+    WindowManager* windowManager;
     ui::TextInput* textInput;
     glm::vec3 saveValue;
     glm::vec3 stateAxis;

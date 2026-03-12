@@ -183,6 +183,7 @@ void LockedWindow::DrawWindows(ui::UIRenderer* renderer)
 WindowManager::WindowManager(StateMachine* state)
 {
 	this->state = state;
+	state->setWindowManager(this);
 	selectedWindow = nullptr;
 	rootLockedWindow = nullptr;
 	popUpWindow = nullptr;
@@ -243,9 +244,19 @@ void WindowManager::UpdateWindows(GLFWwindow* window, glm::ivec2 screenSize)
 		if (popUpWindow)
 		{
 			// Check for collision
-			glm::vec4 checkCorners = popUpWindow->getPosition().getCorners();
-			if (smath::checkUICollision(mousePos, checkCorners))
+			if (smath::checkUICollision(mousePos, popUpWindow->getPosition().getCorners()))
+			{
 				newSelectedWindow = popUpWindow;
+			}
+			// Checking if the window should be closed (clicked outside of the screen)
+			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
+			{
+				if (selectedWindow == popUpWindow)
+					selectedWindow = nullptr;
+
+				closePopUp();
+				newSelectedWindow = nullptr;
+			}
 		}
 		// Checking non-pop-up windows
 		else
@@ -315,9 +326,4 @@ void WindowManager::CreateDefaultWindows(glm::ivec2 screenSize)
 
 	// Hierarchy UI
 	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.1667);
-
-	// REMOVE AT SOME POINT
-	// Test Color Window
-	ui::UIWindow* testColorWindow = new ui::ColorWindow(150, 260, screenSize.x * 0.25f, 200, &(state->getSelectedObject()->testColor));
-	addFreeWindow(testColorWindow);
 }

@@ -1,4 +1,5 @@
 #include "../UIElements.h"
+#include "../../Runtime/WindowManager.h"
 using namespace ui;
 
 // Color Entry Mouse Functions
@@ -8,6 +9,9 @@ void ColorEntry::OnRelease(StateMachine* state)
 {
     // TODO: Create Color Pop-Up window
     std::cout << "Color Entry clicked" << std::endl;
+    state->getWindowManager()->setPopUpWindow(new ui::ColorWindow(150, 260, 
+        position.right_x + (position.getBuffer() * 3.0f) + position.getXOffset(), 
+        position.getYCenter() + position.getYOffset() - (260 - position.getFixedUnit()), value));
     state->exitState();
 }
 

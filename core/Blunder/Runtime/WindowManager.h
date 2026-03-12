@@ -75,7 +75,6 @@ private:
 	float bottomHeight;
 };
 
-
 class WindowManager
 {
 public:
@@ -86,7 +85,7 @@ public:
 	// Getters
 
 	// Setters
-	void setPopUpWindow(ui::UIWindow* window) { closePopUp(); this->popUpWindow = window; }
+	void setPopUpWindow(ui::UIWindow* window) { closePopUp(); this->popUpWindow = window; window->ResizeWindow(); }
 
 	// Functions
 	void closePopUp() { if (popUpWindow) { popUpWindow->UnselectWindow(); delete popUpWindow; popUpWindow = nullptr; } }
