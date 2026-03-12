@@ -2,17 +2,6 @@
 
 // Base Hierarchy Element Class Functions
 // --------------------------------------
-// Constructor
-HierarchyElement::HierarchyElement(obj::Object* object, HierarchyType type, HierarchyElement* parent, bool displayed, bool rendered)
-{
-    this->object = object;
-    this->type = type;
-    this->displayed = displayed;
-    this->rendered = rendered;
-    this->parent = parent;
-    this->dropdown = true;
-}
-
 void HierarchyElement::changeParent(HierarchyElement* parent)
 {
     // Checking if parent exists
@@ -67,13 +56,8 @@ void HierarchyElement::EraseObject(bool deleteChildren)
     }
 }
 
-Folder::Folder(std::string name, Folder* parentFolder, bool displayed, bool rendered)
-{
-    this->name = name;
-    this->parentFolder = parentFolder;
-    this->displayed = displayed;
-    this->rendered = rendered;
-}
+// Folder Hierarchy Element Class Functions
+// --------------------------------------
 void Folder::addElement(HierarchyElement* element)
 {
     elements.push_back(element);

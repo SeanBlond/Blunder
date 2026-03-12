@@ -22,11 +22,11 @@ void Scene::addObject(obj::Object* object)
 {
     if (selectedFolder != nullptr)
     {
-        selectedFolder->addElement(new HierarchyElement(object, OBS_OBJECT, nullptr));
+        selectedFolder->addElement(new HierarchyElement(object, nullptr, SCN_OBJECT));
     }
     else
     {
-        rootFolder->addElement(new HierarchyElement(object, OBS_OBJECT, nullptr));
+        rootFolder->addElement(new HierarchyElement(object, nullptr, SCN_OBJECT));
     }
 }
 void Scene::addHierarchyElement(HierarchyElement* element)

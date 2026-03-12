@@ -5,13 +5,13 @@
 #include <vector>
 #include "../../object/object.h"
 
-enum HierarchyType { OBS_OBJECT, OBS_LIGHT, OBS_CAMERA, OBS_EMPTY };
+enum HierarchyType { SCN_FOLDER, SCN_OBJECT, SCN_LIGHT, SCN_CAMERA, SCN_EMPTY };
 
 class HierarchyInfo
 {
 public:
     // Constructor
-    HierarchyInfo(bool displayed = true, bool rendered = true, bool dropdown = true) : displayed(displayed), rendered(rendered), dropdown(dropdown) {}
+    HierarchyInfo(HierarchyType type, bool displayed = true, bool rendered = true, bool dropdown = true) : type(type), displayed(displayed), rendered(rendered), dropdown(dropdown) {}
 
     // Getters
     bool getDisplayed() { return displayed; }
@@ -32,6 +32,8 @@ public:
     virtual void setName(std::string name) = 0;
 
 protected:
+    HierarchyType type;
+
     // UI Interaction Elements
     bool displayed;
     bool rendered;
@@ -42,7 +44,8 @@ class HierarchyElement : public HierarchyInfo
 {
 public:
     // Constructor
-    HierarchyElement(obj::Object* object, HierarchyType type, HierarchyElement* parent, bool displayed = true, bool rendered = true);
+    HierarchyElement(obj::Object* object, HierarchyElement* parent, HierarchyType type = SCN_OBJECT, bool displayed = true, bool rendered = true) :
+        object(object), parent(parent), HierarchyInfo(type, displayed, rendered, false) {}
     ~HierarchyElement() { EraseObject(true); }
 
     // Getters
@@ -66,7 +69,6 @@ public:
 
 private:
     obj::Object* object;
-    HierarchyType type;
     HierarchyElement* parent;
     std::vector<HierarchyElement*> children;
 };
@@ -75,7 +77,8 @@ class Folder : public HierarchyInfo
 {
 public:
     // Constructor & Deconstructor
-    Folder(std::string name, Folder* parentFolder = nullptr, bool displayed = true, bool rendered = true);
+    Folder(std::string name, Folder* parentFolder = nullptr, bool displayed = true, bool rendered = true) :
+        name(name), parentFolder(parentFolder), HierarchyInfo(SCN_FOLDER, displayed, rendered, true) {}
     ~Folder() { EraseFolder(); }
 
     // Getters
