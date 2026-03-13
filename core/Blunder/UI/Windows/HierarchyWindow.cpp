@@ -41,7 +41,7 @@ void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int ind
     // Creating the base position that all elements of the attribute will be based on
     ElementPosition tempPos = ElementPosition(
         glm::vec2(position.getWidth() * 0.5f + (indent * position.unitScale * 0.5f), yPos),    // Center
-        glm::vec2(position.getWidth() - 2.0f * position.getBuffer() - (indent * position.unitScale), position.unitScale),   // Size
+        glm::vec2(position.getWidth() - (2.0f * position.getBuffer()) - (indent * position.unitScale), position.unitScale),   // Size
         0.0f,   // Split
         &(this->position)   // Parent Position
     );
@@ -52,7 +52,7 @@ void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int ind
 
     // Resizing the hierarchy text element
     attribute->nameEntry->UpdateElement(ElementPosition(glm::vec4(
-        position.unitScale * (2.0f + indent),
+        position.unitScale * (2.0f + indent) + position.getBuffer(),
         tempPos.bottom_y,
         tempPos.getWidth() - (position.unitScale * 2.0f),
         tempPos.top_y),
@@ -93,9 +93,9 @@ void HierarchyWindow::DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::Hie
 
     // Drawing the element symbol
     glm::vec4 symbolCorners = glm::vec4(
-        position.unitScale * (1.0f + indent),
+        position.unitScale * (1.0f + indent) + position.getBuffer(),
         yPos - position.unitScale * 0.5f,
-        position.unitScale * (2.0f + indent),
+        position.unitScale * (2.0f + indent) + position.getBuffer(),
         yPos + position.unitScale * 0.5f
     );
     renderer->addQuad(symbolCorners, 0.21f, colors::lightestgrey.rgb(), position.offset, attribute->elementSymbol);
