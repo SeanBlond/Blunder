@@ -209,7 +209,7 @@ void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     }
 
     // Unhighlighting an Element
-    else if (highlightedElement && currentElement == highlightedElement && highlightedElement->highlighted)
+    else if (highlightedElement && currentElement != highlightedElement && highlightedElement->highlighted)
     {
         highlightedElement->highlighted = false;
         highlightedElement = nullptr;
@@ -242,6 +242,12 @@ void HierarchyWindow::UnselectWindow()
         clickedElement->clicked = false;
         clickedElement->highlighted = false;
         clickedElement = nullptr;
+    }
 
+    // Unhighlighting an Element
+    if (highlightedElement)
+    {
+        highlightedElement->highlighted = false;
+        highlightedElement = nullptr;
     }
 }
