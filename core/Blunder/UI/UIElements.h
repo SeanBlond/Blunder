@@ -458,7 +458,7 @@ namespace ui
             this->element = element;
             this->elementSymbol = elementSymbol;
             dropdownToggle = new ImageToggle(element->getName() + "-dropdown", element->getDropdownAddress(), ui::UI_DROPDOWN_T, ui::UI_DROPDOWN_F, colors::lightestgrey, ui::UI_ATTRIBUTE_HEADER);
-            nameEntry = new HierarchyTextEntry(element->getName() + "-name", element->getNameAddress());
+            nameEntry = new HierarchyTextEntry(element->getName() + "-name", element->getNameAddress(), element->getObject());
             displayToggle = new ImageToggle(element->getName() + "-display", element->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
             renderToggle = new ImageToggle(element->getName() + "-toggle", element->getRenderedAddress(), ui::UI_RENDER_T, UI_RENDER_F);
         }

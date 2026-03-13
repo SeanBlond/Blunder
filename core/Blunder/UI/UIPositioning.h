@@ -34,6 +34,9 @@ namespace ui
         float getHeight() const { return dimensions.y; }
         float getXOffset() const { return offset.x; }
         float getYOffset() const { return offset.y; }
+        float getXCenter() const { return (dimensions.x * 0.5f) + offset.x; }
+        float getYCenter() const { return (dimensions.y * 0.5f) + offset.y; }
+        glm::vec2 getCenter() const { return (dimensions * 0.5f) + offset; }
         float getAspectRatio() const { return (dimensions.x / dimensions.y); }
         glm::vec4 getCorners() const { return glm::vec4(offset.x, offset.y, dimensions.x + offset.x, dimensions.y + offset.y); }
         glm::vec4 getBufferedCorners() const { return glm::vec4(getBuffer() + offset.x, getBuffer() + offset.y, dimensions.x + offset.x - getBuffer(), dimensions.y + offset.y - getBuffer()); }

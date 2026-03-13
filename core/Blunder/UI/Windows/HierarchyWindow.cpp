@@ -16,14 +16,7 @@ void HierarchyWindow::CreateHierarchyElementsFromRoot(Folder* root)
 }
 void HierarchyWindow::CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute)
 {
-    // Adding each hierarchy element at an attribute child
-    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
-    {
-        // TODO: Make it so different element symbols are passed in to the child constructor
-        folderAttribute->children.push_back(new ui::HierarchyAttribute(folder->getHierarchyElement(i), ui::UI_OBJECT_SYMBOL));
-    }
-
-    // Going through eaach child folder of the main folder and creating attributes for them
+    // Going through each child folder of the main folder and creating attributes for them
     for (int i = 0; i < folder->getChildFoldersSize(); i++)
     {
         // Creating a temporry pointer to the new attribute
@@ -34,6 +27,13 @@ void HierarchyWindow::CreateHierarchyElementsFromFolder(Folder* folder, ui::Hier
 
         // Adding the fully created attribute to the child vector
         folderAttribute->children.push_back(tempAttribute);
+    }
+
+    // Adding each child element at an attribute child
+    for (int i = 0; i < folder->getHierarchyElementSize(); i++)
+    {
+        // TODO: Make it so different element symbols are passed in to the child constructor
+        folderAttribute->children.push_back(new ui::HierarchyAttribute(folder->getHierarchyElement(i), ui::UI_OBJECT_SYMBOL));
     }
 }
 void HierarchyWindow::ResizeAttribute(ui::HierarchyAttribute* attribute, int indent, float& yPos)
@@ -87,6 +87,15 @@ void HierarchyWindow::ResizeWindow()
 }
 void HierarchyWindow::DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::HierarchyAttribute* attribute, int indent, float& yPos)
 {
+    // Checking if highlighted quad needs to be drawn
+    if (attribute->element->getObject() == state->getSelectedObject())
+    {
+        renderer->addQuad(
+            glm::vec3(position.getXCenter(), yPos, 0.2f), 
+            glm::vec2(position.getWidth() - (2.0f * position.getBuffer()), position.unitScale), 
+            colors::grey.rgb());
+    }
+
     // Drawing the dropdown symbol (if applicable)
     if (attribute->children.size() > 0)
         attribute->dropdownToggle->RenderElement(renderer, mediumText());

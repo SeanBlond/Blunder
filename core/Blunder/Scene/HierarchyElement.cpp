@@ -101,7 +101,6 @@ void Folder::moveElement(HierarchyElement* element, Folder* folder)
         moveElement(index, folder);
     }
 }
-
 void Folder::changeParentFolder(Folder* parent)
 {
     // Checking if parent folder can be changed to

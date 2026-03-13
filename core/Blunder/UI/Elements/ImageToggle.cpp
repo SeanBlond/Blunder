@@ -37,7 +37,7 @@ void ImageToggle::RenderElement(UIRenderer* renderer, float textSize)
 
     // Drawing the texture
     if (*value)
-        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, position.getOffset(), trueTex);
+        renderer->addQuad(position.getCorners(), 0.21f, imageColor.rgb() * colorMod, position.getOffset(), trueTex);
     else
-        renderer->addQuad(position.getCorners(), 0.2f, imageColor.rgb() * colorMod, position.getOffset(), falseTex);
+        renderer->addQuad(position.getCorners(), 0.21f, imageColor.rgb() * colorMod, position.getOffset(), falseTex);
 }

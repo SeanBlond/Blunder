@@ -18,6 +18,7 @@ void HierarchyTextEntry::OnClick(StateMachine* state)
         // Checking if object reference exists before setting it to be the selected object
         if (object != nullptr)
         {
+            std::cout << "Change Selected Object" << std::endl;
             state->selectObject(object);
         }
     }
