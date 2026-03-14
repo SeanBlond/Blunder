@@ -451,9 +451,11 @@ namespace ui
         std::vector<AttributeElement*> elements;
     };
 
-    struct HierarchyAttribute // Struct that stores all the different UI elements a hierarchy element could have
+
+    // Structs used by HierarchyWindow to keep track of the different UI elements that hierarchy elements need
+    struct HierarchyElementAttribute
     {
-        HierarchyAttribute(HierarchyInfo* element, ui::UITexture elementSymbol)
+        HierarchyElementAttribute(HierarchyElement* element, ui::UITexture elementSymbol)
         {
             this->element = element;
             this->elementSymbol = elementSymbol;
@@ -462,7 +464,7 @@ namespace ui
             displayToggle = new ImageToggle(element->getName() + "-display", element->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
             renderToggle = new ImageToggle(element->getName() + "-toggle", element->getRenderedAddress(), ui::UI_RENDER_T, UI_RENDER_F);
         }
-        ~HierarchyAttribute()
+        ~HierarchyElementAttribute()
         {
             delete dropdownToggle;
             dropdownToggle = nullptr;
@@ -481,13 +483,60 @@ namespace ui
             children.clear();
         }
 
-        HierarchyInfo* element;
+        HierarchyElement* element;
         ImageToggle* dropdownToggle;
         ui::UITexture elementSymbol;
         HierarchyTextEntry* nameEntry;
         ImageToggle* displayToggle;
         ImageToggle* renderToggle;
-        std::vector<HierarchyAttribute*> children;
+        std::vector<HierarchyElementAttribute*> children;
+    };
+
+    struct HierarchyFolderAttribute
+    {
+        HierarchyFolderAttribute(HierarchyFolder* folder)
+        {
+            this->folder = folder;
+            dropdownToggle = new ImageToggle(folder->getName() + "-dropdown", folder->getDropdownAddress(), ui::UI_DROPDOWN_T, ui::UI_DROPDOWN_F, colors::lightestgrey, ui::UI_ATTRIBUTE_HEADER);
+            nameEntry = new HierarchyTextEntry(folder->getName() + "-name", folder->getNameAddress());
+            displayToggle = new ImageToggle(folder->getName() + "-display", folder->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
+            renderToggle = new ImageToggle(folder->getName() + "-toggle", folder->getRenderedAddress(), ui::UI_RENDER_T, UI_RENDER_F);
+        }
+        ~HierarchyFolderAttribute()
+        {
+            delete dropdownToggle;
+            dropdownToggle = nullptr;
+            delete nameEntry;
+            nameEntry = nullptr;
+            delete displayToggle;
+            displayToggle = nullptr;
+            delete renderToggle;
+            renderToggle = nullptr;
+
+            // Deleting each folder child
+            for (int i = 0; i < folderChildren.size(); i++)
+            {
+                delete folderChildren[i];
+                folderChildren[i] = nullptr;
+            }
+            folderChildren.clear();
+
+            // Deleting each element child
+            for (int i = 0; i < elementChildren.size(); i++)
+            {
+                delete elementChildren[i];
+                elementChildren[i] = nullptr;
+            }
+            elementChildren.clear();
+        }
+
+        HierarchyFolder* folder;
+        ImageToggle* dropdownToggle;
+        HierarchyTextEntry* nameEntry;
+        ImageToggle* displayToggle;
+        ImageToggle* renderToggle;
+        std::vector<HierarchyFolderAttribute*> folderChildren;
+        std::vector<HierarchyElementAttribute*> elementChildren;
     };
 }
 #endif // !UI Elements

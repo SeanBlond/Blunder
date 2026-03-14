@@ -4,7 +4,7 @@ using namespace scn;
 // Constructor & Deocnstructor
 Scene::Scene()
 {
-    rootFolder = new Folder("Scene");
+    rootFolder = new HierarchyFolder("Scene");
     selectedFolder = rootFolder;
     renderSettings.backfaceCull = true;
     renderSettings.renderTriangles = true;
@@ -40,11 +40,11 @@ void Scene::addFolder(std::string name)
 {
     if (selectedFolder != nullptr)
     {
-        selectedFolder->addChildFolder(new Folder(name, selectedFolder));
+        selectedFolder->addChildFolder(new HierarchyFolder(name, selectedFolder));
     }
     else
     {
-        rootFolder->addChildFolder(new Folder(name, rootFolder));
+        rootFolder->addChildFolder(new HierarchyFolder(name, rootFolder));
     }
 }
 
@@ -66,7 +66,7 @@ void Scene::RenderHierarchyElement(HierarchyElement* element, glm::mat4 projecti
         RenderHierarchyElement(element->getChild(i), projection, view);
     }
 }
-void Scene::RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view)
+void Scene::RenderFolder(HierarchyFolder* folder, glm::mat4 projection, glm::mat4 view)
 {
     // Checking if folder is set to be displayed
     if (folder->getDisplayed())

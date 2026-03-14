@@ -21,7 +21,6 @@ public:
     bool* getRenderedAddress() { return &rendered; }
     bool* getDropdownAddress() { return &dropdown; }
     HierarchyType getType() { return type; }
-    virtual obj::Object* getObject() = 0;
     virtual std::string* getNameAddress() = 0;
 
     // Setters
@@ -55,7 +54,7 @@ public:
     HierarchyElement* getChild(int index) { return children[index]; }
     int getChildrenSize() { return children.size(); }
     HierarchyType getType() { return type; }
-    obj::Object* getObject() override { return object; }
+    obj::Object* getObject() { return object; }
     std::string getName() override { return object->getName(); }
     bool hasChildren() { return children.size() > 0; }
     std::string* getNameAddress() override { return object->getNameAddress(); }
@@ -75,24 +74,23 @@ private:
     std::vector<HierarchyElement*> children;
 };
 
-class Folder : public HierarchyInfo
+class HierarchyFolder : public HierarchyInfo
 {
 public:
     // Constructor & Deconstructor
-    Folder(std::string name, Folder* parentFolder = nullptr, bool displayed = true, bool rendered = true) :
+    HierarchyFolder(std::string name, HierarchyFolder* parentFolder = nullptr, bool displayed = true, bool rendered = true) :
         name(name), parentFolder(parentFolder), HierarchyInfo(SCN_FOLDER, displayed, rendered, true) {}
-    ~Folder() { EraseFolder(); }
+    ~HierarchyFolder() { EraseFolder(); }
 
     // Getters
     HierarchyElement* getHierarchyElement(int index) { return elements[index]; }
     int getHierarchyElementSize() { return elements.size(); }
-    Folder* getParentFolder() { return parentFolder; }
-    Folder* getChildFolder(int index) { return childrenFolders[index]; }
+    HierarchyFolder* getParentFolder() { return parentFolder; }
+    HierarchyFolder* getChildFolder(int index) { return childrenFolders[index]; }
     int getChildFoldersSize() { return childrenFolders.size(); }
     bool hasChildren() { return (elements.size() > 0 || childrenFolders.size() > 0); }
     std::string getName() override { return name; }
     std::string* getNameAddress() override { return &name; }
-    obj::Object* getObject() { return nullptr; }
 
     // Setters
     void setName(std::string name) override { this->name = name; }
@@ -100,17 +98,17 @@ public:
     // Functions
     void addElement(HierarchyElement* element);
     void removeElement(HierarchyElement* element, bool deleteChildren = false);
-    void moveElement(int index, Folder* folder);
-    void moveElement(HierarchyElement* element, Folder* folder);
-    void changeParentFolder(Folder* parent);
-    void addChildFolder(Folder* child);
-    void removeChildFolder(Folder* index, bool deleteElements = false);
+    void moveElement(int index, HierarchyFolder* folder);
+    void moveElement(HierarchyElement* element, HierarchyFolder* folder);
+    void changeParentFolder(HierarchyFolder* parent);
+    void addChildFolder(HierarchyFolder* child);
+    void removeChildFolder(HierarchyFolder* index, bool deleteElements = false);
     void EraseFolder();
 
 private:
     std::string name;
-    Folder* parentFolder;
-    std::vector<Folder*> childrenFolders;
+    HierarchyFolder* parentFolder;
+    std::vector<HierarchyFolder*> childrenFolders;
     std::vector<HierarchyElement*> elements;
 
     // Sorting Elements by Alphabetical order

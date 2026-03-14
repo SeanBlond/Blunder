@@ -101,27 +101,31 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootAttribute(nullptr) {
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootFolderAttribute(nullptr) {
             CreateHierarchyElementsFromRoot(state->getScene()->getRootFolder()); }
         ~HierarchyWindow()
         {
         }
 
         // Functions
-        void CreateHierarchyElementsFromRoot(Folder* root);
-        void CreateHierarchyElementsFromFolder(Folder* folder, ui::HierarchyAttribute* folderAttribute);
+        void CreateHierarchyElementsFromRoot(HierarchyFolder* root);
+        void CreateFolderAttribute(HierarchyFolder* folder, ui::HierarchyFolderAttribute* folderAttribute);
+        void CreateElementAttribute(HierarchyElement* element, ui::HierarchyElementAttribute* elementAttribute);
         void ResizeWindow() override;
-        void ResizeAttribute(ui::HierarchyAttribute* attribute, int indent, float& yPos);
-        void DrawUIHierarchyAttribute(ui::UIRenderer* renderer, ui::HierarchyAttribute* attribute, int indent, float& yPos);
+        void ResizeFolderAttribute(ui::HierarchyFolderAttribute* attribute, int indent, float& yPos);
+        void ResizeElementAttribute(ui::HierarchyElementAttribute* attribute, int indent, float& yPos);
+        void DrawFolderAttribute(ui::UIRenderer* renderer, ui::HierarchyFolderAttribute* attribute, int indent, float& yPos);
+        void DrawElementAttribute(ui::UIRenderer* renderer, ui::HierarchyElementAttribute* attribute, int indent, float& yPos);
         void DrawWindow(ui::UIRenderer* renderer) override;
-        ui::AttributeElement* CheckAttributeInteraction(ui::HierarchyAttribute* attribute, glm::vec2 pos);
+        ui::AttributeElement* CheckFolderAttributeInteraction(ui::HierarchyFolderAttribute* attribute, glm::vec2 pos);
+        ui::AttributeElement* CheckElementAttributeInteraction(ui::HierarchyElementAttribute* attribute, glm::vec2 pos);
         void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         void UnselectWindow() override;
         void OpenWindow() override {}
 
     private:
         StateMachine* state;
-        ui::HierarchyAttribute* rootAttribute;
+        ui::HierarchyFolderAttribute* rootFolderAttribute;
         ui::AttributeElement* highlightedElement;
         ui::AttributeElement* clickedElement;
     };

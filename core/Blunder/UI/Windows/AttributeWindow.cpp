@@ -9,10 +9,10 @@ void AttributeWindow::ResizeWindow()
     float attributeTitleHeight = position.unitScale + position.getBuffer();
     float attributeYPos = position.getHeight() - (attributeTitleHeight * 0.5f + position.getBuffer());
 
-    // Adding Each Attribute
+    // Resizing Each Attribute
     for (int i = 0; i < attributes.size(); i++)
     {
-        // Adding Attribute Header
+        // Resizing Attribute Header
         float attributeHeaderWidth = position.getWidth() - 2.0f * position.getBuffer();
         ui::ElementPosition elementPos(glm::vec2(position.getWidth() / 2.0f, attributeYPos), glm::vec2(attributeHeaderWidth, attributeTitleHeight), 0.0f, &position);
         attributes[i]->getHeader()->UpdateElement(elementPos);
@@ -121,6 +121,7 @@ void AttributeWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
     if (attributeObject != state->getSelectedObject())
     {
         CreateUIfromObject(state->getSelectedObject());
+        ResizeWindow();
     }
 
     // Finding clicked element by looping through each element within each attribute

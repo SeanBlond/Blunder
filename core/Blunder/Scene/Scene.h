@@ -32,12 +32,12 @@ namespace scn
         ~Scene();
 
         // Getters
-        Folder* getSelectedFolder() { return selectedFolder; }
-        Folder* getRootFolder() { return rootFolder; }
+        HierarchyFolder* getSelectedFolder() { return selectedFolder; }
+        HierarchyFolder* getRootFolder() { return rootFolder; }
         RenderSettings getRenderSettings() { return renderSettings; }
 
         // Setters
-        void setSelectedFolder(Folder* folder) { this->selectedFolder = folder; }
+        void setSelectedFolder(HierarchyFolder* folder) { this->selectedFolder = folder; }
         void setRenderSettings(RenderSettings renderSettings) { this->renderSettings = renderSettings; }
 
         //Functions
@@ -45,12 +45,12 @@ namespace scn
         void addHierarchyElement(HierarchyElement* element);
         void addFolder(std::string name);
         void RenderHierarchyElement(HierarchyElement* element, glm::mat4 projection, glm::mat4 view);
-        void RenderFolder(Folder* folder, glm::mat4 projection, glm::mat4 view);
+        void RenderFolder(HierarchyFolder* folder, glm::mat4 projection, glm::mat4 view);
         void Render(glm::mat4 projection, glm::mat4 view);
 
     private:
-        Folder* selectedFolder;
-        Folder* rootFolder;
+        HierarchyFolder* selectedFolder;
+        HierarchyFolder* rootFolder;
         RenderSettings renderSettings;
     };
 }

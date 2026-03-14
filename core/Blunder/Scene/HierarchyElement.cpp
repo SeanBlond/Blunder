@@ -58,11 +58,11 @@ void HierarchyElement::EraseObject(bool deleteChildren)
 
 // Folder Hierarchy Element Class Functions
 // --------------------------------------
-void Folder::addElement(HierarchyElement* element)
+void HierarchyFolder::addElement(HierarchyElement* element)
 {
     elements.push_back(element);
 }
-void Folder::removeElement(HierarchyElement* element, bool deleteChildren)
+void HierarchyFolder::removeElement(HierarchyElement* element, bool deleteChildren)
 {
     // Checking if element exists within folder
     int index = smath::vectorFind(elements, element);
@@ -83,7 +83,7 @@ void Folder::removeElement(HierarchyElement* element, bool deleteChildren)
         elements.erase(elements.begin() + index);
     }
 }
-void Folder::moveElement(int index, Folder* folder)
+void HierarchyFolder::moveElement(int index, HierarchyFolder* folder)
 {
     // Checking if index is within the range of the vector
     if (index >= 0 && index < elements.size())
@@ -92,7 +92,7 @@ void Folder::moveElement(int index, Folder* folder)
         removeElement(elements[index]);
     }
 }
-void Folder::moveElement(HierarchyElement* element, Folder* folder)
+void HierarchyFolder::moveElement(HierarchyElement* element, HierarchyFolder* folder)
 {
     // Checking if element exists within folder
     int index = smath::vectorFind(elements, element);
@@ -101,7 +101,7 @@ void Folder::moveElement(HierarchyElement* element, Folder* folder)
         moveElement(index, folder);
     }
 }
-void Folder::changeParentFolder(Folder* parent)
+void HierarchyFolder::changeParentFolder(HierarchyFolder* parent)
 {
     // Checking if parent folder can be changed to
     if (parent != nullptr)
@@ -111,11 +111,11 @@ void Folder::changeParentFolder(Folder* parent)
         this->parentFolder->addChildFolder(this);
     }
 }
-void Folder::addChildFolder(Folder* child)
+void HierarchyFolder::addChildFolder(HierarchyFolder* child)
 {
     childrenFolders.push_back(child);
 }
-void Folder::removeChildFolder(Folder* folder, bool deleteElements)
+void HierarchyFolder::removeChildFolder(HierarchyFolder* folder, bool deleteElements)
 {
     // Checking if folder exists within the vector
     int index = smath::vectorFind(childrenFolders, folder);
@@ -144,7 +144,7 @@ void Folder::removeChildFolder(Folder* folder, bool deleteElements)
         childrenFolders.erase(childrenFolders.begin() + index);
     }
 }
-void Folder::EraseFolder()
+void HierarchyFolder::EraseFolder()
 {
     // Erasing all elements
     for (int i = 0; i < elements.size(); i++)
@@ -167,7 +167,7 @@ void Folder::EraseFolder()
 // Folder Class Functions
 // ----------------------
 // Sorting Elements by Alphabetical order
-void Folder::SortElements()
+void HierarchyFolder::SortElements()
 {
     // Right now, this function just uses insertion sort. In the future it can be changed to combine quick and insertion for better efficiency
 

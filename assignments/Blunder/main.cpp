@@ -99,14 +99,15 @@ int main()
     // Creating Shader
     shdr::Shader testShader("assets/vertex.glsl", "assets/Lighting.glsl");
 
-    // Creating Default Objects
-    activeScene.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, 2.5f)));
-    activeScene.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 10), &testShader));
-    activeScene.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
-
     // Testing hierarchy stuff
     activeScene.addFolder("Test 1");
     activeScene.addFolder("Test 2");
+
+    // Creating Default Objects
+    activeScene.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, 2.5f)));
+    activeScene.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 10), &testShader));
+    activeScene.setSelectedFolder(activeScene.getRootFolder()->getChildFolder(0));
+    activeScene.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
 
     // Selecting the default cube
     state.selectObject(activeScene.getSelectedFolder()->getHierarchyElement(0)->getObject());
