@@ -452,13 +452,16 @@ namespace ui
     };
 
 
-    // Structs used by HierarchyWindow to keep track of the different UI elements that hierarchy elements need
+    // Structs used by HierarchyWindow to keep track of the different UI elements that hierarchy elements needstruct HierarchyFolderAttribute
+    struct HierarchyFolderAttribute;
     struct HierarchyElementAttribute
     {
-        HierarchyElementAttribute(HierarchyElement* element, ui::UITexture elementSymbol)
+        HierarchyElementAttribute(HierarchyElement* element, HierarchyFolderAttribute* folderParent, HierarchyElementAttribute* elementParent, ui::UITexture elementSymbol)
         {
             this->element = element;
             this->elementSymbol = elementSymbol;
+            this->folderParent = folderParent;
+            this->elementParent = elementParent;
             dropdownToggle = new ImageToggle(element->getName() + "-dropdown", element->getDropdownAddress(), ui::UI_DROPDOWN_T, ui::UI_DROPDOWN_F, colors::lightestgrey, ui::UI_ATTRIBUTE_HEADER);
             nameEntry = new HierarchyTextEntry(element->getName() + "-name", element->getNameAddress(), element->getObject());
             displayToggle = new ImageToggle(element->getName() + "-display", element->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
@@ -475,12 +478,12 @@ namespace ui
             delete renderToggle;
             renderToggle = nullptr;
 
-            for (int i = 0; i < children.size(); i++)
+            for (int i = 0; i < elementChildren.size(); i++)
             {
-                delete children[i];
-                children[i] = nullptr;
+                delete elementChildren[i];
+                elementChildren[i] = nullptr;
             }
-            children.clear();
+            elementChildren.clear();
         }
 
         HierarchyElement* element;
@@ -489,14 +492,18 @@ namespace ui
         HierarchyTextEntry* nameEntry;
         ImageToggle* displayToggle;
         ImageToggle* renderToggle;
-        std::vector<HierarchyElementAttribute*> children;
+        std::vector<HierarchyElementAttribute*> elementChildren;
+        HierarchyFolderAttribute* folderParent;
+        HierarchyElementAttribute* elementParent;
+
     };
 
     struct HierarchyFolderAttribute
     {
-        HierarchyFolderAttribute(HierarchyFolder* folder)
+        HierarchyFolderAttribute(HierarchyFolder* folder, HierarchyFolderAttribute* folderParent)
         {
             this->folder = folder;
+            this->folderParent = folderParent;
             dropdownToggle = new ImageToggle(folder->getName() + "-dropdown", folder->getDropdownAddress(), ui::UI_DROPDOWN_T, ui::UI_DROPDOWN_F, colors::lightestgrey, ui::UI_ATTRIBUTE_HEADER);
             nameEntry = new HierarchyTextEntry(folder->getName() + "-name", folder->getNameAddress());
             displayToggle = new ImageToggle(folder->getName() + "-display", folder->getDisplayedAddress(), ui::UI_DISPLAY_T, ui::UI_DISPLAY_F);
@@ -537,6 +544,7 @@ namespace ui
         ImageToggle* renderToggle;
         std::vector<HierarchyFolderAttribute*> folderChildren;
         std::vector<HierarchyElementAttribute*> elementChildren;
+        HierarchyFolderAttribute* folderParent;
     };
 }
 #endif // !UI Elements

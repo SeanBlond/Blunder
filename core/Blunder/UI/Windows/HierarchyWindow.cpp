@@ -2,6 +2,7 @@
 using namespace ui;
 
 // Hierarchy Window Functions
+// UI Creation
 void HierarchyWindow::CreateHierarchyElementsFromRoot(HierarchyFolder* root)
 {
     // Deleting old root (if applicable)
@@ -11,7 +12,7 @@ void HierarchyWindow::CreateHierarchyElementsFromRoot(HierarchyFolder* root)
     }
 
     // Creating root attribute from passed in element
-    rootFolderAttribute = new ui::HierarchyFolderAttribute(root);
+    rootFolderAttribute = new ui::HierarchyFolderAttribute(root, nullptr);
     CreateFolderAttribute(root, rootFolderAttribute);
 }
 void HierarchyWindow::CreateFolderAttribute(HierarchyFolder* folder, ui::HierarchyFolderAttribute* folderAttribute)
@@ -20,7 +21,7 @@ void HierarchyWindow::CreateFolderAttribute(HierarchyFolder* folder, ui::Hierarc
     for (int i = 0; i < folder->getChildFoldersSize(); i++)
     {
         // Creating a temporary pointer to the new attribute
-        ui::HierarchyFolderAttribute* tempAttribute = new ui::HierarchyFolderAttribute(folder->getChildFolder(i));
+        ui::HierarchyFolderAttribute* tempAttribute = new ui::HierarchyFolderAttribute(folder->getChildFolder(i), folderAttribute);
 
         // Properly creating the folder attribute
         CreateFolderAttribute(folder->getChildFolder(i), tempAttribute);
@@ -33,7 +34,7 @@ void HierarchyWindow::CreateFolderAttribute(HierarchyFolder* folder, ui::Hierarc
     for (int i = 0; i < folder->getHierarchyElementSize(); i++)
     {
         // Creating a temporary pointer to the new attribute
-        ui::HierarchyElementAttribute* tempAttribute = new ui::HierarchyElementAttribute(folder->getHierarchyElement(i), ui::UI_OBJECT_SYMBOL);
+        ui::HierarchyElementAttribute* tempAttribute = new ui::HierarchyElementAttribute(folder->getHierarchyElement(i), folderAttribute, nullptr, ui::UI_OBJECT_SYMBOL);
 
         // Properly creating the element attribute
         CreateElementAttribute(folder->getHierarchyElement(i), tempAttribute);
@@ -48,15 +49,17 @@ void HierarchyWindow::CreateElementAttribute(HierarchyElement* element, ui::Hier
     for (int i = 0; i < element->getChildrenSize(); i++)
     {
         // Creating a temporary pointer to the new attribute
-        ui::HierarchyElementAttribute* tempAttribute = new ui::HierarchyElementAttribute(element->getChild(i), ui::UI_OBJECT_SYMBOL);
+        ui::HierarchyElementAttribute* tempAttribute = new ui::HierarchyElementAttribute(element->getChild(i), elementAttribute->folderParent, elementAttribute, ui::UI_OBJECT_SYMBOL);
 
         // Properly creating the element attribute
         CreateElementAttribute(element->getChild(i), tempAttribute);
 
         // TODO: Make it so different element symbols are passed in to the child constructor
-        elementAttribute->children.push_back(tempAttribute);
+        elementAttribute->elementChildren.push_back(tempAttribute);
     }
 }
+
+// Resizing
 void HierarchyWindow::ResizeWindow()
 {
     // Setting up initial positioning values
@@ -66,7 +69,6 @@ void HierarchyWindow::ResizeWindow()
     // Starting the resizing from the root folder
     ResizeFolderAttribute(rootFolderAttribute, 0, yPos);
 }
-
 void HierarchyWindow::ResizeFolderAttribute(ui::HierarchyFolderAttribute* attribute, int indent, float& yPos)
 {
     // Creating the base position that all elements of the attribute will be based on
@@ -145,11 +147,32 @@ void HierarchyWindow::ResizeElementAttribute(ui::HierarchyElementAttribute* attr
     // Resizing attribute children (if not dropped down)
     if (attribute->element->getDropdown())
     {
-        for (int i = 0; i < attribute->children.size(); i++)
+        for (int i = 0; i < attribute->elementChildren.size(); i++)
         {
-            ResizeElementAttribute(attribute->children[i], indent + 1, yPos);
+            ResizeElementAttribute(attribute->elementChildren[i], indent + 1, yPos);
         }
     }
+}
+
+// Drawing
+void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
+{
+    // Adding Base Quads
+    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
+    renderer->addQuad(position.getBufferedCorners(), 0.01f, colors::darkerGrey.rgb());
+
+    float hierarchyTitleHeight = position.unitScale * 1.5f;
+    float yPos = position.getHeight() - (hierarchyTitleHeight * 0.5f) - position.getBuffer();
+
+    // Adding Hierarchy Label
+    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f), position.offset);
+    renderer->addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largeText(), colors::white.rgb(), position.offset, CENTER);
+
+    // Updating yPos
+    yPos -= (hierarchyTitleHeight * 0.5f) + (position.unitScale * 0.5f);
+
+    // Starting the UI Draw from the root folder
+    DrawFolderAttribute(renderer, rootFolderAttribute, 0, yPos);
 }
 void HierarchyWindow::DrawFolderAttribute(ui::UIRenderer* renderer, ui::HierarchyFolderAttribute* attribute, int indent, float& yPos)
 {
@@ -163,7 +186,7 @@ void HierarchyWindow::DrawFolderAttribute(ui::UIRenderer* renderer, ui::Hierarch
     }*/
 
     // Drawing the dropdown symbol (if applicable)
-    if (attribute->folderChildren.size() > 0 || attribute->elementChildren.size() > 0)
+    if (attribute->folder->hasChildren())
         attribute->dropdownToggle->RenderElement(renderer, mediumText());
 
     // Drawing the element symbol
@@ -212,7 +235,7 @@ void HierarchyWindow::DrawElementAttribute(ui::UIRenderer* renderer, ui::Hierarc
     }
 
     // Drawing the dropdown symbol (if applicable)
-    if (attribute->children.size() > 0)
+    if (attribute->element->hasChildren())
         attribute->dropdownToggle->RenderElement(renderer, mediumText());
 
     // Drawing the element symbol
@@ -239,102 +262,14 @@ void HierarchyWindow::DrawElementAttribute(ui::UIRenderer* renderer, ui::Hierarc
     // Rendering the attributes children (if not dropped down)
     if (attribute->element->getDropdown())
     {
-        for (int i = 0; i < attribute->children.size(); i++)
-        {
-            DrawElementAttribute(renderer, attribute->children[i], indent + 1, yPos);
-        }
-    }
-}
-void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
-{
-    // Adding Base Quads
-    renderer->addQuad(position.getCorners(), 0.0f, colors::grey.rgb());
-    renderer->addQuad(position.getBufferedCorners(), 0.01f, colors::darkerGrey.rgb());
-
-    float hierarchyTitleHeight = position.unitScale * 1.5f;
-    float yPos = position.getHeight() - (hierarchyTitleHeight * 0.5f) - position.getBuffer();
-
-    // Adding Hierarchy Label
-    renderer->addQuad(glm::vec3((position.getWidth() / 2), yPos, 0.1f), glm::vec2(position.getWidth() - 2 * position.getBuffer(), hierarchyTitleHeight), glm::vec3(0.51f), position.offset);
-    renderer->addText("Hierarchy", glm::vec3(0.5f * position.getWidth(), yPos, 0.15f), largeText(), colors::white.rgb(), position.offset, CENTER);
-
-    // Updating yPos
-    yPos -= (hierarchyTitleHeight * 0.5f) + (position.unitScale * 0.5f);
-
-    // Starting the UI Draw from the root folder
-    DrawFolderAttribute(renderer, rootFolderAttribute, 0, yPos);
-}
-ui::AttributeElement* HierarchyWindow::CheckFolderAttributeInteraction(ui::HierarchyFolderAttribute* attribute, glm::vec2 pos)
-{
-    // Checking the dropdown element (if applicable)
-    if ((attribute->folderChildren.size() > 0 || attribute->elementChildren.size() > 0) && attribute->dropdownToggle->checkCollision(pos))
-        return attribute->dropdownToggle;
-
-    // Checking the name entry
-    if (attribute->nameEntry->checkCollision(pos))
-        return attribute->nameEntry;
-
-    // Checking the display toggle
-    if (attribute->displayToggle->checkCollision(pos))
-        return attribute->displayToggle;
-
-    // Checking the render toggle
-    if (attribute->renderToggle->checkCollision(pos))
-        return attribute->renderToggle;
-
-    // Checking the children (if not dropped down)
-    if (attribute->folder->getDropdown())
-    {
-        for (int i = 0; i < attribute->folderChildren.size(); i++)
-        {
-            // Checking if a child interaction returns a non-null element, then returning it
-            ui::AttributeElement* childInteraction = CheckFolderAttributeInteraction(attribute->folderChildren[i], pos);
-            if (childInteraction) { return childInteraction; }
-        }
-
         for (int i = 0; i < attribute->elementChildren.size(); i++)
         {
-            // Checking if a child interaction returns a non-null element, then returning it
-            ui::AttributeElement* childInteraction = CheckElementAttributeInteraction(attribute->elementChildren[i], pos);
-            if (childInteraction) { return childInteraction; }
+            DrawElementAttribute(renderer, attribute->elementChildren[i], indent + 1, yPos);
         }
     }
-
-    // Not collision found, return null
-    return nullptr;
 }
-ui::AttributeElement* HierarchyWindow::CheckElementAttributeInteraction(ui::HierarchyElementAttribute* attribute, glm::vec2 pos)
-{
-    // Checking the dropdown element (if applicable)
-    if (attribute->children.size() > 0 && attribute->dropdownToggle->checkCollision(pos))
-        return attribute->dropdownToggle;
 
-    // Checking the name entry
-    if (attribute->nameEntry->checkCollision(pos))
-        return attribute->nameEntry;
-
-    // Checking the display toggle
-    if (attribute->displayToggle->checkCollision(pos))
-        return attribute->displayToggle;
-
-    // Checking the render toggle
-    if (attribute->renderToggle->checkCollision(pos))
-        return attribute->renderToggle;
-
-    // Checking the children (if not dropped down)
-    if (attribute->element->getDropdown())
-    {
-        for (int i = 0; i < attribute->children.size(); i++)
-        {
-            // Checking if a child interaction returns a non-null element, then returning it
-            ui::AttributeElement* childInteraction = CheckElementAttributeInteraction(attribute->children[i], pos);
-            if (childInteraction) { return childInteraction; }
-        }
-    }
-
-    // Not collision found, return null
-    return nullptr;
-}
+// Interaction Management
 void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
 {
     // Getting mouse Position (flipping the y because glfw is stupid)
@@ -397,6 +332,155 @@ void HierarchyWindow::ManageInteraction(GLFWwindow* window, StateMachine* state)
         }
     }
 }
+ui::AttributeElement* HierarchyWindow::CheckFolderAttributeInteraction(ui::HierarchyFolderAttribute* attribute, glm::vec2 pos)
+{
+    // Checking the dropdown element (if applicable)
+    if ((attribute->folder->hasChildren()) && attribute->dropdownToggle->checkCollision(pos))
+        return attribute->dropdownToggle;
+
+    // Checking the name entry
+    if (attribute->nameEntry->checkCollision(pos))
+        return attribute->nameEntry;
+
+    // Checking the display toggle
+    if (attribute->displayToggle->checkCollision(pos))
+        return attribute->displayToggle;
+
+    // Checking the render toggle
+    if (attribute->renderToggle->checkCollision(pos))
+        return attribute->renderToggle;
+
+    // Checking the children (if not dropped down)
+    if (attribute->folder->getDropdown())
+    {
+        for (int i = 0; i < attribute->folderChildren.size(); i++)
+        {
+            // Checking if a child interaction returns a non-null element, then returning it
+            ui::AttributeElement* childInteraction = CheckFolderAttributeInteraction(attribute->folderChildren[i], pos);
+            if (childInteraction) { return childInteraction; }
+        }
+
+        for (int i = 0; i < attribute->elementChildren.size(); i++)
+        {
+            // Checking if a child interaction returns a non-null element, then returning it
+            ui::AttributeElement* childInteraction = CheckElementAttributeInteraction(attribute->elementChildren[i], pos);
+            if (childInteraction) { return childInteraction; }
+        }
+    }
+
+    // Not collision found, return null
+    return nullptr;
+}
+ui::AttributeElement* HierarchyWindow::CheckElementAttributeInteraction(ui::HierarchyElementAttribute* attribute, glm::vec2 pos)
+{
+    // Checking the dropdown element (if applicable)
+    if (attribute->element->hasChildren() && attribute->dropdownToggle->checkCollision(pos))
+        return attribute->dropdownToggle;
+
+    // Checking the name entry
+    if (attribute->nameEntry->checkCollision(pos))
+        return attribute->nameEntry;
+
+    // Checking the display toggle
+    if (attribute->displayToggle->checkCollision(pos))
+        return attribute->displayToggle;
+
+    // Checking the render toggle
+    if (attribute->renderToggle->checkCollision(pos))
+        return attribute->renderToggle;
+
+    // Checking the children (if not dropped down)
+    if (attribute->element->getDropdown())
+    {
+        for (int i = 0; i < attribute->elementChildren.size(); i++)
+        {
+            // Checking if a child interaction returns a non-null element, then returning it
+            ui::AttributeElement* childInteraction = CheckElementAttributeInteraction(attribute->elementChildren[i], pos);
+            if (childInteraction) { return childInteraction; }
+        }
+    }
+
+    // Not collision found, return null
+    return nullptr;
+}
+
+// Hierarchy Positioning
+void HierarchyWindow::GeneratePositionList(HierarchyFolder* excludedFolder, HierarchyElement* excludedElement)
+{
+    // Clearing old positions
+    storedHierarchyPositions.clear();
+
+    // Setting up initial positioning values
+    float hierarchyTitleHeight = position.unitScale * 1.5f;
+    float yPos = position.getHeight() - hierarchyTitleHeight - position.getBuffer() - (position.unitScale * 0.5f);
+
+    GeneratePositionFromFolder(rootFolderAttribute, yPos, excludedFolder, excludedElement);
+
+    std::cout << "GENERATED POSITION LIST: " << std::endl;
+    for (int i = 0; i < storedHierarchyPositions.size(); i++)
+    {
+        std::cout << i << ", yPos: " << storedHierarchyPositions[i].yPos
+            << ", folder parent: " << (storedHierarchyPositions[i].folderParent ? storedHierarchyPositions[i].folderParent->getName() : "N/A")
+            << ", element parent: " << (storedHierarchyPositions[i].elementParent ? storedHierarchyPositions[i].elementParent->getName() : "N/A")
+            << std::endl;
+    }
+}
+void HierarchyWindow::GeneratePositionFromFolder(HierarchyFolderAttribute* folder, float& yOffset, HierarchyFolder* excludedFolder, HierarchyElement* excludedElement)
+{
+    // Checking if the folder requested was the exlcuded one
+    if (folder->folder == excludedFolder)
+        return;
+
+    // Generating the child position
+    storedHierarchyPositions.push_back(HierarchyPositioning(yOffset, folder->folder));
+
+    // Generating the below 
+    yOffset -= position.unitScale * 0.5f;
+    storedHierarchyPositions.push_back(HierarchyPositioning(yOffset, (folder->folderParent ? folder->folderParent->folder : nullptr)));
+
+    // Changing yOffset for next attributes
+    yOffset -= position.unitScale * 0.5f;
+
+    // Calling Generate positions on all other children
+    if (folder->folder->hasChildren())
+    {
+        for (int i = 0; i < folder->folderChildren.size(); i++)
+        {
+            GeneratePositionFromFolder(folder->folderChildren[i], yOffset, excludedFolder, excludedElement);
+        }
+        for (int i = 0; i < folder->elementChildren.size(); i++)
+        {
+            GeneratePositionFromElement(folder->elementChildren[i], yOffset, excludedElement);
+        }
+    }
+}
+void HierarchyWindow::GeneratePositionFromElement(HierarchyElementAttribute* element, float& yOffset, HierarchyElement* excludedElement)
+{
+    // Checking if the element requested was the exlcuded one
+    if (element->element == excludedElement)
+        return;
+
+    // Generating the child position
+    storedHierarchyPositions.push_back(HierarchyPositioning(yOffset, element->folderParent->folder, element->element));
+
+    // Generating the below 
+    yOffset -= position.unitScale * 0.5f;
+    storedHierarchyPositions.push_back(HierarchyPositioning(yOffset, element->folderParent->folder, (element->elementParent ? element->elementParent->element : nullptr)));
+
+    // Changing yOffset for next attributes
+    yOffset -= position.unitScale * 0.5f;
+
+    // Calling Generate positions on all other children
+    if (element->element->hasChildren())
+    {
+        for (int i = 0; i < element->elementChildren.size(); i++)
+        {
+            GeneratePositionFromElement(element->elementChildren[i], yOffset, excludedElement);
+        }
+    }
+}
+
+// Unselecting
 void HierarchyWindow::UnselectWindow()
 {
     // Unclicking element

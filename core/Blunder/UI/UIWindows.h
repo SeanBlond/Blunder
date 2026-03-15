@@ -102,32 +102,57 @@ namespace ui
     public:
         // Constructor & Deconstructor
         HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootFolderAttribute(nullptr) {
-            CreateHierarchyElementsFromRoot(state->getScene()->getRootFolder()); }
+            CreateHierarchyElementsFromRoot(state->getScene()->getRootFolder()); GeneratePositionList(); }
         ~HierarchyWindow()
         {
         }
 
         // Functions
+        // UI Creation
         void CreateHierarchyElementsFromRoot(HierarchyFolder* root);
         void CreateFolderAttribute(HierarchyFolder* folder, ui::HierarchyFolderAttribute* folderAttribute);
         void CreateElementAttribute(HierarchyElement* element, ui::HierarchyElementAttribute* elementAttribute);
+
+        // Resizing
         void ResizeWindow() override;
         void ResizeFolderAttribute(ui::HierarchyFolderAttribute* attribute, int indent, float& yPos);
         void ResizeElementAttribute(ui::HierarchyElementAttribute* attribute, int indent, float& yPos);
+
+        // Drawing
+        void DrawWindow(ui::UIRenderer* renderer) override;
         void DrawFolderAttribute(ui::UIRenderer* renderer, ui::HierarchyFolderAttribute* attribute, int indent, float& yPos);
         void DrawElementAttribute(ui::UIRenderer* renderer, ui::HierarchyElementAttribute* attribute, int indent, float& yPos);
-        void DrawWindow(ui::UIRenderer* renderer) override;
+
+        // Interaction Management
+        void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
         ui::AttributeElement* CheckFolderAttributeInteraction(ui::HierarchyFolderAttribute* attribute, glm::vec2 pos);
         ui::AttributeElement* CheckElementAttributeInteraction(ui::HierarchyElementAttribute* attribute, glm::vec2 pos);
-        void ManageInteraction(GLFWwindow* window, StateMachine* state) override;
+
+        // Hierarchy Positioning
+        void GeneratePositionList(HierarchyFolder* excludedFolder = nullptr, HierarchyElement* excludedElement = nullptr);
+        void GeneratePositionFromFolder(HierarchyFolderAttribute* folder, float& yOffset, HierarchyFolder* excludedFolder = nullptr, HierarchyElement* excludedElement = nullptr);
+        void GeneratePositionFromElement(HierarchyElementAttribute* element, float& yOffset, HierarchyElement* excludedElement = nullptr);
+
         void UnselectWindow() override;
         void OpenWindow() override {}
+
+        // Struct for element sliding
+        struct HierarchyPositioning
+        {
+            HierarchyPositioning() : yPos(0), folderParent(nullptr), elementParent(nullptr) {}
+            HierarchyPositioning(float yPos, HierarchyFolder* folderParent, HierarchyElement* elementParent = nullptr)
+                : yPos(yPos), folderParent(folderParent), elementParent(elementParent) {}
+            HierarchyFolder* folderParent;
+            HierarchyElement* elementParent;
+            float yPos;
+        };
 
     private:
         StateMachine* state;
         ui::HierarchyFolderAttribute* rootFolderAttribute;
         ui::AttributeElement* highlightedElement;
         ui::AttributeElement* clickedElement;
+        std::vector<HierarchyPositioning> storedHierarchyPositions;
     };
 
     // Viewport Window
