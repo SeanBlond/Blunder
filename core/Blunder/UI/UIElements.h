@@ -495,7 +495,6 @@ namespace ui
         std::vector<HierarchyElementAttribute*> elementChildren;
         HierarchyFolderAttribute* folderParent;
         HierarchyElementAttribute* elementParent;
-
     };
 
     struct HierarchyFolderAttribute

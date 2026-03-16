@@ -26,7 +26,7 @@ namespace ui
         UI_RENDER_F, 
         UI_DISPLAY_T, 
         UI_DISPLAY_F, 
-        UI_DRAG_POSITION_ICON, 
+        UI_DRAG_POSITION, 
         UI_FOLDER_SYMBOL, 
         UI_OBJECT_SYMBOL, 
         UI_LIGHT_SYMBOL, 

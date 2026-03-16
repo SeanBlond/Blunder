@@ -155,8 +155,11 @@ namespace ui
         ui::AttributeElement* clickedElement;
 
         // Sliding Hierarchy
-        bool slidingHierarchyPositions;
         std::vector<HierarchyPositioning> storedHierarchyPositions;
+        HierarchyElement* excludedElement;
+        HierarchyFolder* excludedFolder;
+        bool slidingHierarchyPositions;
+        bool slidingTriggered;
     };
 
     // Viewport Window
