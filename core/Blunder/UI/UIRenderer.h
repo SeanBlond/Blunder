@@ -17,6 +17,7 @@
 namespace ui
 {
     enum QuadStyle { QUAD_RECT, QUAD_CIRCLE };
+    const int NUM_UI_ICONS = 11;
     enum UITexture { 
         UI_NO_TEXTURE = -1, 
         UI_DROPDOWN_T, 
@@ -25,10 +26,11 @@ namespace ui
         UI_RENDER_F, 
         UI_DISPLAY_T, 
         UI_DISPLAY_F, 
+        UI_DRAG_POSITION_ICON, 
         UI_FOLDER_SYMBOL, 
-        UI_CAMERA_SYMBOL,
         UI_OBJECT_SYMBOL, 
         UI_LIGHT_SYMBOL, 
+        UI_CAMERA_SYMBOL,
     };
     struct UIVertex
     {

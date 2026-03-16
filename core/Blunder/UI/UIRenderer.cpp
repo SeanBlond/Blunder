@@ -11,7 +11,8 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, 
     this->textHeight = textHeight;
 
     // Shaders
-    const char* quadVertexShader = R"(
+    {
+        const char* quadVertexShader = R"(
         #version 330 core
         layout (location = 0) in vec3 vertex;
         layout (location = 1) in vec2 TexCoord;
@@ -35,7 +36,7 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, 
         }  
         )";
 
-    const char* quadFragmentShader = R"(
+        const char* quadFragmentShader = R"(
         #version 330 core
         in vec2 TexCoords;
         in vec3 Color;
@@ -61,8 +62,9 @@ UIRenderer::UIRenderer(std::string fntFilePath, std::string fontBitmapFilePath, 
         }  
         )";
 
-    // Setting Up Shader
-    quadShader = new shdr::Shader(quadVertexShader, quadFragmentShader, 1);
+        // Setting Up Shader
+        quadShader = new shdr::Shader(quadVertexShader, quadFragmentShader, 1);
+    }
 
     // Creating the UI Bitmap
     uiBitmap = new shdr::Texture2D(uiBitmapFilePath.c_str(), GL_LINEAR_MIPMAP_LINEAR, GL_TEXTURE_WRAP_S);
@@ -134,27 +136,28 @@ void UIRenderer::createBitmapUVData()
     // x---z
 
     // Getting each icon from each row from top to bottom (pngs are flipped!)
-    for (int i = 1; i <= 5; i++)
+    int iconsRead = 0;
+    const int NUM_COLUMNS = 8;
+    const int NUM_ROWS = 2;
+    float xUV = 1.0f / (float)NUM_COLUMNS;
+    float yUV = 1.0f / (float)NUM_ROWS;
+
+    while (iconsRead < NUM_UI_ICONS)
     {
-        // Left Icon
+        float xOffset = ((float)(iconsRead % NUM_COLUMNS) / (float)NUM_COLUMNS);
+        int yOffset = iconsRead / NUM_COLUMNS;
+
+        // Adding an icon corners
         glm::vec4 tempCorner = glm::vec4(
-            0.0f,
-            (float)(i - 1) / 5.0f,
-            0.5f,
-            (float)i / 5.0f
+            xOffset,
+            yOffset,
+            xOffset + xUV,
+            yOffset + yUV
         );
         uiTextureCorners.push_back(tempCorner);
 
-        // Right Icon
-        tempCorner = glm::vec4(
-            0.5f,
-            (float)(i - 1) / 5.0f,
-            1.0f,
-            (float)i / 5.0f
-        );
-        uiTextureCorners.push_back(tempCorner);
+        iconsRead++;
     }
-
 }
 void UIRenderer::addText(std::string text, glm::vec3 position, float scale, glm::vec3 color, TextAlign alignment)
 {
@@ -186,7 +189,7 @@ void UIRenderer::addQuad(glm::vec4 corners, float depth, glm::vec3 color, UIText
     // Getting the TexCoord location of the texture
     glm::vec4 uvCoords;
     if (texture == UI_NO_TEXTURE)
-        uvCoords = glm::vec4(0.25f, 0.1f, 0.25f, 0.1f);
+        uvCoords = glm::vec4(0.075f, 0.25f, 0.075f, 0.25f);
     else
         uvCoords = uiTextureCorners[texture];
 
