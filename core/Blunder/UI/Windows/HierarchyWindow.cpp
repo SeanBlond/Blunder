@@ -173,6 +173,19 @@ void HierarchyWindow::DrawWindow(ui::UIRenderer* renderer)
 
     // Starting the UI Draw from the root folder
     DrawFolderAttribute(renderer, rootFolderAttribute, 0, yPos);
+
+    // Drawing the hierarchy positioning quads (if applicable)
+    if (storedHierarchyPositions.size() > 0)
+    {
+        for (int i = 0; i < storedHierarchyPositions.size(); i++)
+        {
+            renderer->addQuad(glm::vec3(
+                position.getWidth() - (1.75f * position.unitScale),
+                storedHierarchyPositions[i].yPos,
+                0.95f
+            ), glm::vec2(position.unitScale, position.unitScale * 0.15f), colors::blue.rgb(), position.offset);
+        }
+    }
 }
 void HierarchyWindow::DrawFolderAttribute(ui::UIRenderer* renderer, ui::HierarchyFolderAttribute* attribute, int indent, float& yPos)
 {

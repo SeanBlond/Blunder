@@ -101,7 +101,8 @@ namespace ui
     {
     public:
         // Constructor & Deconstructor
-        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state) : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootFolderAttribute(nullptr) {
+        HierarchyWindow(float width, float height, float xoffset, float yoffset, StateMachine* state)
+            : UIWindow(width, height, xoffset, yoffset, "Hierarchy"), state(state), clickedElement(nullptr), highlightedElement(nullptr), rootFolderAttribute(nullptr), slidingHierarchyPositions(false) {
             CreateHierarchyElementsFromRoot(state->getScene()->getRootFolder()); GeneratePositionList(); }
         ~HierarchyWindow()
         {
@@ -152,6 +153,9 @@ namespace ui
         ui::HierarchyFolderAttribute* rootFolderAttribute;
         ui::AttributeElement* highlightedElement;
         ui::AttributeElement* clickedElement;
+
+        // Sliding Hierarchy
+        bool slidingHierarchyPositions;
         std::vector<HierarchyPositioning> storedHierarchyPositions;
     };
 
