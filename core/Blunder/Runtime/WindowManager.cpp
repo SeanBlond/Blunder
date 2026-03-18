@@ -322,8 +322,8 @@ void WindowManager::CreateDefaultWindows(glm::ivec2 screenSize)
 	rootLockedWindow = new LockedWindow(new ui::ViewportWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), nullptr, screenSize, LockedWindow::POS_NONE);
 
 	// Attribute UI
-	rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.1667f);
+	//rootLockedWindow->setLeftWindow(new ui::AttributeWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state->getSelectedObject()), 0.1667f);
 
 	// Hierarchy UI
-	rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.1667);
+	//rootLockedWindow->setRightWindow(new ui::HierarchyWindow(screenSize.x, screenSize.y, 0.0f, 0.0f, state), 0.1667);
 }

@@ -16,6 +16,7 @@
 #include <Camera/camera.h>
 #include <shader/shader.h>
 #include <object/object.h>
+#include <object/CubeSim.h>
 #include <math/smath.h>
 #include <Blunder/Keystroke.h>
 #include <Font/font.h>
@@ -38,7 +39,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void character_callback(GLFWwindow* window, unsigned int codepoint);
 
 // Camera Data
-OrbitCamera camera(1.25f, 2.0f, 7.5f);
+OrbitCamera camera(1.25f, 2.0f, 15.0f);
 
 // Setting up Object System
 scn::Scene activeScene;
@@ -53,6 +54,11 @@ std::mutex TimeManager::mtx;
 
 // Setting up Time Manager
 TimeManager* Time = TimeManager::getInstance();
+
+// Setting up Cube Sim
+glm::vec3 Cube::gravity = glm::vec3(0, -3, 0);
+glm::vec3 Cube::groundNormal = glm::vec3(0, 1, 0);
+float Cube::friction = 0.1f;
 
 int main() 
 {
@@ -104,10 +110,7 @@ int main()
     activeScene.addFolder("Test 2");
 
     // Creating Default Objects
-    activeScene.addObject(new obj::Object("torus", mesh::createTorus(1.0f, 0.25f, 8, 8), &testShader, glm::vec3(0, 0, 2.5f)));
-    activeScene.addObject(new obj::Object("cube", mesh::createCube(1.0f, 1.0f, 1.0f, 10), &testShader));
-    activeScene.setSelectedFolder(activeScene.getRootFolder()->getChildFolder(0));
-    activeScene.addObject(new obj::Object("sphere", mesh::createSphere(1.0f, 8), &testShader, glm::vec3(-2, 0, 0)));
+    activeScene.addObject(new obj::Object("ground", mesh::createPlane(10.0f, 10.0f, 1), &testShader));
 
     // Selecting the default cube
     state.selectObject(activeScene.getSelectedFolder()->getHierarchyElement(0)->getObject());
@@ -121,6 +124,10 @@ int main()
 
     // Creating Projection Matrix
     glm::mat4 projection = camera.getProjectionMatrix((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+
+    // Creating the Simulated Cube
+    Cube simCube = Cube(&testShader, glm::vec3(0.5f));
+    simCube.SetCube(glm::vec3(0, 10, 0), glm::vec3(0));
 
     //Render loop
     while (!glfwWindowShouldClose(window)) {
@@ -145,6 +152,15 @@ int main()
 
         // State Machine Managment
         state.manageStateMachine();
+
+        // Updating the cube
+        simCube.UpdateSim(Time->getDeltaTime());
+        
+        // Drawing the cube
+        simCube.DrawCube(
+            camera.getProjectionMatrix((float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f),
+            camera.getViewMatrix()
+            );
 
         // Drawing Windows
         windows.UpdateWindows(window, glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT));
